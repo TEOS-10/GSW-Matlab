@@ -32,9 +32,9 @@ function sound_speed = gsw_sound_speed(SA,CT,p)
 %  sound_speed  =  speed of sound in seawater                       [ m/s ]
 %
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]   
+%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.0 (23rd Macrh, 2011)
+% VERSION NUMBER: 3.01 (23rd Macrh, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

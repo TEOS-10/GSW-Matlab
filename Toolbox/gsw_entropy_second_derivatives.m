@@ -35,9 +35,9 @@ function [eta_SA_SA, eta_SA_CT, eta_CT_CT] = gsw_entropy_second_derivatives(SA,C
 %               Salinity.  eta_CT_CT has units of:           [ J/(kg K^3) ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 % 
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

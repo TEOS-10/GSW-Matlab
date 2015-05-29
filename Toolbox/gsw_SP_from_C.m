@@ -29,9 +29,9 @@ function SP = gsw_SP_from_C(C,t,p)
 %  SP  =  Practical Salinity on the PSS-78 scale               [ unitless ]
 %
 % AUTHOR:  
-%  Paul Barker, Trevor McDougall and Rich Pawlowicz   [ help_gsw@csiro.au ]
+%  Paul Barker, Trevor McDougall and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (1st April, 2010)
+% VERSION NUMBER: 3.01 (1st April, 2010)
 %
 % REFERENCES:
 %  Culkin and Smith, 1980:  Determination of the Concentration of Potassium  

@@ -35,9 +35,9 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 %     Scale of Millero et al. (2008). 
 %
 % AUTHOR: 
-%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
+%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.0 (4th April, 2011)
+% VERSION NUMBER: 3.01 (4th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -31,9 +31,9 @@ function pt0 = gsw_pt0_from_t(SA,t,p)
 %
 % AUTHOR:  
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
-%                                                     [ help_gsw@csiro.au ]
+%                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

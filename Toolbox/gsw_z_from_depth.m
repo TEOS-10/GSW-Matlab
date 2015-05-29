@@ -17,9 +17,9 @@ function z = gsw_z_from_depth(depth)
 %  z  =  height                                                       [ m ]
 %
 % AUTHOR:  
-%  Winston                                            [ help_gsw@csiro.au ]
+%  Winston                                              [ god@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (26th March, 2011)
+% VERSION NUMBER: 3.01 (26th March, 2011)
 %   
 %  This software is available from http://www.TEOS-10.org
 %

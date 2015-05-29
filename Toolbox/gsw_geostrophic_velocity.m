@@ -57,9 +57,9 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 %
 %
 % AUTHOR: 
-%  Paul Barker, Trevor McDougall and Phil Morgan      [ help_gsw@csiro.au ]
+%  Paul Barker, Trevor McDougall and Phil Morgan       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (24th March, 2011)
+% VERSION NUMBER: 3.01 (24th March, 2011)
 %
 % REFERENCES:
 %  Cunningham, S. A., 2000: Circulation and volume flux of the North 

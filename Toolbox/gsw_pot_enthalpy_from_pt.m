@@ -20,9 +20,9 @@ function pot_enthalpy = gsw_pot_enthalpy_from_pt(SA,pt)
 %  pot_enthalpy  =  potential enthalpy                             [ J/kg ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

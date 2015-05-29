@@ -34,9 +34,9 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives(SA,CT,p)
 %              CT at constant SA and p.                      [ J/(kg K^2) ]
 %
 % AUTHOR:   
-%  Trevor McDougall and Paul Barker.                  [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

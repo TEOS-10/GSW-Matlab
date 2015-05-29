@@ -51,9 +51,9 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %            That is, p_mid is on a (M-1)xN grid.                  [ dbar ]
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (23rd March, 2011)
+% VERSION NUMBER: 3.01 (23rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

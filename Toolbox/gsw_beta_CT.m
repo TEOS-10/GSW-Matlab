@@ -39,9 +39,9 @@ function beta_CT = gsw_beta_CT(SA,CT,p)
 %              at constant Conservative Temperature
 %    
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
+%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (23rd March, 2010)
+% VERSION NUMBER: 3.01 (23rd March, 2010)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

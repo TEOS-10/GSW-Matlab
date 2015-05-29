@@ -30,7 +30,7 @@ function t_freezing = gsw_t_freezing(SA,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall, Paul Barker and Rainer Feistal    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (3th November, 2011)
+% VERSION NUMBER: 3.01 (3th November, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

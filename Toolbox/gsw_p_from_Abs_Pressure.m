@@ -17,9 +17,9 @@ function p = gsw_p_from_Abs_Pressure(Absolute_Pressure)
 %  p  =  sea pressure                                              [ dbar ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

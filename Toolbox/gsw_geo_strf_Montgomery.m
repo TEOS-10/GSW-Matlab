@@ -49,9 +49,9 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %                          streamfunction                      
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (26th March, 2011)
+% VERSION NUMBER: 3.01 (26th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

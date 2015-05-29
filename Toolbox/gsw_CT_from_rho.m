@@ -41,9 +41,9 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 %      called with two outputs the second variable will be set to NaN.
 %
 % AUTHOR:
-%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
+%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (21th April, 2011)
+% VERSION NUMBER: 3.01 (21th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of

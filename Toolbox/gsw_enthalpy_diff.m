@@ -38,9 +38,9 @@ function enthalpy_diff = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep)
 %                       (deep minus shallow)
 %
 % AUTHOR: 
-%  Trevor McDougall & Paul Barker.                    [ help_gsw@csiro.au ]
+%  Trevor McDougall & Paul Barker.                     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (21st March, 2011)
+% VERSION NUMBER: 3.01 (21st March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

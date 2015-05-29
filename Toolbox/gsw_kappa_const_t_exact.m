@@ -25,9 +25,9 @@ function kappa_const_t_exact = gsw_kappa_const_t_exact(SA,t,p)
 %   Note. The output units are 1/Pa not 1/dbar.
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

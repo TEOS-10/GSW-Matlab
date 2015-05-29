@@ -21,9 +21,9 @@ function SP_baltic = gsw_SP_from_SA_Baltic(SA,long,lat)
 %  SP_baltic  =  Practical Salinity                            [ unitless ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall & Paul Barker      [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall & Paul Barker       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  Feistel, R., S. Weinreben, H. Wolf, S. Seitz, P. Spitzer, B. Adel, 

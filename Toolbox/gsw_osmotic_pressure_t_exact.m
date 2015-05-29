@@ -22,9 +22,9 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 %  osmotic_pressure_t_exact  =  osmotic pressure of seawater       [ dbar ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (26th May, 2011)
+% VERSION NUMBER: 3.01 (26th May, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

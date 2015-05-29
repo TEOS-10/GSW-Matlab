@@ -32,9 +32,9 @@ function specvol_anom = gsw_specvol_anom(SA,CT,p)
 %  specvol_anom  =  specific volume anomaly                      [ m^3/kg ]
 %
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
+%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (24th March, 2011)
+% VERSION NUMBER: 3.01 (24th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

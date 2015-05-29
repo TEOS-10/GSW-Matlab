@@ -24,15 +24,14 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %    (McDougall et al., 2011).
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
-%  McDougall T. J., P. M. Barker, D. R. Jackett, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2011:  A computationally efficient 48-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 % The software is available from http://www.TEOS-10.org
 %

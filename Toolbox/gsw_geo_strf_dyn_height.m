@@ -58,9 +58,9 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %     on the whole vertical profile is returned as NaN.
 %
 % AUTHOR:  
-%  Paul Barker, Jeff Dunn and Trevor McDougall        [ help_gsw@csiro.au ]
+%  Paul Barker, Jeff Dunn and Trevor McDougall         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (7th April, 2011) 
+% VERSION NUMBER: 3.01 (7th April, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

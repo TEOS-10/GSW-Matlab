@@ -41,9 +41,9 @@ function R = gsw_R_from_SP(SP,t,p)
 %  R  =  conductivity ratio                                    [ unitless ]
 %
 % AUTHOR:
-%  Trevor McDougall, Paul Barker and Rich Pawlowicz   [ help_gsw@csiro.au ]
+%  Trevor McDougall, Paul Barker and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (6th April, 2011)
+% VERSION NUMBER: 3.01 (6th April, 2011)
 %
 % REFERENCES:
 %  Culkin and Smith, 1980:  Determination of the Concentration of Potassium  

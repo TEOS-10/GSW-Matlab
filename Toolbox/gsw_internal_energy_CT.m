@@ -37,9 +37,9 @@ function internal_energy_CT = gsw_internal_energy_CT(SA,CT,p)
 %  internal_energy_CT  =  specific internal energy                 [ J/kg ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker.                  [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (4th April, 2011)
+% VERSION NUMBER: 3.01 (4th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

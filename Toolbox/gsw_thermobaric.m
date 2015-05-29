@@ -34,9 +34,9 @@ function thermobaric = gsw_thermobaric(SA,CT,p)
 %    pressure in Pa not dbar.
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (24th March, 2011)
+% VERSION NUMBER: 3.01 (24th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

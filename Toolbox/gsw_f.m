@@ -19,12 +19,12 @@ function f = gsw_f(lat)
 %  f    =  Coriolis parameter                                 [ radians/s ]
 %
 % AUTHOR:  
-%  20th April 1993. Phil Morgan                       [ help_gsw@csiro.au ]
+%  20th April 1993. Phil Morgan                        [ help@teos-10.org ]
 %
 % MODIFIED:
 %  28th July, 2010 by Paul Barker  
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (28th July, 2010).
 %
 % REFERENCE:

@@ -25,9 +25,9 @@ function sigma0_pt0_exact = gsw_sigma0_pt0_exact(SA,pt0)
 %                       that is, potential density minus 1000 kg/m^3.
 %
 % AUTHOR: 
-%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
+%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

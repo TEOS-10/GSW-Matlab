@@ -41,9 +41,9 @@ function C = gsw_C_from_SP(SP,t,p)
 %  C  =  conductivity                                             [ mS/cm ]
 %
 % AUTHOR:
-%  Trevor McDougall, Paul Barker and Rich Pawlowicz   [ help_gsw@csiro.au ]
+%  Trevor McDougall, Paul Barker and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (1st April, 2011)
+% VERSION NUMBER: 3.01 (1st April, 2011)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee and D.J. Woods, 1986: The extension of the
@@ -57,7 +57,7 @@ function C = gsw_C_from_SP(SP,t,p)
 %    See appendix E of this TEOS-10 Manual.
 %
 %  Unesco, 1983: Algorithms for computation of fundamental properties of
-%  seawater. Unesco Technical Papers in Marine Science, 44, 53 pp.
+%   seawater. Unesco Technical Papers in Marine Science, 44, 53 pp.
 %
 %  The software is available from http://www.TEOS-10.org
 %

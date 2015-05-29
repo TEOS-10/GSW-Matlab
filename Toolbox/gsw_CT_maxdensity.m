@@ -34,9 +34,9 @@ function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 %                    given Absolute Salinity and pressure.
 %
 % AUTHOR: 
-%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
+%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (3rd April, 2011)
+% VERSION NUMBER: 3.01 (3rd April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

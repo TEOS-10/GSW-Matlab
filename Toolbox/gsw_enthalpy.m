@@ -32,9 +32,9 @@ function enthalpy = gsw_enthalpy(SA,CT,p)
 %
 % AUTHOR: 
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker.    
-%                                                     [ help_gsw@csiro.au ]
+%                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (5th April, 2011)
+% VERSION NUMBER: 3.01 (5th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <title>TEOS-10/GSW preamble</title>
+  </head>
+  <body>
+    <p>
+      The International Thermodynamic Equation Of Seawater – 2010 (TEOS-10) allows all the thermodynamic properties of
+      pure water, ice, seawater and moist air to be evaluated in a self-consistent manner.  For the first time the effects
+      of the variations in seawater composition around the world ocean are accounted for; these spatial variations of
+      seawater composition cause density differences that are equivalent to ten times the precision of our Practical
+      Salinity measurements at sea.
+    </p>
+    <p>
+      The GSW Oceanographic Toolbox of TEOS-10 is concerned primarily with the properties of pure liquid water
+      and of seawater; the TEOS-10 software for evaluating the properties of ice and of humid air is available in
+      the SIA (Seawater-Ice-Air) software library from the TEOS-10 web site, http://www.TEOS-10.org.
+    </p>
+    <p>
+      TEOS-10 has introduced several new variables into oceanography, including Absolute Salinity  , Preformed
+      Salinity  , and Conservative Temperature Θ.  These variables are introduced in this document, and then the
+      use of these variables is discussed, followed by the complete listing and description of the functions available
+      in the GSW toolbox.
+    </p>
+    <p>
+      Absolute Salinity is the salinity argument of the TEOS-10 algorithms which give the various thermodynamic
+      properties of seawater, and under TEOS-10 Absolute Salinity   is the salinity variable to be used in scientific
+      publications.  Note, however, it is Practical Salinity   which must be reported to and stored in national
+      databases.  The practice of storing one type of salinity in national databases (Practical Salinity), but using
+      a different type of salinity in publications (Absolute Salinity), is exactly analogous to our present practice
+      with temperature; in situ temperature is stored in databases (since it is the measured quantity), but the
+      temperature variable that is used in publications is a calculated quantity, being potential temperature to
+      date, and from now, Conservative Temperature.
+    </p>
+    <p>
+      For the past thirty years, under EOS-80 we have taken the “raw” data of Practical Salinity   (PSS-78),
+      in situ temperature   (now ITS-90) and pressure   and we have used an algorithm to calculate potential temperature
+      in order to analyze and publish water-mass characteristics on the   diagram.  On this   diagram we have been able
+      to draw curved contours of potential density using EOS-80.  Under TEOS-10 this practice has now changed.  Density
+      and potential density (and all types of geostrophic streamfunction including dynamic height anomaly) are now not
+      functions of Practical Salinity   but rather are functions of Absolute Salinity  .  TEOS-10 also defines a new
+      temperature variable, Conservative Temperature Θ, which takes the place of potential temperature <i>θ</i>.  Conservative
+      Temperature Θ has the advantage over   of more accurately representing the “heat content” of seawater.  Under
+      TEOS-10 is not possible to draw isolines of potential density on a   diagram.  Rather, because of the spatial
+      variations of seawater composition, a given value of potential density defines an area on the   diagram, not
+      a curved line.  Hence for the analysis and publication of ocean data under TEOS-10 we need to change from using
+      the   diagram which was appropriate under EOS-80, to using the   diagram.  It is on this   diagram that the
+      isolines of potential density can be drawn under TEOS-10.
+    </p>
+    <p>
+      As a fast-track precursor to the rest of this document, we note that these calculations can be performed
+      using the functions of the GSW Oceanographic Toolbox as follows.  The observed variables  , together with
+      longitude and latitude, are used to first form Absolute Salinity   using gsw_SA_from_SP, and then Conservative
+      Temperature Θ is calculated using gsw_CT_from_t.  Oceanographic water masses are then analyzed on the
+      diagram (using gsw_SA_CT_plot), and potential density contours can be drawn on this   diagram using gsw_rho(SA,CT,p_ref).
+    </p>
+
+
+    <p> The more prominent advantages of TEOS-10 compared with EOS-80 are  </p>
+    <ul>
+      <li>
+        For the first time the influence of the spatially varying composition of seawater is systematically
+        taken into account through the use of Absolute Salinity.  In the open ocean, this has a non-trivial
+        effect on the horizontal density gradient, and thereby on ocean velocities and “heat” transports
+        calculated via the “thermal wind” relation.
+      </li>
+      <li>The new salinity variable, Absolute Salinity, is measured in SI units (e.g.  ).</li>
+      <li>
+        The Gibbs function approach of TEOS-10 allows the calculation of internal energy, entropy, enthalpy,
+        potential enthalpy and the chemical potentials of seawater as well as the freezing temperature, and
+        the latent heats of freezing and of evaporation.  These quantities were not available from EOS-80
+        but are essential for the accurate accounting of “heat” in the ocean and for the consistent and
+        accurate treatment of air-sea and ice-sea heat fluxes in coupled climate models.
+      </li>
+      <li>
+        In particular, Conservative Temperature Θ accurately represents the “heat content” per unit mass of
+        seawater, and is to be used in place of potential temperature <i>θ</i> in oceanography.
+      </li>
+      <li>
+        The thermodynamic quantities available from TEOS-10 are totally consistent with each other, while
+        this was not the case with EOS-80.
+      </li>
+      <li>
+        A single algorithm for seawater density (the 48-term computationally-efficient expression  ) can
+        now be used for ocean modelling, for observational oceanography, and for theoretical studies.  By
+        contrast, for the past 30 years we have used different algorithms for density in ocean modelling
+        and in observational oceanography and inverse modelling.
+      </li>
+    </ul>
+    <p>
+      The present document (McDougall and Barker, 2011) provides a short description of the three new
+      oceanographic variables  ,  and Θ, leading into a discussion of the changes to observational oceanography
+      and ocean modelling under TEOS-10 (compared with EOS-80), and then we list and describe the functions in
+      the GSW Oceanographic Toolbox.  The present document ends with the recommendations of SCOR/IAPSO Working
+      Group 127, as endorsed by the Intergovernmental Oceanographic Commission, for the nomenclature, symbols
+      and units to be used in physical oceanography, repeated from appendix L of IOC et al. (2010).  Another
+      document “What every oceanographer needs to know about TEOS-10 (The TEOS-10 Primer)” (Pawlowicz, 2010)
+      provides a succinct introduction to the thermodynamic theory underlying TEOS-10 and is available
+      from www.TEOS-10.org.
+    </p>
+    <p>Note that when referring to the use of TEOS-10, it is the TEOS-10 Manual which should be referenced as 
+    IOC et al. (2010) [IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of seawater – 2010: 
+    Calculation and use of thermodynamic properties.  Intergovernmental Oceanographic Commission, Manuals and 
+    Guides No. 56, UNESCO (English), 196 pp.].  </p>
+
+  </body>
+</html>

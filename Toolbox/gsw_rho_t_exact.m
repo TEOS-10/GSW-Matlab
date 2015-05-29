@@ -24,9 +24,9 @@ function rho_t_exact = gsw_rho_t_exact(SA,t,p)
 %  rho_t_exact  =  in-situ density (not density anomaly)         [ kg/m^3 ]
 %    
 % AUTHOR: 
-%  Paul Barker, David Jackett & Trevor McDougall      [ help_gsw@csiro.au ]
+%  Paul Barker, David Jackett & Trevor McDougall       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -22,9 +22,9 @@ function sound_speed_t_exact = gsw_sound_speed_t_exact(SA,t,p)
 %  sound_speed_t_exact  =  speed of sound in seawater               [ m/s ]
 %
 % AUTHOR: 
-%  David Jackett, Paul Barker and Trevor McDougall    [ help_gsw@csiro.au ]   
+%  David Jackett, Paul Barker and Trevor McDougall     [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

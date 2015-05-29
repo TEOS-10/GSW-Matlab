@@ -26,9 +26,9 @@ function alpha_wrt_pt_t_exact = gsw_alpha_wrt_pt_t_exact(SA,t,p)
 %                           with a reference pressure of zero dbar.
 %    
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

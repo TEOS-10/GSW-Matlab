@@ -41,9 +41,9 @@ function [rho, alpha, beta] = gsw_rho_alpha_beta(SA,CT,p)
 %            coefficient at constant Conservative Temperature
 %
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
+%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (3rd April, 2011)
+% VERSION NUMBER: 3.01 (3rd April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

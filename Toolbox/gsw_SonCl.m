@@ -18,9 +18,9 @@ function SonCl = gsw_SonCl
 %  SonCl  =  SP to Chlorinity ratio                           [ (g/kg)^-1 ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.0 (29th March, 2011) 
+% VERSION NUMBER: 3.01 (29th March, 2011) 
 %
 % REFERENCES:
 %  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 

@@ -1,7 +1,7 @@
 function internal_energy = gsw_internal_energy(SA,CT,p)
 
 % gsw_internal_energy                   specific interal energy of seawater
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 %
 % USAGE:
@@ -9,12 +9,12 @@ function internal_energy = gsw_internal_energy(SA,CT,p)
 %
 % DESCRIPTION:
 %  Calculates specific internal energy of seawater using the 
-%  computationally-efficient 48-term expression for density in terms of SA,
-%  CT and p (IOC et al., 2010).
+%  computationally-efficient expression for specific volume in terms of SA,
+%  CT and p (Roquet et al., 2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -33,13 +33,22 @@ function internal_energy = gsw_internal_energy(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -92,15 +101,14 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-P0 = 101325;               %  Pressure (in Pa) of one standard atmosphere
 db2Pa = 1e4;               %  dbar to Pa conversion factor 
 
 enthalpy = gsw_enthalpy(SA,CT,p);
-internal_energy = enthalpy - (P0 + db2Pa*p).*gsw_specvol(SA,CT,p);
+internal_energy = enthalpy - (gsw_P0 + db2Pa*p).*gsw_specvol(SA,CT,p);
 
 %--------------------------------------------------------------------------
 % This function calculates enthalpy using the computationally-efficient
-% 48-term expression for density in terms of SA, CT and p. If one wanted to
+% expression for specific volume in terms of SA, CT and p. If one wanted to
 % compute enthalpy from SA, CT, and p with the full TEOS-10 Gibbs function,  
 % the following line of code will enable this.
 %

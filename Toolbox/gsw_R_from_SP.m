@@ -21,7 +21,7 @@ function R = gsw_R_from_SP(SP,t,p)
 %  polynomials for the starting value of Rtx (the square root of Rt) in 
 %  four different ranges of SP, and by using one and a half iterations of 
 %  a computationally efficient modified Newton-Raphson technique 
-%  (McDougall and Wotherspoon, 2012) to find the root of the equation.  
+%  (McDougall and Wotherspoon, 2013) to find the root of the equation.  
 %
 %  Note that strictly speaking PSS-78 (Unesco, 1983) defines Practical
 %  Salinity in terms of the conductivity ratio, R, without actually
@@ -43,7 +43,7 @@ function R = gsw_R_from_SP(SP,t,p)
 % AUTHOR:
 %  Trevor McDougall, Paul Barker and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  Culkin and Smith, 1980:  Determination of the Concentration of Potassium  

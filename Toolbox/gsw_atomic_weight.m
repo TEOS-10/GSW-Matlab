@@ -19,7 +19,7 @@ function atomic_weight = gsw_atomic_weight
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -28,7 +28,7 @@ function atomic_weight = gsw_atomic_weight
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Table D.4 of this TEOS-10 Manual. 
 %
-%  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 
+%  Millero, F.J., R. Feistel, D.G. Wright, and T.J. McDougall, 2008: 
 %   The composition of Standard Seawater and the definition of the 
 %   Reference-Composition Salinity Scale, Deep-Sea Res. I, 55, 50-72. 
 %     See Eqn. (5.3) of this paper.  

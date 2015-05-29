@@ -1,14 +1,13 @@
 function entropy = gsw_entropy_from_CT(SA,CT)
 
-% gsw_entropy_from_CT                     specific entropy of seawater with  
-%                         Conservative Temperature as the input temperature 
+% gsw_entropy_from_CT                          specific entropy of seawater  
 %==========================================================================
 %
 % USAGE:
 %  entropy  =  gsw_entropy_from_CT(SA,CT)
 %
 % DESCRIPTION:
-%  Calculates specific entropy of seawater. 
+%  Calculates specific entropy of seawater from Conservative Temperature. 
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                     [ g kg^-1 ]
@@ -22,7 +21,7 @@ function entropy = gsw_entropy_from_CT(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -65,12 +64,10 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-n0 = 0; 
-n1 = 1;
-
 pt0 = gsw_pt_from_CT(SA,CT);
 pr0 = zeros(size(SA)); 
-entropy = -gsw_gibbs(n0,n1,n0,SA,pt0,pr0);
+
+entropy = -gsw_gibbs(0,1,0,SA,pt0,pr0);
 
 if transposed
     entropy = entropy.';

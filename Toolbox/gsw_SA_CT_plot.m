@@ -1,8 +1,8 @@
-function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
+function c2 = gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 
 % gsw_SA_CT_plot         plots Absolute Salinity - Conservative Temperature
 %                   profiles on a SA-CT diagram including freezing line and
-%                    selected potential density contours.(48-term equation)
+%                    selected potential density contours (75-term equation)
 %==========================================================================
 %
 % USAGE:
@@ -13,12 +13,12 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 %  profiles.  The diagram also plots the Conservative Temperature freezing 
 %  point for p = 0 dbar assuming the seawater is completely saturated with
 %  dissolved air and user defined potential density contours.  This 
-%  function uses the computationally efficient 48-term expression for 
-%  density in terms of SA, CT and p (McDougall et al., 2013).  
+%  function uses the computationally efficient 75-term expression for 
+%  specific volume in terms of SA, CT and p (Roquet et al., 2015).  
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2013).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -47,13 +47,17 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 % MODIFIED:
 %  Paul Barker & Trevor McDougall
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2014: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -100,11 +104,11 @@ SA_min(SA_min < 0) = 0;
 SA_max = max_SA_data + 0.1*(max_SA_data - min_SA_data);
 SA_axis = [SA_min:(SA_max-SA_min)/200:SA_max];
 
-CT_freezing = gsw_CT_freezing(SA_axis,0); 
+CT_freezing = gsw_CT_freezing(SA_axis,p_ref,0); 
 CT_min = min_CT_data - 0.1*(max_CT_data - min_CT_data);
 CT_max = max_CT_data + 0.1*(max_CT_data - min_CT_data);
-if CT_min > (min(CT_freezing) - 0.5)
-    CT_min = min(CT_freezing)- 0.5;
+if CT_min > min(CT_freezing) 
+    CT_min = min_CT_data - 0.1*(max_CT_data - min(CT_freezing));
 end
 CT_axis = [CT_min:(CT_max-CT_min)/200:CT_max];
 
@@ -113,7 +117,7 @@ clear min_SA_data max_SA_data min_CT_data max_CT_data
 SA_gridded = meshgrid(SA_axis,1:length(CT_axis));
 CT_gridded = meshgrid(CT_axis,1:length(SA_axis))';
 
-isopycs_gridded = gsw_rho_CT(SA_gridded,CT_gridded,p_ref)-1000;
+isopycs_gridded = gsw_rho(SA_gridded,CT_gridded,p_ref)-1000;
 % figure
 
 %scaling for macs

@@ -22,7 +22,7 @@ function CT = gsw_CT_from_pt(SA,pt)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %  
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -65,8 +65,6 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-cp0 = 3991.86795711963;     % defined in Eqn. (3.3.3) of IOC et al. (2010).
-
 sfac = 0.0248826675584615;                   % sfac = 1/(40.*(35.16504/35)). 
 
 x2 = sfac.*SA; 
@@ -99,15 +97,13 @@ pot_enthalpy =  61.01362420681071 + y.*(168776.46138048015 + ...
 % below is run, the results are identical to calculating pot_enthalpy as 
 % above, to machine precision.  
 %
-%  n0 = 0;
-%  n1 = 1;
 %  pr0 = zeros(size(SA));
-%  pot_enthalpy = gsw_gibbs(n0,n0,n0,SA,pt,pr0) - ...
-%                       (273.15 + pt).*gsw_gibbs(n0,n1,n0,SA,pt,pr0);
+%  pot_enthalpy = gsw_gibbs(0,0,0,SA,pt,pr0) - ...
+%                       (273.15 + pt).*gsw_gibbs(0,1,0,SA,pt,pr0);
 %
 %-----------------This is the end of the alternative code------------------
 
-CT = pot_enthalpy./cp0;
+CT = pot_enthalpy./gsw_cp0;
 
 if transposed
     CT = CT.';

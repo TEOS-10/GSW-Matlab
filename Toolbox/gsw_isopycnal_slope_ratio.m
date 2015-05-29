@@ -2,7 +2,7 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 
 % gsw_isopycnal_slope_ratio               ratio of the slopes of isopycnals
 %                                      on the SA-CT diagram for p and p_ref
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 % =========================================================================
 %
 % USAGE:
@@ -10,12 +10,13 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 %
 % DESCRIPTION:
 %  Calculates the ratio of alpha/beta at pressure, p, to that at reference
-%  pressure, p_ref.  This function uses the computationally-efficient 48-term 
-%  expression for density in terms of SA, CT & p (IOC et al., 2010).
+%  pressure, p_ref.  This function uses the computationally-efficient 
+%  75-term expression for specific volume in terms of SA, CT and p 
+%  (Roquet et al., 2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -39,7 +40,7 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 % AUTHOR: 
 %  Trevor McDougall, Paul Barker & David Jackett       [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -47,6 +48,15 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See Eqn. (3.17.2) of this TEOS-10 Manual.   
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -113,18 +123,17 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-[dummy, alpha, beta] = gsw_rho_alpha_beta(SA,CT,p);
-[dummy, alpha_pref, beta_pref] = gsw_rho_alpha_beta(SA,CT,p_ref);
+[dummy, alpha, beta] = gsw_specvol_alpha_beta(SA,CT,p);
+[dummy, alpha_pref, beta_pref] = gsw_specvol_alpha_beta(SA,CT,p_ref);
 
 %--------------------------------------------------------------------------
 % This function calculates isopycnal_slope_ratio using the computationally
-% efficient 48-term expression for density as a function of SA, CT and p. 
-% If one wanted to compute this with the full TEOS-10 Gibbs function 
-% expression for density, the following lines of code will enable this.
+% efficient 75-term expression for specific volume as a function of SA, CT
+% and p.  If one wanted to compute this with the full TEOS-10 Gibbs 
+% function expression for specific volume, the following lines of code will 
+% enable this.
 %  
-%     pt = gsw_pt_from_CT(SA,CT);
-%     p_ref0 = zeros(size(SA)); 
-%     t = gsw_pt_from_t(SA,pt,pr0,p);
+%     t = gsw_pt_from_CT(SA,CT,p);
 %     alpha = gsw_alpha_wrt_CT_t_exact(SA,t,p);
 %     beta = gsw_beta_const_CT_t_exact(SA,t,p);
 %     tr = gsw_pt_from_t(SA,pt,p_ref0,p_ref);
@@ -133,7 +142,7 @@ end
 %
 %--------------This is the end of the alternative code---------------------
 
-isopycnal_slope_ratio = nan(size(SA));
+isopycnal_slope_ratio = NaN(size(SA));
 isopycnal_slope_ratio(alpha_pref ~= 0) = (alpha(alpha_pref ~= 0).*beta_pref(alpha_pref ~= 0))./ ...
                                            (alpha_pref(alpha_pref ~= 0).*beta(alpha_pref ~= 0));
 

@@ -1,7 +1,7 @@
 function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 
 % gsw_CT_from_rho                     Conservative Temperature from density
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 % =========================================================================
 %
 % USAGE:
@@ -10,12 +10,12 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 % DESCRIPTION:
 %  Calculates the Conservative Temperature of a seawater sample, for given
 %  values of its density, Absolute Salinity and sea pressure (in dbar), 
-%  using the computationally-efficient 48-term expression for density in 
-%  terms of SA, CT and p (IOC et al., 2010)
+%  using the computationally-efficient expression for specific volume in 
+%  terms of SA, CT and p (Roquet et al., 2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -43,13 +43,22 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -122,7 +131,7 @@ SA((rho - rho_40) < 0) = NaN;
 CT_max_rho = gsw_CT_maxdensity(SA,p);
 rho_max = gsw_rho(SA,CT_max_rho,p);
 rho_extreme = rho_max;
-CT_freezing = gsw_CT_freezing(SA,p); % this assumes that the seawater is always saturated with air
+CT_freezing = gsw_CT_freezing(SA,p,0); % this assumes that the seawater is always unsaturated with air
 rho_freezing = gsw_rho(SA,CT_freezing,p);
 % reset the extreme values
 rho_extreme((CT_freezing - CT_max_rho) > 0) = rho_freezing((CT_freezing - CT_max_rho) > 0);
@@ -130,14 +139,14 @@ rho_extreme((CT_freezing - CT_max_rho) > 0) = rho_freezing((CT_freezing - CT_max
 % set SA values to NaN for the rho's that are too dense.
 SA(rho > rho_extreme) = NaN;
 
-if any(isnan(SA + p + rho))
+if any(isnan(SA(:) + p(:) + rho(:)))
     [I_bad] = find(isnan(SA + p + rho));
     SA(I_bad) = NaN;
 end
 
 alpha_freezing = gsw_alpha(SA,CT_freezing,p);
 
-if any(alpha_freezing > alpha_limit)
+if any(alpha_freezing(:) > alpha_limit)
     [I_salty] = find(alpha_freezing > alpha_limit);
     CT_diff = 40*ones(size(I_salty)) - CT_freezing(I_salty);
     
@@ -152,7 +161,7 @@ if any(alpha_freezing > alpha_limit)
     CT(I_salty) = CT_freezing(I_salty) + 0.5*(-b - sqrt_disc)./a;
 end
 
-if any(alpha_freezing <= alpha_limit)
+if any(alpha_freezing(:) <= alpha_limit)
     [I_fresh] = find(alpha_freezing <= alpha_limit);
 
     CT_diff = 40*ones(size(I_fresh)) - CT_max_rho(I_fresh);
@@ -211,10 +220,10 @@ for Number_of_iterations = 1:3
     CT = CT_old - delta_v./v_CT ;
 end
 
-if exist('t_a','var')
+if exist('CT_a','var')
     CT(~isnan(CT_a)) = CT_a(~isnan(CT_a));
 end
-if exist('t_b','var')
+if exist('CT_b','var')
     CT_multiple(~isnan(CT_b)) = CT_b(~isnan(CT_b));
 end
 % After three iterations of this modified Newton-Raphson iteration,

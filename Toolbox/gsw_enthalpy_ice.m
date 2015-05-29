@@ -22,7 +22,7 @@ function enthalpy_ice = gsw_enthalpy_ice(t,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -78,7 +78,7 @@ rec_Pt = 1.634903221903779e-3;   % 1./Pt, where Pt = 611.657;  Experimental
 Tt = 273.16;  % Triple-point temperature, kelvin (K).  
 rec_Tt = 3.660858105139845e-3;   % 1/Tt = 3.660858105139845e-3; 
 
-T = t + 273.15; % The input temperature t is in-situ temperature in
+T = t + gsw_T0; % The input temperature t is in-situ temperature in
                 % units of degrees Celcius.  T is the in-situ Absolute 
                 % Temperature of the ice in degrees kelvin (K).  
 tau = T.*rec_Tt;

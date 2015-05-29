@@ -1,7 +1,7 @@
 function CT = gsw_CT_from_enthalpy_exact(SA,h,p)
 
 % gsw_CT_from_enthalpy_exact         Conservative Temperature from specific
-%                                     enthalpy of seawater (Gibbs function)
+%                                                      enthalpy of seawater  
 %==========================================================================
 %
 % USAGE:
@@ -12,6 +12,12 @@ function CT = gsw_CT_from_enthalpy_exact(SA,h,p)
 %  Salinity, SA, specific enthalpy, h, and pressure p.  The specific 
 %  enthalpy input is calculated from the full Gibbs function of seawater,
 %  gsw_enthalpy_t_exact. 
+%
+%  Note that this function uses the full Gibbs function.  There is an 
+%  alternative to calling this function, namely 
+%  gsw_CT_from_enthalpy(SA,h,p), which uses the computationally 
+%  efficient 75-term expression for specific volume in terms of SA, CT  
+%  and p (Roquet et al., 2015).   
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -28,7 +34,7 @@ function CT = gsw_CT_from_enthalpy_exact(SA,h,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -36,13 +42,17 @@ function CT = gsw_CT_from_enthalpy_exact(SA,h,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall, T. J., 2003: Potential enthalpy: A conservative oceanic 
+%  McDougall, T.J., 2003: Potential enthalpy: A conservative oceanic 
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
-%   Newton?s method to achieve convergence of order 1 + sqrt(2).  Applied 
+%  McDougall T.J. and S.J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -94,11 +104,11 @@ end
 
 SA(SA < 0) = 0; % This line ensures that SA is non-negative
 
-CTf = gsw_CT_freezing(SA,p,0); % This is the CT freezing temperature
-
-hf = gsw_enthalpy_CT_exact(SA,CTf,p);
-if any(h(:) < hf(:)) %The input, seawater enthalpy h, is less than the enthalpy at the freezing temperature, i.e. the water is frozen
-    [I] = find(h < hf);
+CT_freezing = gsw_CT_freezing(SA,p,0); % This is the CT freezing temperature
+h_below_freeze = gsw_cp0;  %This allows for water to be approx. 1C below the freezing temperature
+h_freezing = gsw_enthalpy_CT_exact(SA,CT_freezing,p);
+if any(h(:) < (h_freezing(:) - h_below_freeze)) %The input, seawater enthalpy h, is less than the enthalpy at the freezing temperature, i.e. the water is frozen
+    [I] = find(h < h_freezing);
     SA(I) = NaN;
 end 
 
@@ -108,7 +118,7 @@ if any(h(:) > h_40(:)) % The input, seawater enthalpy h, is greater than the ent
     SA(I) = NaN;
 end 
 
-CT = CTf + (40 - CTf).*(h - hf)./(h_40 - hf); % First guess of CT
+CT = CT_freezing + (40 - CT_freezing).*(h - h_freezing)./(h_40 - h_freezing); % First guess of CT
 [dummy, h_CT] = gsw_enthalpy_first_derivatives_CT_exact(SA,CT,p);
 
 %--------------------------------------------------------------------------

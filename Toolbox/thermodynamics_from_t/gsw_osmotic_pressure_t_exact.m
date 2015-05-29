@@ -24,7 +24,7 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -106,7 +106,7 @@ for Number_of_iterations = 1:2
 end
    
 % After two iterations though the modified Newton-Raphson technique 
-% (McDougall and Wotherspoon, 2012) the maximum error is 6x10^-12 dbar.
+% (McDougall and Wotherspoon, 2013) the maximum error is 6x10^-12 dbar.
 
 osmotic_pressure_t_exact = p - pw; % osmotic pressure of seawater, in dbar.
 

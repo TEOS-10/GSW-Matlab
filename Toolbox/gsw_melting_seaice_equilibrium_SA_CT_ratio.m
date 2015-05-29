@@ -1,15 +1,14 @@
-function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium_SA_CT_ratio(SA,p,saturation_fraction)
+function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium_SA_CT_ratio(SA,p)
 
 % gsw_melting_seaice_equilibrium_SA_CT_ratio      ratio of SA to CT changes 
-%                                   when sea ice melts into a large mass of 
-%                                      seawater, with both the seawater and 
-%                                   sea ice temperatures being almost equal
-%                                   to the equilibrium freezing temperature                                   
+%                         when sea ice melts into a large mass of seawater,
+%                     with both the seawater and sea ice temperatures being 
+%                      almost equal to the equilibrium freezing temperature                                   
 %==========================================================================
 %
 % USAGE:
 %  melting_seaice_equilibrium_SA_CT_ratio = ...
-%      gsw_melting_seaice_equilibrium_SA_CT_ratio(SA,p,saturation_fraction)
+%                          gsw_melting_seaice_equilibrium_SA_CT_ratio(SA,p)
 %
 % DESCRIPTION:
 %  Calculates the ratio of SA to CT changes when sea ice melts into 
@@ -26,7 +25,7 @@ function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium
 %  Note that the output of this function, dSA/dCT is independent of the 
 %  sea ice salinity, SA_seaice.  That is, the output applies equally to  
 %  pure ice Ih and to sea ice with seaice salinity, SA_seaice.  This result 
-%  is proven in the manuscript, McDougall et al. (2013).  
+%  is proven in McDougall et al. (2014).  
 %
 %  The output, melting_seaice_equilibrium_SA_CT_ratio, is dSA/dCT rather  
 %  than dCT/dSA.  This is done so that when SA = 0, the output, dSA/dCT is 
@@ -36,8 +35,6 @@ function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium
 %  SA  =  Absolute Salinity of seawater                            [ g/kg ]
 %  p   =  sea pressure at which the melting occurs                 [ dbar ]
 %         ( i.e. absolute pressure - 10.1325 dbar ) 
-%  saturation_fraction = the saturation fraction of dissolved air in 
-%               seawater.  The saturation_fraction must be between 0 and 1.
 %
 % p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA is MxN.
 %
@@ -50,7 +47,7 @@ function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (6th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -58,9 +55,9 @@ function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %
-%  McDougall, T.J., P.M. Barker and R. Feistel, 2013: Melting of ice and 
-%   sea ice into seawater and frazil ice formation. Journal of Physical 
-%   Oceanography, (Submitted).
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
 %    See Eqn. (29) of this manuscript.  
 %
 %  The software is available from http://www.TEOS-10.org
@@ -71,17 +68,12 @@ function melting_seaice_equilibrium_SA_CT_ratio = gsw_melting_seaice_equilibrium
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin == 3) 
-   error('gsw_melting_seaice_equilibrium_SA_CT_ratio: Requires three inputs')
+if ~(nargin == 2) 
+   error('gsw_melting_seaice_equilibrium_SA_CT_ratio: Requires two inputs')
 end 
-
-if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_melting_seaice_equilibrium_SA_CT_ratio: saturation fraction MUST be between zero and one.')
-end
 
 [ms,ns] = size(SA);
 [mp,np] = size(p);
-[msf,nsf] = size(saturation_fraction);
 
 if (mp == 1) & (np == 1)                    % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -98,25 +90,9 @@ else
     error('gsw_melting_seaice_equilibrium_SA_CT_ratio: Inputs array dimensions arguments do not agree; check p')
 end 
 
-if (msf == 1) & (nsf == 1)                                    % saturation_fraction scalar
-    saturation_fraction = saturation_fraction*ones(size(SA));         % fill to size of SA
-elseif (ns == nsf) & (msf == 1)                        % saturation_fraction is row vector,
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (nsf == 1)                     % saturation_fraction is column vector,
-    saturation_fraction = saturation_fraction(:,ones(1,ns));        % copy across each row.
-elseif (ns == msf) & (nsf == 1)           % saturation_fraction is a transposed row vector,
-    saturation_fraction = saturation_fraction.';                           % transposed then
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (ns == nsf)
-    % ok
-else
-    error('gsw_melting_seaice_equilibrium_SA_CT_ratio: Inputs array dimensions arguments do not agree')
-end %if
-
 if ms == 1
     SA = SA.';
     p = p.';
-    saturation_fraction = saturation_fraction.';
     transposed = 1;
 else
     transposed = 0;
@@ -127,6 +103,8 @@ end
 %--------------------------------------------------------------------------
 
 SA(SA < 0) = 0; % This line ensure that SA is non-negative.
+
+saturation_fraction = zeros(size(SA));
 
 CTf = gsw_CT_freezing(SA,p,saturation_fraction);
 t_seaice = gsw_t_freezing(SA,p,saturation_fraction);

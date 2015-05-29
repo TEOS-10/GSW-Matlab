@@ -8,18 +8,18 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %
 % DESCRIPTION:
 %  Calculates height from sea pressure using the computationally-efficient
-%  48-term expression for density in terms of SA, CT and p (IOC et al.,
-%  2010).  Dynamic height anomaly, geo_strf_dyn_height, if provided,
-%  must be computed with its p_ref = 0 (the surface). Also if provided,
-%  sea_surface_geopotental is the geopotential at zero sea pressure. This 
-%  function solves Eqn.(3.32.3) of IOC et al. (2010).  
+%  75-term expression for specific volume in terms of SA, CT and p 
+%  (Roquet et al., 2015).  Dynamic height anomaly, geo_strf_dyn_height, if
+%  provided, must be computed with its p_ref = 0 (the surface).  Also if
+%  provided, sea_surface_geopotental is the geopotential at zero sea 
+%  pressure. This function solves Eqn.(3.32.3) of IOC et al. (2010).  
 %
 %  Note. Height z is NEGATIVE in the ocean. i.e. Depth is -z.  
 %   Depth is not used in the GSW computer software library.  
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -56,8 +56,17 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
 %  Moritz (2000) Goedetic reference system 1980. J. Geodesy, 74, 128-133.
-%   
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
+%
 %  This software is available from http://www.TEOS-10.org
 %
 %==========================================================================
@@ -88,7 +97,6 @@ end
 if (mdh ~= msg) | (ndh ~= nsg)
     error('gsw_z_from_p: dynamic height anomaly & the geopotential at zero sea pressure need to have the same dimensions')
 end
-
 
 if (ml == 1) & (nl == 1)              % lat scalar - fill to size of p
     lat = lat*ones(size(p));
@@ -124,11 +132,11 @@ gamma = 2.26e-7; % If the graviational acceleration were to be regarded as
                  % ocean models, then gamma would be set to be zero here,
                  % and the code below works perfectly well.
 deg2rad = pi/180;
-X = sin(lat*deg2rad);
-sin2 = X.*X;
+sinlat = sin(lat*deg2rad);
+sin2 = sinlat.*sinlat;
 B = 9.780327*(1.0 + (5.2792e-3 + (2.32e-5*sin2)).*sin2); 
 A = -0.5*gamma*B;
-C = gsw_enthalpy_SSO_0_p(p) - (geo_strf_dyn_height + sea_surface_geopotental);
+C = gsw_enthalpy_SSO_0(p) - (geo_strf_dyn_height + sea_surface_geopotental);
 z = -2*C./(B + sqrt(B.*B - 4.*A.*C));
 
 if transposed

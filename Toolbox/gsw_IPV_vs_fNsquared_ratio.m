@@ -3,7 +3,7 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 % gsw_IPV_vs_fNsquared_ratio              ratio of the vertical gradient of
 %                       potential density (with reference pressure, p_ref),  
 %                            to the vertical gradient of locally-referenced 
-%                                      potential density (48-term equation)
+%                                      potential density (75-term equation)
 %==========================================================================
 % 
 % USAGE:  
@@ -20,12 +20,12 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %
 %  IPV_vs_fNsquared_ratio is evaluated at the mid pressure between the 
 %  individual data points in the vertical.  This function uses the 
-%  computationally-efficient 48-term expression for density in terms of 
-%  SA, CT and p (IOC et al., 2010). 
+%  computationally-efficient 75-term expression for specific volume in 
+%  terms of SA, CT and p (Roquet et al., 2015). 
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -52,7 +52,7 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,6 +60,15 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.20.5) of this TEOS-10 Manual. 
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %   The software is available from http://www.TEOS-10.org
 %
@@ -112,7 +121,6 @@ else
     error('gsw_IPV_vs_fNsquared_ratio: Inputs array dimensions arguments do not agree')
 end %if
 
-
 if ms == 1
     SA = SA.';
     CT = CT.';
@@ -143,13 +151,12 @@ dCT = CT(Ishallow,:) - CT(Ideep,:);
 
 %--------------------------------------------------------------------------
 % This function calculates IPV_vs_fNsquared_ratio using the computationally
-% efficient 48-term expression for density in terms of SA, CT and p.  If 
-% one wanted to compute this with the full TEOS-10 Gibbs function
-% expression for density, the following lines of code will enable this.
+% efficient 75-term expression for specific volume in terms of SA, CT and 
+% p.  If one wanted to compute this with the full TEOS-10 Gibbs function
+% expression for specific volume, the following lines of code will enable
+% this.
 %
-%    pt_mid = gsw_pt_from_CT(SA_mid,CT_mid);
-%    pr0 = zeros(size(SA_mid)); 
-%    t_mid = gsw_pt_from_t(SA_mid,pt_mid,pr0,p_mid);
+%    t_mid = gsw_pt_from_CT(SA_mid,CT_mid,p_mid);
 %    beta = gsw_beta_const_CT_t_exact(SA_mid,t_mid,p_mid);
 %    alpha  = gsw_alpha_wrt_CT_t_exact(SA_mid,t_mid,p_mid);
 %    beta_pref  = gsw_beta_const_CT_t_exact(SA_mid,t_mid,p_ref);

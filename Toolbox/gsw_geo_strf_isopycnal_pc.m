@@ -1,7 +1,7 @@
 function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_p,gamma_n,layer_index,A)
 
 % gsw_geo_strf_isopycnal_pc                     McDougall-Klocker piecewise 
-%                    constant geostrophic streamfunction (48-term equation)
+%                    constant geostrophic streamfunction (75-term equation)
 %==========================================================================
 %
 % USAGE:
@@ -21,7 +21,7 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 %  interpolation of a one-dimensional look-up table, with the interpolating
 %  variable being Neutral Density (gamma_n) or sigma_2.  This function 
 %  calculates specific volume anomaly using the computationally efficient 
-%  48-term expression for specific volume of IOC et al. (2010).
+%  75-term expression for specific volume of Roquet et al. (2015).
 %
 % INPUT:
 %  SA       =  Absolute Salinity                                   [ g/kg ]
@@ -52,7 +52,7 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -74,6 +74,10 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 %    Eqn. (62) of this paper.
 %    See section 8 of this paper for a discussion of this piecewise-
 %    constant version of the McDougall-Klocker geostrophic streamfunction. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -138,9 +142,8 @@ end
 %--------------------------------------------------------------------------
 
 db2Pa = 1e4;
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 
-SA_iref_cast = nan(size(gamma_n));
+SA_iref_cast = NaN(size(gamma_n));
 CT_iref_cast = SA_iref_cast;
 p_iref_cast = SA_iref_cast;
 
@@ -158,28 +161,28 @@ CT_iref_cast_nd = CT_iref_cast.* ones(size(p_mid));
 part1 = 0.5*db2Pa*(p_mid_fine(layer_index,:) - p_iref_cast).*(gsw_specvol(SA(layer_index,:),CT(layer_index,:),p_mid_fine(layer_index,:)) - ...
                                    gsw_specvol(SA_iref_cast_nd,CT_iref_cast_nd,p_mid_fine(layer_index,:)));
 
-part2 = -0.225e-15*db2Pa*db2Pa*(CT(layer_index,:)-CT_iref_cast).*...
-    (p_mid_fine(layer_index,:)-p_iref_cast).*(p_mid_fine(layer_index,:)-p_iref_cast);
+part2 = -0.225e-15*db2Pa*db2Pa*(CT(layer_index,:) - CT_iref_cast).*...
+    (p_mid_fine(layer_index,:) - p_iref_cast).*(p_mid_fine(layer_index,:) - p_iref_cast);
 
-part3 = dyn_height_pc(layer_index,:) - gsw_enthalpy_SSO_0_p(p_mid_fine(layer_index,:)) + ...
-        gsw_enthalpy(SA_iref_cast_nd,CT_iref_cast_nd,p_mid_fine(layer_index,:)) - cp0*CT_iref_cast;
+part3 = dyn_height_pc(layer_index,:) - gsw_enthalpy_SSO_0(p_mid_fine(layer_index,:)) + ...
+        gsw_enthalpy(SA_iref_cast_nd,CT_iref_cast_nd,p_mid_fine(layer_index,:)) - gsw_cp0*CT_iref_cast;
     
 %--------------------------------------------------------------------------
 % This function calculates the McDougall-Klocker piecewise constant 
-% streamfunction using the computationally efficient 48-term expression for
-% density in terms of SA, CT and p. If one wanted to compute this with the 
-% full TEOS-10 Gibbs function expression for density, the following lines 
-% of code will enable this. Note that dynamic height will also need to be 
-% evaluated using the full Gibbs function.
+% streamfunction using the computationally efficient 75-term expression for
+% specific volume in terms of SA, CT and p. If one wanted to compute this
+% with the full TEOS-10 Gibbs function expression for specific volume, the 
+% following lines of code will enable this. Note that dynamic height will
+% also need to be evaluated using the full Gibbs function.
 %
 %    part1 = 0.5*db2Pa*(p_mid_fine(layer_index,:) - p_iref_cast).*(gsw_specvol_CT_exact(SA(layer_index,:),CT(layer_index,:),p_mid_fine(layer_index,:)) - ...
 %                                    gsw_specvol_CT_exact(SA_iref_cast,CT_iref_cast,p_mid_fine(layer_index,:))); 
-%    part2 = -0.225e-15*db2Pa*db2Pa*(CT(layer_index,:)-CT_iref_cast).*...
-%     (p_mid_fine(layer_index,:)-p_iref_cast).*(p_mid_fine(layer_index,:)-p_iref_cast);
-%    SA_SSO = 35.16504*ones(size(SA));
+%    part2 = -0.225e-15*db2Pa*db2Pa*(CT(layer_index,:) - CT_iref_cast).*...
+%     (p_mid_fine(layer_index,:) - p_iref_cast).*(p_mid_fine(layer_index,:) - p_iref_cast);
+%    SSO = gsw_SSO*ones(size(SA));
 %    CT_0 = zeros(size(CT));
-%    part3 = dyn_height_pc(layer_index,:) - gsw_enthalpy_CT_exact(SA_SSO,CT_0,p_mid_fine(layer_index,:)) + ...
-%         gsw_enthalpy_CT_exact(SA_iref_cast_nd,CT_iref_cast_nd,p_mid_fine(layer_index,:)) - cp0*CT_iref_cast;
+%    part3 = dyn_height_pc(layer_index,:) - gsw_enthalpy_CT_exact(SSO,CT_0,p_mid_fine(layer_index,:)) + ...
+%         gsw_enthalpy_CT_exact(SA_iref_cast_nd,CT_iref_cast_nd,p_mid_fine(layer_index,:)) - gsw_cp0*CT_iref_cast;
 %
 %---------------This is the end of the alternative code--------------------
  

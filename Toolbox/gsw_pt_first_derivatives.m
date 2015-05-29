@@ -7,8 +7,9 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 %  [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 %
 % DESCRIPTION:
-%  Calculates the following two partial derivatives of potential temperature 
-%  (the regular potential temperature whose reference sea pressure is 0 dbar) 
+%  Calculates the following two partial derivatives of potential 
+%  temperature (the regular potential temperature whose reference sea
+%  pressure is 0 dbar) 
 %  (1) pt_SA, the derivative with respect to Absolute Salinity at 
 %       constant Conservative Temperature, and
 %  (2) pt_CT, the derivative with respect to Conservative Temperature at 
@@ -31,7 +32,7 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -75,20 +76,17 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-n0 = 0; 
-n1 = 1;
-n2 = 2;
+cp0 = gsw_cp0;           % from Eqn. (3.3.3) of IOC et al. (2010).
 pr0 = zeros(size(SA)); 
 pt = gsw_pt_from_CT(SA,CT);
-abs_pt = (273.15 + pt);
+abs_pt = (gsw_T0 + pt);
 
-CT_SA = (gsw_gibbs(n1,n0,n0,SA,pt,pr0) -...
-                abs_pt.*gsw_gibbs(n1,n1,n0,SA,pt,pr0))./cp0;
+CT_SA = (gsw_gibbs(1,0,0,SA,pt,pr0) ...
+               - abs_pt.*gsw_gibbs(1,1,0,SA,pt,pr0))./cp0;
 
-CT_pt = - (abs_pt.*gsw_gibbs(n0,n2,n0,SA,pt,pr0))./cp0;
+CT_pt = -(abs_pt.*gsw_gibbs(0,2,0,SA,pt,pr0))./cp0;
 
-pt_SA = - CT_SA./CT_pt;
+pt_SA = -CT_SA./CT_pt;
 
 pt_CT = ones(size(CT_pt))./CT_pt;
 

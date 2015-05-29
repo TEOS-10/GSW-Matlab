@@ -29,7 +29,7 @@ function dynamic_enthalpy_t_exact = gsw_dynamic_enthalpy_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -89,9 +89,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 CT = gsw_CT_from_t(SA,t,p);
-dynamic_enthalpy_t_exact = gsw_enthalpy_t_exact(SA,t,p) - cp0*CT;
+dynamic_enthalpy_t_exact = gsw_enthalpy_t_exact(SA,t,p) - gsw_cp0.*CT;
 
 if transposed
     dynamic_enthalpy_t_exact = dynamic_enthalpy_t_exact.';

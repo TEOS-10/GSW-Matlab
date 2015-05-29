@@ -34,7 +34,7 @@ function [t,t_multiple] = gsw_t_from_rho_exact(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -42,7 +42,7 @@ function [t,t_multiple] = gsw_t_from_rho_exact(rho,SA,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%  McDougall T. J. and S. J. Wotherspoon, 2014: A simple modification of 
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %
@@ -107,7 +107,9 @@ rec_half_rho_TT = -110.0;
 t = nan(size(SA));
 t_multiple = t;
 
-SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
+SA(SA > 120 | t < -12 | t > 80 | p > 12000) = NaN;
 
 rho_40 = gsw_rho_t_exact(SA,40*ones(size(SA)),p);
     
@@ -128,7 +130,7 @@ SA(isnan(SA + p + rho)) = NaN;
 
 alpha_freezing = gsw_alpha_wrt_t_exact(SA,t_freezing,p);
 
-if any(alpha_freezing > alpha_limit)
+if any(alpha_freezing(:) > alpha_limit)
     [I_salty] = find(alpha_freezing > alpha_limit);
 
     t_diff = 40*ones(size(I_salty)) - t_freezing(I_salty);
@@ -143,7 +145,7 @@ if any(alpha_freezing > alpha_limit)
     t(I_salty) = t_freezing(I_salty) + 0.5*(-b - sqrt_disc)./a;
 end
 
-if any(alpha_freezing <= alpha_limit)
+if any(alpha_freezing(:) <= alpha_limit)
     [I_fresh] = find(alpha_freezing <= alpha_limit);
 
     t_diff = 40*ones(size(I_fresh)) - t_max_rho(I_fresh);
@@ -190,7 +192,7 @@ if any(alpha_freezing <= alpha_limit)
 end
 
 % begin the modified Newton-Raphson iterative method (McDougall and 
-% Wotherspoon, 2012), which will only operate on non-NaN t data.
+% Wotherspoon, 2014), which will only operate on non-NaN t data.
 
 v_lab = ones(size(rho))./rho;
 v_t = gsw_gibbs(0,1,1,SA,t,p);

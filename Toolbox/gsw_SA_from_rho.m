@@ -1,6 +1,7 @@
 function SA = gsw_SA_from_rho(rho,CT,p)
 
 % gsw_SA_from_rho                            Absolute Salinity from density
+%                                                        (75-term equation)
 % =========================================================================
 %
 % USAGE:
@@ -9,12 +10,12 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 % DESCRIPTION:
 %  Calculates the Absolute Salinity of a seawater sample, for given values
 %  of its density, Conservative Temperature and sea pressure (in dbar). 
-%  This function uses the computationally-efficient 48-term expression for 
-%  density in terms of SA, CT and p (IOC et al., 2013).
+%  This function uses the computationally-efficient 75-term expression for 
+%  specific volume in terms of SA, CT and p (Roquet et al., 2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2013).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -37,7 +38,7 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,9 +47,18 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 2.5 of this TEOS-10 Manual. 
 %
-%  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Millero, F.J., R. Feistel, D.G. Wright, and T.J. McDougall, 2008: 
 %   The composition of Standard Seawater and the definition of the 
-%   Reference-Composition Salinity Scale, Deep-Sea Res. I, 55, 50-72. 
+%   Reference-Composition Salinity Scale. Deep-Sea Res. I, 55, 50-72. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -116,8 +126,7 @@ for Number_of_iterations = 1:2
     delta_v = gsw_specvol(SA_old,CT,p) - v_lab;
     SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2012)
     SA_mean = 0.5*(SA + SA_old);
-    [rho,alpha,beta] = gsw_rho_alpha_beta(SA_mean,CT,p);
-    v_SA = - beta./rho; 
+    [v_SA, dummy, dummy] = gsw_specvol_first_derivatives(SA_mean,CT,p);
     SA = SA_old - delta_v./v_SA;
     SA(SA < 0 | SA > 50) = NaN; 
 end

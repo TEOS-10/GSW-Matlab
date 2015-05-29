@@ -24,7 +24,7 @@ function specvol_t_exact = gsw_specvol_t_exact(SA,t,p)
 % AUTHOR: 
 %  David Jackett and Paul Barker                       [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (29th January, 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -81,10 +81,7 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0;
-n1 = 1;
-
-specvol_t_exact = gsw_gibbs(n0,n0,n1,SA,t,p);
+specvol_t_exact = gsw_gibbs(0,0,1,SA,t,p);
 
 if transposed
     specvol_t_exact = specvol_t_exact.';

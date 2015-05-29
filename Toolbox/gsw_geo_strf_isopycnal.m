@@ -1,7 +1,7 @@
 function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Density,p_Neutral_Density,A)
 
 % gsw_geo_strf_isopycnal                              isopycnal geostrophic
-%                                         streamfunction (48-term equation)
+%                                         streamfunction (75-term equation)
 %==========================================================================
 %
 % USAGE:
@@ -19,9 +19,8 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 %  Absolute Salinity, Conservative Temperature and pressure are found by 
 %  interpolation of a one-dimensional look-up table, with the interpolating
 %  variable being Neutral_Density (gamma_n).  This function calculates 
-%  specific volume anomaly using the computationally efficient 48-term
-%  expression for specific volume anomaly in terms of SA, CT and p 
-%  (IOC et al., 2010). 
+%  enthalpy using the computationally efficient 75-term expression for 
+%  specific volume in terms of SA, CT and p (Roquet et al., 2015). 
 %
 %  The first three input arguments are a series of vertical profiles.  The 
 %  fourth argument, p_ref, is the reference pressure to which the stream
@@ -74,7 +73,7 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -83,17 +82,21 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.30 of this TEOS-10 Manual.
 %
-%  Jackett, D. R. and T. J. McDougall, 1997: A neutral density variable
+%  Jackett, D.R. and T.J. McDougall, 1997: A neutral density variable
 %   for the world’s oceans. Journal of Physical Oceanography, 27, 237-263.
 %
-%  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method 
+%  Klocker, A., T.J. McDougall and D.R. Jackett, 2009: A new method 
 %   for forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
 %
-%  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
+%  McDougall, T.J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32,
 %   105-117.  
 %    The McDougall-Klocker geostrophic streamfunction is defined in
 %    Eqn. (62) of this paper.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -155,7 +158,7 @@ if mgn == 1 & ms == 1
     p_Neutral_Density = p_Neutral_Density(:);
 end
 
-if ms == 1  % row vector
+if ms == 1 
     p = p(:);
     CT = CT(:);
     SA = SA(:);
@@ -179,16 +182,15 @@ end
 %--------------------------------------------------------------------------
 
 db2Pa = 1e4;
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 
 SA_iref_cast = nan(size(Neutral_Density));
 CT_iref_cast = SA_iref_cast;
 p_iref_cast = SA_iref_cast;
 
-[Inn] = find(~isnan(Neutral_Density));
+[Inn] = find(~isnan(Neutral_Density) & Neutral_Density > 0);
 [SA_iref_cast(Inn),CT_iref_cast(Inn),p_iref_cast(Inn)] = gsw_interp_ref_cast(Neutral_Density(Inn),A);
 
-dummy = cat(1,p,p_Neutral_Density); % this combines the profile pressures with the neutral density pressures
+dummy = cat(1,p,p_Neutral_Density(Inn)); % this combines the profile pressures with the neutral density pressures
 p_plusnd = sort(dummy);             % this sorts the pressures down the profile into decending order
 
 dyn_height_nd = nan(mpgn,ns);
@@ -199,7 +201,7 @@ for Iprofile = 1:ns
     [Inn] = ~isnan(p_plusnd(:,Iprofile));
     p_plus = unique(p_plusnd(Inn,Iprofile));
     [InnSACT] = ~isnan(SA(:,Iprofile)) & ~isnan(CT(:,Iprofile));
-    [SA_plus, CT_plus] = gsw_interp_SA_CT(SA(InnSACT,Iprofile),CT(InnSACT,Iprofile),p(InnSACT,Iprofile),p_plus);
+    [SA_plus, CT_plus] = gsw_linear_interp_SA_CT(SA(InnSACT,Iprofile),CT(InnSACT,Iprofile),p(InnSACT,Iprofile),p_plus);
     dyn_height = gsw_geo_strf_dyn_height(SA_plus(:),CT_plus(:),p_plus,p_ref);
     [dummy, Idata] = intersect(p_plus,p_Neutral_Density(:,Iprofile));
     dyn_height_nd(1:mpgn,Iprofile) = dyn_height(Idata);
@@ -209,29 +211,30 @@ end
 
 p_Neutral_Density(p_Neutral_Density == 0) = NaN;
 
-part1 = 0.5*db2Pa*(p_Neutral_Density -p_iref_cast).*(gsw_specvol(SA_nd,CT_nd,p_Neutral_Density) - ...
+part1 = 0.5*db2Pa*(p_Neutral_Density - p_iref_cast).*(gsw_specvol(SA_nd,CT_nd,p_Neutral_Density) - ...
                                    gsw_specvol(SA_iref_cast,CT_iref_cast,p_Neutral_Density));
 
-part2 = -0.225e-15*db2Pa*db2Pa*(CT_nd-CT_iref_cast).*(p_Neutral_Density-p_iref_cast).*(p_Neutral_Density-p_iref_cast);
+part2 = -0.225e-15*db2Pa*db2Pa*(CT_nd - CT_iref_cast).*(p_Neutral_Density - p_iref_cast).*(p_Neutral_Density - p_iref_cast);
 
-part3 = dyn_height_nd - gsw_enthalpy_SSO_0_p(p_Neutral_Density) + ...
-        gsw_enthalpy(SA_iref_cast,CT_iref_cast,p_Neutral_Density) - cp0*CT_iref_cast;
+part3 = dyn_height_nd - gsw_enthalpy_SSO_0(p_Neutral_Density) + ...
+        gsw_enthalpy(SA_iref_cast,CT_iref_cast,p_Neutral_Density) - gsw_cp0*CT_iref_cast;
 
 %--------------------------------------------------------------------------
 % This function calculates the approximate isopycnal streamfunction as  
 % defined in McDougall-Klocker (2010) using the computationally efficient  
-% 48-term expression for density in terms of SA, CT and p.  If one wanted  
-% to compute this with the full TEOS-10 Gibbs function expression for 
-% density, the following lines of code will enable this.  Note that dynamic  
-% height will also need to be evaluated using the full Gibbs function.
+% 75-term expression for specific volume in terms of SA, CT and p.  If one
+% wanted to compute this with the full TEOS-10 Gibbs function expression 
+% for specific volume, the following lines of code will enable this.  Note
+% that dynamic height will also need to be evaluated using the full Gibbs 
+% function.
 % 
 % part1 = 0.5*db2Pa*(p_Neutral_Density -p_iref_cast).*(gsw_specvol_CT_exact(SA_nd,CT_nd,p_Neutral_Density) - ...
 %                                    gsw_specvol_CT_exact(SA_iref_cast,CT_iref_cast,p_Neutral_Density));
 % part2 = -0.225e-15*db2Pa*db2Pa*(CT_nd-CT_iref_cast).*(p_Neutral_Density-p_iref_cast).*(p_Neutral_Density-p_iref_cast);
-% SA_SSO = 35.16504*ones(size(SA));
+% SSO = gsw_SSO*ones(size(SA));
 % CT_0 = zeros(size(CT));
-% part3 = dyn_height_nd - gsw_enthalpy_CT_exact(SA_SSO,CT_0,p_Neutral_Density) + ...
-%         gsw_enthalpy_CT_exact(SA_iref_cast,CT_iref_cast,p_Neutral_Density) - cp0*CT_iref_cast;
+% part3 = dyn_height_nd - gsw_enthalpy_CT_exact(SSO,CT_0,p_Neutral_Density) + ...
+%         gsw_enthalpy_CT_exact(SA_iref_cast,CT_iref_cast,p_Neutral_Density) - gsw_cp0*CT_iref_cast;
 % 
 %---------------This is the end of the alternative code--------------------
 

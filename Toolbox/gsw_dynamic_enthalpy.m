@@ -1,7 +1,7 @@
 function dynamic_enthalpy = gsw_dynamic_enthalpy(SA,CT,p)
 
 % gsw_dynamic_enthalpy                         dynamic enthalpy of seawater
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 %
 % USAGE:
@@ -9,13 +9,13 @@ function dynamic_enthalpy = gsw_dynamic_enthalpy(SA,CT,p)
 %
 % DESCRIPTION:
 %  Calculates dynamic enthalpy of seawater using the computationally-
-%  efficient 48-term expression for density in terms of SA, CT and p
-%  (IOC et al., 2010).  Dynamic enthalpy is defined as enthalpy minus
+%  efficient expression for specific volume in terms of SA, CT and p
+%  (Roquet et al., 2015).  Dynamic enthalpy is defined as enthalpy minus
 %  potential enthalpy (Young, 2010). 
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -34,7 +34,7 @@ function dynamic_enthalpy = gsw_dynamic_enthalpy(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -47,6 +47,15 @@ function dynamic_enthalpy = gsw_dynamic_enthalpy(SA,CT,p)
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %    See Eqns. (18) and (22)
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  Young, W.R., 2010: Dynamic enthalpy, Conservative Temperature, and the
 %   seawater Boussinesq approximation. Journal of Physical Oceanography, 
@@ -103,92 +112,114 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-db2Pa = 1e4;                      % factor to convert from dbar to Pa
+% % Set lower temperature limit for water that is much colder than the
+% % freezing termperature.
+% CT_frozen = - 1.79e-02 - 6.7157e-2.*SA - 9.2708e-04.*p;
+% 
+% if any(CT(:) < (CT_frozen(:) - 0.2))
+%     [Icold] = find(CT < CT_frozen - 0.2);
+%     CT(Icold) = NaN;
+% end
 
-v01 =  9.998420897506056e+2;
-v02 =  2.839940833161907;
-v03 = -3.147759265588511e-2;
-v04 =  1.181805545074306e-3;
-v05 = -6.698001071123802;
-v06 = -2.986498947203215e-2;
-v07 =  2.327859407479162e-4;
-v08 = -3.988822378968490e-2;
-v09 =  5.095422573880500e-4;
-v10 = -1.426984671633621e-5;
-v11 =  1.645039373682922e-7;
-v12 = -2.233269627352527e-2;
-v13 = -3.436090079851880e-4;
-v14 =  3.726050720345733e-6;
-v15 = -1.806789763745328e-4;
-v16 =  6.876837219536232e-7;
-v17 = -3.087032500374211e-7;
-v18 = -1.988366587925593e-8;
-v19 = -1.061519070296458e-11;
-v20 =  1.550932729220080e-10;
-v21 =  1.0;
-v22 =  2.775927747785646e-3;
-v23 = -2.349607444135925e-5;
-v24 =  1.119513357486743e-6;
-v25 =  6.743689325042773e-10;
-v26 = -7.521448093615448e-3;
-v27 = -2.764306979894411e-5;
-v28 =  1.262937315098546e-7;
-v29 =  9.527875081696435e-10;
-v30 = -1.811147201949891e-11;
-v31 = -3.303308871386421e-5;
-v32 =  3.801564588876298e-7;
-v33 = -7.672876869259043e-9;
-v34 = -4.634182341116144e-11;
-v35 =  2.681097235569143e-12;
-v36 =  5.419326551148740e-6;
-v37 = -2.742185394906099e-5;
-v38 = -3.212746477974189e-7;
-v39 =  3.191413910561627e-9;
-v40 = -1.931012931541776e-12;
-v41 = -1.105097577149576e-7;
-v42 =  6.211426728363857e-10;
-v43 = -1.119011592875110e-10;
-v44 = -1.941660213148725e-11;
-v45 = -1.864826425365600e-14;
-v46 =  1.119522344879478e-14;
-v47 = -1.200507748551599e-15;
-v48 =  6.057902487546866e-17;
+sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
+offset = 5.971840214030754e-1;                      % offset = deltaS*sfac.
 
-sqrtSA = sqrt(SA);
+x2 = sfac.*SA;
+xs = sqrt(x2 + offset);
+ys = CT.*0.025;
+z = p.*1e-4;
 
-a0 = v21 + CT.*(v22 + CT.*(v23 + CT.*(v24 + v25*CT))) ...
-       + SA.*(v26 + CT.*(v27 + CT.*(v28 + CT.*(v29 + v30*CT))) + v36*SA ...
-   + sqrtSA.*(v31 + CT.*(v32 + CT.*(v33 + CT.*(v34 + v35*CT)))));
- 
-a1 = v37 + CT.*(v38 + CT.*(v39 + v40*CT)) + SA.*(v41 + v42*CT);
+h001 =  1.0769995862e-3; 
+h002 = -3.0399571905e-5; 
+h003 =  3.3285389740e-6; 
+h004 = -2.8273403593e-7; 
+h005 =  2.1062306160e-8; 
+h006 = -2.1078768810e-9; 
+h007 =  2.8019291329e-10; 
+h011 = -1.5649734675e-5; 
+h012 =  9.2528827145e-6; 
+h013 = -3.9121289103e-7; 
+h014 = -9.1317516383e-8; 
+h015 =  6.2908199804e-8; 
+h021 =  2.7762106484e-5; 
+h022 = -5.8583034265e-6; 
+h023 =  7.1016762467e-7; 
+h024 =  7.1739762898e-8; 
+h031 = -1.6521159259e-5; 
+h032 =  3.9639828087e-6; 
+h033 = -1.5377513346e-7; 
+h042 = -1.7051093741e-6; 
+h043 = -2.1117638838e-8; 
+h041 =  6.9111322702e-6; 
+h051 = -8.0539615540e-7; 
+h052 =  2.5368383407e-7; 
+h061 =  2.0543094268e-7; 
+h101 = -3.1038981976e-4; 
+h102 =  1.21312343735e-5; 
+h103 = -1.9494810995e-7; 
+h104 =  9.0775471288e-8; 
+h105 = -2.2294250846e-8; 
+h111 =  3.5009599764e-5; 
+h112 = -4.7838544078e-6; 
+h113 = -1.8566384852e-6; 
+h114 = -6.8239240593e-8; 
+h121 = -3.7435842344e-5; 
+h122 = -1.18391541805e-7; 
+h123 =  1.3045795693e-7; 
+h131 =  2.4141479483e-5; 
+h132 = -1.72793868275e-6; 
+h133 =  2.5872962697e-9; 
+h141 = -8.7595873154e-6; 
+h142 =  6.4783588915e-7; 
+h151 = -3.3052758900e-7;
+h201 =  6.6928067038e-4; 
+h202 = -1.7396230487e-5; 
+h203 = -1.6040750532e-6; 
+h204 =  4.1865759450e-9; 
+h211 = -4.3592678561e-5; 
+h212 =  5.5504173825e-6; 
+h213 =  1.8206916278e-6; 
+h221 =  3.5907822760e-5; 
+h222 =  1.46416731475e-6; 
+h223 = -2.1910368022e-7; 
+h231 = -1.4353633048e-5; 
+h232 =  1.5827653039e-7; 
+h241 =  4.3703680598e-6;
+h301 = -8.5047933937e-4; 
+h302 =  1.87353886525e-5; 
+h303 =  1.6421035666e-6; 
+h311 =  3.4532461828e-5; 
+h312 = -4.9223558922e-6; 
+h313 = -4.5147285423e-7; 
+h321 = -1.8698584187e-5; 
+h322 = -2.4413069600e-7; 
+h331 =  2.2863324556e-6;
+h401 =  5.8086069943e-4; 
+h402 = -8.6611093060e-6; 
+h403 = -5.9373249090e-7; 
+h411 = -1.1959409788e-5; 
+h421 =  3.8595339244e-6; 
+h412 =  1.2954612630e-6;
+h501 = -2.1092370507e-4; 
+h502 =  1.54637136265e-6; 
+h511 =  1.3864594581e-6; 
+h601 =  3.1932457305e-5; 
 
-a2 = v43 + CT.*(v44 + v45*CT + v46*SA);
+dynamic_enthalpy_part =  z.*(h001 + xs.*(h101 + xs.*(h201 + xs.*(h301 + xs.*(h401 ...
+    + xs.*(h501 + h601.*xs))))) + ys.*(h011 + xs.*(h111 + xs.*(h211 + xs.*(h311 ...
+    + xs.*(h411 + h511.*xs)))) + ys.*(h021 + xs.*(h121 + xs.*(h221 + xs.*(h321 ...
+    + h421.*xs))) + ys.*(h031 + xs.*(h131 + xs.*(h231 + h331.*xs)) + ys.*(h041 ...
+    + xs.*(h141 + h241.*xs) + ys.*(h051 + h151.*xs + h061.*ys))))) + z.*(h002 ...
+    + xs.*(h102 + xs.*(h202 + xs.*(h302 + xs.*(h402 + h502.*xs)))) + ys.*(h012 ...
+    + xs.*(h112 + xs.*(h212 + xs.*(h312 + h412.*xs))) + ys.*(h022 + xs.*(h122 ...
+    + xs.*(h222 + h322.*xs)) + ys.*(h032 + xs.*(h132 + h232.*xs) + ys.*(h042 ...
+    + h142.*xs + h052.*ys)))) + z.*(h003 + xs.*(h103 + xs.*(h203 + xs.*(h303 ...
+    + h403.*xs))) + ys.*(h013 + xs.*(h113 + xs.*(h213 + h313.*xs)) + ys.*(h023 ...
+    + xs.*(h123 + h223.*xs) + ys.*(h033 + h133.*xs + h043.*ys))) + z.*(h004 ...
+    + xs.*(h104 + h204.*xs) + ys.*(h014 + h114.*xs + h024.*ys) + z.*(h005 ...
+    + h105.*xs + h015.*ys + z.*(h006 + h007.*z))))));
 
-a3 = v47 + v48*CT;
-
-b0 = v01 + CT.*(v02 + CT.*(v03 + v04*CT))  ...
-         + SA.*(v05 + CT.*(v06 + v07*CT) ...
-     + sqrtSA.*(v08 + CT.*(v09 + CT.*(v10 + v11*CT))));
- 
-b1 = 0.5*(v12 + CT.*(v13 + v14*CT) + SA.*(v15 + v16*CT));
-
-b2 = v17 + CT.*(v18 + v19*CT) + v20*SA;
-
-b1sq = b1.*b1; 
-sqrt_disc = sqrt(b1sq - b0.*b2);
-
-N = a0 + (2*a3.*b0.*b1./b2 - a2.*b0)./b2;
-
-M = a1 + (4*a3.*b1sq./b2 - a3.*b0 - 2*a2.*b1)./b2;
-
-A = b1 - sqrt_disc;
-B = b1 + sqrt_disc;
-
-part = (N.*b2 - M.*b1)./(b2.*(B - A));
-
-dynamic_enthalpy = db2Pa.*(p.*(a2 - 2*a3.*b1./b2 + 0.5*a3.*p)./b2  ...
-                      + (M./(2*b2)).*log(1 + p.*(2*b1 + b2.*p)./b0)  ...
-                      + part.*log(1 + (b2.*p.*(B - A))./(A.*(B + b2.*p))));
+dynamic_enthalpy = dynamic_enthalpy_part.*1e8;         %Note. 1e8 = db2Pa*1e4;
 
 if transposed
     dynamic_enthalpy = dynamic_enthalpy.';

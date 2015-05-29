@@ -11,7 +11,7 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %  Calculates the Conservative Temperature at which seawater freezes.  The 
 %  Conservative Temperature freezing point is calculated from the exact 
 %  in-situ freezing temperature which is found by a modified Newton-Raphson
-%  iteration (McDougall and Wotherspoon, 2013) of the equality of the 
+%  iteration (McDougall and Wotherspoon, 2014) of the equality of the 
 %  chemical potentials of water in seawater and in ice.
 %
 %  An alternative GSW function, gsw_CT_freezing_poly, it is based on a 
@@ -27,7 +27,7 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %  saturation_fraction = the saturation fraction of dissolved air in 
 %                        seawater
 %  (i.e., saturation_fraction must be between 0 and 1, and the default 
-%    is 1, completely saturated) 
+%    is 0, air free) 
 %
 %  p & saturation_fraction (if provided) may have dimensions 1x1 or Mx1 or 
 %  1xN or MxN, where SA is MxN.
@@ -40,7 +40,7 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -49,9 +49,9 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %    See sections 3.33 and 3.34 of this TEOS-10 Manual.  
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
-%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
-%   Mathematics Letters, 29, 20-25.  
+%  McDougall, T.J., and S.J. Wotherspoon, 2014: A simple modification of
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied
+%   Mathematics Letters, 29, 20-25.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -62,11 +62,11 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 2 | nargin == 3) 
-   error('gsw_CT_freezing_:  Requires either two or three inputs')
-end %if
+   error('gsw_CT_freezing:  Requires either two or three inputs')
+end
 
 if ~exist('saturation_fraction','var')
-    saturation_fraction = 1;
+    saturation_fraction = 0;
 end
 
 if (saturation_fraction < 0 | saturation_fraction > 1)
@@ -120,10 +120,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-if any(SA < 0)
-    error('gsw_CT_freezing: SA must be non-negative!')
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 t_freezing = gsw_t_freezing(SA,p,saturation_fraction);
 CT_freezing = gsw_CT_from_t(SA,t_freezing,p);

@@ -24,7 +24,7 @@ function Helmholtz_energy_t_exact = gsw_Helmholtz_energy_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall                                    [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -82,11 +82,9 @@ end
 %--------------------------------------------------------------------------
 
 db2Pa = 1e4;
-n0 = 0;
-n1 = 1;
 
-Helmholtz_energy_t_exact = gsw_gibbs(n0,n0,n0,SA,t,p) ...
-                          - (db2Pa*p + 101325).*gsw_gibbs(n0,n0,n1,SA,t,p);
+Helmholtz_energy_t_exact = gsw_gibbs(0,0,0,SA,t,p) ...
+                          - (db2Pa*p + gsw_P0).*gsw_gibbs(0,0,1,SA,t,p);
 
 if transposed
     Helmholtz_energy_t_exact = Helmholtz_energy_t_exact.';

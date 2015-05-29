@@ -19,8 +19,8 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives_CT_exact(
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
 %  gsw_enthalpy_second_derivatives(SA,CT,p) which uses the computationally
-%  efficient 48-term expression for density in terms of SA, CT and p 
-%  (IOC et al., 2010).   
+%  efficient 75-term expression for specific volume in terms of SA, CT and 
+%  p (Roquet et al., 2015).
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -42,7 +42,7 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives_CT_exact(
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -54,6 +54,10 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives_CT_exact(
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %    See Eqns. (18) and (22)
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -107,36 +111,30 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;             % from Eqn. 3.3.3 of IOC et al. (2010).
-n0 = 0; 
-n1 = 1; 
-n2 = 2;
+cp0 = gsw_cp0;                      % from Eqn. 3.3.3 of IOC et al. (2010).
 pr0 = zeros(size(SA)); 
+T0 = gsw_T0;
 
 pt0 = gsw_pt_from_CT(SA,CT);
-rec_abs_pt0 = 1./(273.15 + pt0);
+rec_abs_pt0 = 1./(T0 + pt0);
 t = gsw_pt_from_t(SA,pt0,pr0,p);
-temp_ratio = (273.15 + t).*rec_abs_pt0;
+temp_ratio = (T0 + t).*rec_abs_pt0;
 
-rec_gTT_pt0 = 1./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
-rec_gTT_t = 1./gsw_gibbs(n0,n2,n0,SA,t,p);
-gST_pt0 = gsw_gibbs(n1,n1,n0,SA,pt0,pr0);
-gST_t = gsw_gibbs(n1,n1,n0,SA,t,p);
-gS_pt0 = gsw_gibbs(n1,n0,n0,SA,pt0,pr0);
+rec_gTT_pt0 = 1./gsw_gibbs(0,2,0,SA,pt0,pr0);
+rec_gTT = 1./gsw_gibbs(0,2,0,SA,t,p);
+gSAT_pt0 = gsw_gibbs(1,1,0,SA,pt0,pr0);
+gSAT = gsw_gibbs(1,1,0,SA,t,p);
+gSA_pt0 = gsw_gibbs(1,0,0,SA,pt0,pr0);
+gSASA = gsw_gibbs(2,0,0,SA,t,p);
+gSASA_pt0 = gsw_gibbs(2,0,0,SA,pt0,pr0);
+
+part_a = temp_ratio.*rec_gTT_pt0 - rec_gTT;
 
 % h_CT_CT is naturally well-behaved as SA approaches zero. 
-h_CT_CT = cp0.*cp0.* ...
-    (temp_ratio.*rec_gTT_pt0 - rec_gTT_t).*(rec_abs_pt0.*rec_abs_pt0);
+h_CT_CT = cp0.*cp0.*rec_abs_pt0.*rec_abs_pt0.*part_a;
 
-part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t).*rec_abs_pt0;
-factor = gS_pt0./cp0;
-
-% h_SA_SA has a singularity at SA = 0, and blows up as SA approaches zero.  
-h_SA_SA = gsw_gibbs(n2,n0,n0,SA,t,p) ...
-    - temp_ratio.*gsw_gibbs(n2,n0,n0,SA,pt0,pr0)  ...
-    + temp_ratio.*gST_pt0.*gST_pt0.*rec_gTT_pt0  ...
-    - gST_t.*gST_t.*rec_gTT_t  ...
-    - 2.0.*gS_pt0.*part + (factor.*factor).*h_CT_CT;
+part_b = rec_abs_pt0.*(temp_ratio.*gSAT_pt0.*rec_gTT_pt0 - gSAT.*rec_gTT);
+factor = gSA_pt0./cp0;
 
 % h_SA_CT should not blow up as SA approaches zero.  The following lines
 % of code ensure that the h_SA_CT output of this function does not blow
@@ -144,16 +142,22 @@ h_SA_SA = gsw_gibbs(n2,n0,n0,SA,t,p) ...
 % output to be the same as if SA = 1e-100 g/kg.  
 if any(SA < 1e-100)
     SA(SA < 1e-100) = 1e-100;
-    rec_gTT_pt0 = 1./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
-    rec_gTT_t = 1./gsw_gibbs(n0,n2,n0,SA,t,p);
-    gST_pt0 = gsw_gibbs(n1,n1,n0,SA,pt0,pr0);
-    gST_t = gsw_gibbs(n1,n1,n0,SA,t,p);
-    gS_pt0 = gsw_gibbs(n1,n0,n0,SA,pt0,pr0);
-    part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t).*rec_abs_pt0;
-    factor = gS_pt0./cp0;
+    rec_gTT_pt0 = 1./gsw_gibbs(0,2,0,SA,pt0,pr0);
+    rec_gTT = 1./gsw_gibbs(0,2,0,SA,t,p);
+    gSAT_pt0 = gsw_gibbs(1,1,0,SA,pt0,pr0);
+    gSAT = gsw_gibbs(1,1,0,SA,t,p);
+    gSA_pt0 = gsw_gibbs(1,0,0,SA,pt0,pr0);
+    part_b = (temp_ratio.*gSAT_pt0.*rec_gTT_pt0 - gSAT.*rec_gTT).*rec_abs_pt0;
+    factor = gSA_pt0./cp0;
 end
 
-h_SA_CT  = cp0.*part - factor.*h_CT_CT;
+h_SA_CT  = cp0.*part_b - factor.*h_CT_CT;
+
+% h_SA_SA has a singularity at SA = 0, and blows up as SA approaches zero.  
+h_SA_SA = gSASA - temp_ratio.*gSASA_pt0  ...
+    + temp_ratio.*gSAT_pt0.*gSAT_pt0.*rec_gTT_pt0  ...
+    - gSAT.*gSAT.*rec_gTT  ...
+    - 2.*gSA_pt0.*h_SA_CT./cp0 - (factor.*factor).*h_CT_CT;
 
 if transposed
     h_SA_SA = h_SA_SA.';

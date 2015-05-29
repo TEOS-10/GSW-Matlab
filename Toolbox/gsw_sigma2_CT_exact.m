@@ -15,9 +15,9 @@ function sigma2_CT_exact = gsw_sigma2_CT_exact(SA,CT)
 %
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely gsw_sigma2(SA,CT,p), 
-%  which uses the computationally efficient 48-term expression for density 
-%  in terms of SA, CT and p (IOC et al., 2010).   
-%
+%  which uses the computationally efficient 75-term expression for specific
+%  volume in terms of SA, CT and p (Roquet et al., 2015).
+
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
 %  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
@@ -32,7 +32,7 @@ function sigma2_CT_exact = gsw_sigma2_CT_exact(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -40,6 +40,10 @@ function sigma2_CT_exact = gsw_sigma2_CT_exact(SA,CT)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (A.30.1) of this TEOS-10 Manual. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %

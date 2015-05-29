@@ -22,7 +22,7 @@ function entropy_ice = gsw_entropy_ice(t,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -58,7 +58,7 @@ elseif (mt == mp) & (nt == np)
     % ok
 else
     error('gsw_entropy_ice: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 if mt == 1
     t = t.';

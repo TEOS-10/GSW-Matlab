@@ -14,10 +14,9 @@ function enthalpy_diff_CT_exact = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_d
 %  (SA,CT,p_deep) minus the specific enthalpy at (SA,CT,p_shallow). 
 %
 %  Note that this function uses the full Gibbs function.  There is an 
-%  alternative to calling this function, namely 
-%  gsw_enthalpy_diff_CT(SA,CT,p), which uses the computationally 
-%  efficient 48-term expression for density in terms of SA, CT and p 
-%  (IOC et al., 2010).   
+%  alternative to calling this function, namely gsw_enthalpy_diff(SA,CT,p),
+%  which uses the computationally efficient 75-term expression for specific
+%  volume in terms of SA, CT and p (Roquet et al., 2015).   
 %
 % INPUT:
 %  SA        =  Absolute Salinity                                  [ g/kg ]
@@ -28,7 +27,7 @@ function enthalpy_diff_CT_exact = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_d
 %               ( i.e. deeper absolute pressure - 10.1325 dbar )
 %
 %  p_shallow and p_deep may have dimensions Mx1 or 1xN or MxN, 
-%   where SA and CT are MxN.
+%  where SA and CT are MxN.
 %
 % OUTPUT:
 %  enthalpy_diff_CT_exact = difference of specific enthalpy        [ J/kg ]
@@ -37,7 +36,7 @@ function enthalpy_diff_CT_exact = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_d
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,10 +45,14 @@ function enthalpy_diff_CT_exact = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_d
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.32.2) of this TEOS-10 Manual. 
 %
-%  McDougall, T. J., 2003: Potential enthalpy: A conservative oceanic 
+%  McDougall, T.J., 2003: Potential enthalpy: A conservative oceanic 
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %    See Eqns. (18) and (22)
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %

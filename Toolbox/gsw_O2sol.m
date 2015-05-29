@@ -13,6 +13,10 @@ function O2sol = gsw_O2sol(SA,CT,p,long,lat)
 %  derived from the data of Benson and Krause (1984), as fitted by Garcia 
 %  and Gordon (1992, 1993).
 %
+%  Note that this algorithm has not been approved by IOC and is not work 
+%  from SCOR/IAPSO Working Group 127. It is included in the GSW
+%  Oceanographic Toolbox as it seems to be oceanographic best practice.
+%
 % INPUT:  
 %  SA    =  Absolute Salinity                                      [ g/kg ]
 %  CT    =  Conservative Temperature (ITS-90)                     [ deg C ]
@@ -31,7 +35,7 @@ function O2sol = gsw_O2sol(SA,CT,p,long,lat)
 % AUTHOR:  Roberta Hamme, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (6th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

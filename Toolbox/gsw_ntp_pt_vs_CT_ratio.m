@@ -3,7 +3,7 @@ function ntp_pt_vs_CT_ratio = gsw_ntp_pt_vs_CT_ratio(SA,CT,p)
 % gsw_ntp_pt_vs_CT_ratio                    ratio of gradients of potential
 %                             temperature and Conservative Temperature in a
 %                            neutral tangent plane (in a locally-referenced
-%                              potential density surface)(48-term equation)
+%                              potential density surface)(75-term equation)
 % =========================================================================
 %
 % USAGE:
@@ -14,12 +14,12 @@ function ntp_pt_vs_CT_ratio = gsw_ntp_pt_vs_CT_ratio(SA,CT,p)
 %  temperature versus that of Conservative Temperature, CT, along the  
 %  neutral tangent plane.  The potential temperature is the regular one  
 %  which has a reference sea pressure of 0 dbar.  Part of the calculation  
-%  uses the computationally-efficient 48-term expression for density in   
-%  terms of SA, CT and p (IOC et al., 2010).  
+%  uses the computationally-efficient 75-term expression for specific 
+%  volume in terms of SA, CT and p (Roquet et al., 2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -41,7 +41,7 @@ function ntp_pt_vs_CT_ratio = gsw_ntp_pt_vs_CT_ratio(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -49,6 +49,15 @@ function ntp_pt_vs_CT_ratio = gsw_ntp_pt_vs_CT_ratio(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See Eqn. (A.14.5) of this TEOS-10 Manual.   
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -60,7 +69,7 @@ function ntp_pt_vs_CT_ratio = gsw_ntp_pt_vs_CT_ratio(SA,CT,p)
 
 if ~(nargin == 3)
    error('gsw_ntp_pt_vs_CT_ratio:  Requires three inputs')
-end %if
+end 
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -83,7 +92,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_ntp_pt_vs_CT_ratio: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 if ms == 1
     SA = SA.';
@@ -98,17 +107,16 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-[dummy, alpha, beta] = gsw_rho_alpha_beta(SA,CT,p);
+[dummy, alpha, beta] = gsw_specvol_alpha_beta(SA,CT,p);
 
 %--------------------------------------------------------------------------
 % This function calculates the ntp_pt_vs_CT_ratio using the computationally
-% efficient 48-term expression for density in terms of SA, CT and p.  If 
-% one wanted to compute this with the full TEOS-10 Gibbs function 
-% expression for density, the following lines of code will enable this.
+% efficient 75-term expression for specific volume in terms of SA, CT and 
+% p.  If one wanted to compute this with the full TEOS-10 Gibbs function 
+% expression for specific volume, the following lines of code will enable 
+% this.
 %
-%    pt = gsw_pt_from_CT(SA,CT);
-%    pref0 = zeros(size(SA)); 
-%    t = gsw_pt_from_t(SA,pt,pref0,p);
+%    t = gsw_t_from_CT(SA,CT,p);
 %    beta = gsw_beta_const_CT_t_exact(SA,t,p);
 %    alpha = gsw_alpha_wrt_CT_t_exact(SA,t,p);
 %

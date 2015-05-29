@@ -43,7 +43,7 @@ function distance = gsw_distance(long,lat,p)
 % MODIFIED:
 %  4th April, 2011 by Paul Barker and Trevor McDougall. 
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCE:
 %  http://www.eos.ubc.ca/~rich/map.html

@@ -37,7 +37,7 @@ function [eta_SA_SA, eta_SA_CT, eta_CT_CT] = gsw_entropy_second_derivatives(SA,C
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 % 
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -81,24 +81,21 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;             % from Eqn. 3.3.3 of IOC et al. (2010).
-n0 = 0; 
-n1 = 1;
-n2 = 2;
+cp0 = gsw_cp0;             % from Eqn. 3.3.3 of IOC et al. (2010).
 pr0 = zeros(size(SA)); 
 pt = gsw_pt_from_CT(SA,CT);
-abs_pt = 273.15 + pt;
+abs_pt = gsw_T0 + pt;
 
-CT_SA = (gsw_gibbs(n1,n0,n0,SA,pt,pr0) - ...
-               (abs_pt.*gsw_gibbs(n1,n1,n0,SA,pt,pr0)))./cp0;
+CT_SA = (gsw_gibbs(1,0,0,SA,pt,pr0) - ...
+               (abs_pt.*gsw_gibbs(1,1,0,SA,pt,pr0)))./cp0;
 
-CT_pt = -(abs_pt.*gsw_gibbs(n0,n2,n0,SA,pt,pr0))./cp0;
+CT_pt = -(abs_pt.*gsw_gibbs(0,2,0,SA,pt,pr0))./cp0;
 
 eta_CT_CT = -cp0./(CT_pt.*abs_pt.*abs_pt);
 
-eta_SA_CT = - CT_SA.*eta_CT_CT;
+eta_SA_CT = -CT_SA.*eta_CT_CT;
 
-eta_SA_SA = - gsw_gibbs(n2,n0,n0,SA,pt,pr0)./abs_pt - CT_SA.*eta_SA_CT;
+eta_SA_SA = -gsw_gibbs(2,0,0,SA,pt,pr0)./abs_pt - CT_SA.*eta_SA_CT;
 
 if transposed
     eta_CT_CT = eta_CT_CT.';

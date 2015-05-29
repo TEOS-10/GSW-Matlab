@@ -1,7 +1,7 @@
 function steric_height = gsw_steric_height(SA,CT,p,p_ref)
 
 % gsw_geo_strf_steric_height                          steric height anomaly
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 % This function has changed name to gsw_geo_strf_steric_height
 %==========================================================================

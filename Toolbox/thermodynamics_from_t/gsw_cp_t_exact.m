@@ -24,7 +24,7 @@ function cp_t_exact = gsw_cp_t_exact(SA,t,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -80,10 +80,7 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n2 = 2;
-
-cp_t_exact = -(t + 273.15).*gsw_gibbs(n0,n2,n0,SA,t,p);
+cp_t_exact = -(t + 273.15).*gsw_gibbs(0,2,0,SA,t,p);
 
 if transposed
     cp_t_exact = cp_t_exact.';

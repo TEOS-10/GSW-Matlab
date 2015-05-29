@@ -26,7 +26,7 @@ function adiabatic_lapse_rate = gsw_adiabatic_lapse_rate_from_t(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -83,11 +83,7 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0;
-n1 = 1; 
-n2 = 2;
-
-adiabatic_lapse_rate = -gsw_gibbs(n0,n1,n1,SA,t,p)./(gsw_gibbs(n0,n2,n0,SA,t,p));
+adiabatic_lapse_rate = -gsw_gibbs(0,1,1,SA,t,p)./(gsw_gibbs(0,2,0,SA,t,p));
 
 if transposed
     adiabatic_lapse_rate = adiabatic_lapse_rate.';

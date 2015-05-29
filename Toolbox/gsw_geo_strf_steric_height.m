@@ -1,7 +1,7 @@
 function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 
 % gsw_geo_strf_steric_height                          steric height anomaly
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 %
 % USAGE:  
@@ -28,7 +28,7 @@ function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 %
 %  Note however that steric_height is not exactly the height (in metres)
 %  of an isobaric surface above a geopotential surface.  It is tempting to 
-%  divide  dynamic height anomaly by the local value of the gravitational
+%  divide dynamic height anomaly by the local value of the gravitational
 %  acceleration, but doing so robs the resulting quantity of either being
 %     (i)  an exact geostrophic streamfunction, or 
 %     (ii) exactly the height of an isobaric surface above a geopotential 
@@ -42,16 +42,15 @@ function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 %
 %  The reference values used for the specific volume anomaly are 
 %  SSO = 35.16504 g/kg and CT = 0 deg C.  This function calculates 
-%  specific volume anomaly using the computationally efficient 48-term 
-%  expression for specific volume of IOC et al. (2010). Note that the 
-%  48-term equation has been fitted in a restricted range of parameter 
+%  specific volume anomaly using the computationally efficient 75-term 
+%  expression for specific volume of Roquet et al. (2015). Note that the 
+%  75-term equation has been fitted in a restricted range of parameter 
 %  space, and is most accurate inside the "oceanographic funnel" described
-%  in IOC et al. (2010) and IOC et al. (2010).  For dynamical 
-%  oceanography we may take the 48-term rational function expression for 
-%  density as essentially reflecting the full accuracy of TEOS-10.  The GSW 
-%  internal library function "gsw_infunnel(SA,CT,p)" is avaialble to be 
-%  used if one wants to test if some of one's data lies outside this 
-%  "funnel".  
+%  in McDougall et al. (2003).  For dynamical oceanography we may take the
+%  75-term rational function expression for density as essentially
+%  reflecting the full accuracy of TEOS-10.  The GSW internal library 
+%  function "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to
+%  test if some of one's data lies outside this "funnel".  
 %
 % INPUT:
 %  SA    =  Absolute Salinity                                      [ g/kg ]
@@ -75,7 +74,7 @@ function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -86,6 +85,15 @@ function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.7.3) and section 3.27 of this TEOS-10 Manual. 
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -108,10 +116,6 @@ p_ref = unique_p_ref;
 
 if p_ref < 0
     error('gsw_geo_strf_steric_height: The reference pressure p_ref must be positive')
-end
-
-if any(SA < 0)
-    error('gsw_geo_strf_steric_height: The Absolute Salinity must be positive!')
 end
 
 [ms,ns] = size(SA);
@@ -161,12 +165,15 @@ if max(p(:)) < p_ref
     error('gsw_geo_strf_steric_height: The reference pressure p_ref is deeper than all bottles')
 end
 
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
+
 dynamic_height_anomaly = gsw_geo_strf_dyn_height(SA,CT,p,p_ref);
 const_grav = 9.7963;             % (Griffies, 2004);
 steric_height = dynamic_height_anomaly./const_grav;  
 
 if transposed
    steric_height = steric_height.';
-end %if
+end 
 
 end

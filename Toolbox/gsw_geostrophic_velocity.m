@@ -1,7 +1,10 @@
 function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(geo_strf,long,lat,p)
 
+% gsw_geostrophic_velocity                             geostrophic velocity
+%==========================================================================
 % USAGE:  
-%  [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(geo_strf,long,lat,p)
+%  [geostrophic_velocity, mid_lat, mid_long] = ...
+%                             gsw_geostrophic_velocity(geo_strf,long,lat,p)
 %
 % DESCRIPTION:
 %  Calculates geostrophic velocity relative to the sea surface, given a
@@ -59,7 +62,7 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 % AUTHOR: 
 %  Paul Barker, Trevor McDougall and Phil Morgan       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  Cunningham, S. A., 2000: Circulation and volume flux of the North 

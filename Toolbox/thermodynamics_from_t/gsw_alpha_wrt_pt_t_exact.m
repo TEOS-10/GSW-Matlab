@@ -28,7 +28,7 @@ function alpha_wrt_pt_t_exact = gsw_alpha_wrt_pt_t_exact(SA,t,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -85,16 +85,12 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1;
-n2 = 2;
-
 pr0 = zeros(size(p)); 
 pt0 = gsw_pt0_from_t(SA,t,p);
 
-factor = gsw_gibbs(n0,n2,n0,SA,pt0,pr0)./gsw_gibbs(n0,n2,n0,SA,t,p);
+factor = gsw_gibbs(0,2,0,SA,pt0,pr0)./gsw_gibbs(0,2,0,SA,t,p);
 
-alpha_wrt_pt_t_exact = factor.*(gsw_gibbs(n0,n1,n1,SA,t,p)./gsw_gibbs(n0,n0,n1,SA,t,p));
+alpha_wrt_pt_t_exact = factor.*(gsw_gibbs(0,1,1,SA,t,p)./gsw_gibbs(0,0,1,SA,t,p));
 
 if transposed
     alpha_wrt_pt_t_exact = alpha_wrt_pt_t_exact.';

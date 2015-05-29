@@ -1,4 +1,4 @@
-function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,CT,p,saturation_fraction,t_Ih)
+function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,CT,p,t_Ih)
 
 % gsw_ice_fraction_to_freeze_seawater         ice mass fraction, which when
 %                                  melted into seawater, brings the diluted
@@ -7,7 +7,7 @@ function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,C
 %
 % USAGE:
 %  [SA_freeze, CT_freeze, w_Ih] = ...
-%                        gsw_ice_fraction_to_freeze_seawater(SA,CT,p,saturation_fraction,t_Ih)
+%                         gsw_ice_fraction_to_freeze_seawater(SA,CT,p,t_Ih)
 %
 % DESCRIPTION:
 %  Calculates the mass fraction of ice (mass of ice divided by mass of ice
@@ -21,8 +21,6 @@ function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,C
 %  CT   =  Conservative Temperature of seawater (ITS-90)          [ deg C ]
 %  p    =  sea pressure                                            [ dbar ]
 %            ( i.e. absolute pressure - 10.1325 dbar )
-%  saturation_fraction = the saturation fraction of dissolved air in 
-%               seawater.  The saturation_fraction must be between 0 and 1.
 %  t_Ih =  in-situ temperature of the ice at pressure p (ITS-90)  [ deg C ]
 %
 %  SA, CT and t_Ih must have the same dimensions.
@@ -30,25 +28,25 @@ function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,C
 %  are MxN.
 %
 % OUTPUT:
-%  SA_freeze  = Absolute Salinity of seawater after the mass fraction of 
-%               ice, ice_fraction, at temperature t_Ih has melted into the
-%               original seawater, and the final mixture is at the freezing
-%               temperature of seawater.                           [ g/kg ]
+%  SA_freeze = Absolute Salinity of seawater after the mass fraction of 
+%              ice, ice_fraction, at temperature t_Ih has melted into the
+%              original seawater, and the final mixture is at the freezing
+%              temperature of seawater.                            [ g/kg ]
 %
-%  CT_freeze  = Conservative Temperature of seawater after the mass 
-%               fraction, w_Ih, of ice at temperature t_Ih has melted into
-%               the original seawater, and the final mixture is at the
-%               freezing temperature of seawater.                 [ deg C ]
+%  CT_freeze = Conservative Temperature of seawater after the mass 
+%              fraction, w_Ih, of ice at temperature t_Ih has melted into
+%              the original seawater, and the final mixture is at the
+%              freezing temperature of seawater.                  [ deg C ]
 %
-%  w_Ih       = mass fraction of ice, having in-situ temperature t_Ih, 
-%               which, when melted into seawater at (SA,CT,p) leads to the
-%               final diluted seawater being at the freezing temperature.
-%               This output must be between 0 and 1.             [unitless]
+%  w_Ih      = mass fraction of ice, having in-situ temperature t_Ih, 
+%              which, when melted into seawater at (SA,CT,p) leads to the
+%              final diluted seawater being at the freezing temperature.
+%              This output must be between 0 and 1.              [unitless]
 %                                                                
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -61,10 +59,10 @@ function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,C
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %
-%  McDougall, T.J., P.M. Barker and R. Feistel, 2013: Melting of ice and 
-%   sea ice into seawater and frazil ice formation. Journal of Physical 
-%   Oceanography, (Submitted).
-%    See Eqn. (6) of this manuscript.  
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
+%    See Eqn. (9) of this manuscript.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -74,18 +72,13 @@ function [SA_freeze, CT_freeze, w_Ih] = gsw_ice_fraction_to_freeze_seawater(SA,C
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin == 5) 
-   error('gsw_ice_fraction_to_freeze_seawater:  Requires five inputs')
+if ~(nargin == 4) 
+   error('gsw_ice_fraction_to_freeze_seawater:  Requires four inputs')
 end 
-
-if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_ice_fraction_to_freeze_seawater: saturation fraction MUST be between zero and one.')
-end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
 [mp,np] = size(p);
-[msf,nsf] = size(saturation_fraction);
 [mt_Ih,nt_Ih] = size(t_Ih);
 
 if (mt ~= ms) & (nt ~= ns)
@@ -111,26 +104,10 @@ else
     error('gsw_ice_fraction_to_freeze_seawater: Inputs array dimensions arguments do not agree; check p')
 end 
 
-if (msf == 1) & (nsf == 1)                                    % saturation_fraction scalar
-    saturation_fraction = saturation_fraction*ones(size(SA));         % fill to size of SA
-elseif (ns == nsf) & (msf == 1)                        % saturation_fraction is row vector,
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (nsf == 1)                     % saturation_fraction is column vector,
-    saturation_fraction = saturation_fraction(:,ones(1,ns));        % copy across each row.
-elseif (ns == msf) & (nsf == 1)           % saturation_fraction is a transposed row vector,
-    saturation_fraction = saturation_fraction.';                           % transposed then
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (ns == nsf)
-    % ok
-else
-    error('gsw_ice_fraction_to_freeze_seawater: Inputs array dimensions arguments do not agree')
-end %if
-
 if ms == 1
     SA = SA.';
     CT = CT.';  
     p = p.';
-    saturation_fraction = saturation_fraction.';
     t_Ih = t_Ih.';
     transposed = 1;
 else
@@ -142,6 +119,8 @@ end
 %--------------------------------------------------------------------------
 
 SA(SA < 0) = 0; % This line ensure that SA is non-negative.
+
+saturation_fraction = zeros(size(SA));
 
 CTf = gsw_CT_freezing(SA,p,saturation_fraction);
 if any(CT(:) < CTf(:)) %the seawater CT input is below the freezing temperature
@@ -175,7 +154,8 @@ dfunc_dSAf = SA.*(h_hat_SA + h_hat_CT.*CTf_SA) - (h - h_Ih);
 for Number_of_iterations = 1:2
     SAf_old = SAf;
     CTf_old = CTf;
-    func = SA.*(gsw_enthalpy_CT_exact(SAf_old,CTf_old,p) - h)  - (SAf_old - SA).*(h - h_Ih);
+    func = SA.*(gsw_enthalpy_CT_exact(SAf_old,CTf_old,p) - h)  - (SAf_old - SA).*(h - h_Ih); 
+    % This is the function whose zero we seek, it is SA*(Eqn. (9), (McDougall et al., 1014)) .
     SAf = SAf_old - func./dfunc_dSAf; % this is half way through the modified Newton's method
     SAf_mean = 0.5*(SAf + SAf_old);
     CTf_mean = gsw_CT_freezing(SAf_mean,p,saturation_fraction);

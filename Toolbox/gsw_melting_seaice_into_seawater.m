@@ -1,4 +1,4 @@
-function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturation_fraction,w_seaice,SA_seaice,t_seaice)
+function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,w_seaice,SA_seaice,t_seaice)
 
 % gsw_melting_seaice_into_seawater             the resulting SA and CT when 
 %                                           sea ice is melted into seawater
@@ -6,7 +6,7 @@ function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturat
 %
 % USAGE:
 %  [SA_final, CT_final] = ...
-%   gsw_melting_seaice_into_seawater(SA,CT,p,saturation_fraction,w_seaice,SA_seaice,t_seaice)
+%     gsw_melting_seaice_into_seawater(SA,CT,p,w_seaice,SA_seaice,t_seaice)
 %
 % DESCRIPTION:
 %  Calculates the Absolute Salinity and Conservative Temperature that 
@@ -36,8 +36,6 @@ function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturat
 %  CT  =  Conservative Temperature of seawater (ITS-90)           [ deg C ]
 %  p   =  sea pressure at which the melting occurs                 [ dbar ]
 %         ( i.e. absolute pressure - 10.1325 dbar ) 
-%  saturation_fraction = the saturation fraction of dissolved air in 
-%               seawater.  The saturation_fraction must be between 0 and 1.
 %  w_seaice  =  mass fraction of sea ice, that is the mass of sea ice 
 %               divided by the sum of the masses of sea ice and seawater. 
 %               That is, the mass of sea ice divided by the mass of the 
@@ -49,9 +47,9 @@ function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturat
 %  t_seaice  =  the in-situ temperature of the sea ice (or ice) (ITS-90)
 %                                                                 [ deg C ]
 %
-%  SA, CT, w_seaice, SA_seaice & t_seaice must all have the same dimensions.
-%  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where where SA, CT, 
-%  w_seaice, SA_seaice and t_seaice are MxN.
+% SA, CT, w_seaice, SA_seaice & t_seaice must all have the same dimensions.
+% p may have dimensions 1x1 or Mx1 or 1xN or MxN, where where SA, CT, 
+% w_seaice, SA_seaice and t_seaice are MxN.
 %
 % OUTPUT:
 %  SA_final  =  Absolute Salinity of the mixture of the melted sea ice 
@@ -62,7 +60,7 @@ function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturat
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -70,9 +68,9 @@ function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturat
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %
-%  McDougall, T.J., P.M. Barker and R. Feistel, 2013: Melting of ice and 
-%   sea ice into seawater and frazil ice formation. Journal of Physical 
-%   Oceanography, (Submitted).
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
 %     Eqns. (8) and (9) are the simplifications when SA_seaice = 0. 
 %
 %  The software is available from http://www.TEOS-10.org
@@ -83,18 +81,13 @@ function [SA_final, CT_final] = gsw_melting_seaice_into_seawater(SA,CT,p,saturat
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin == 7)
-    error('gsw_melting_seaice_into_seawater: Requires seven inputs')
-end
-
-if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_melting_seaice_into_seawater: saturation fraction MUST be between zero and one.')
+if ~(nargin == 6)
+    error('gsw_melting_seaice_into_seawater: Requires six inputs')
 end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
 [mp,np] = size(p);
-[msf,nsf] = size(saturation_fraction);
 [mw_Ih,nw_Ih] = size(w_seaice);
 [ms_Ih,ns_Ih] = size(SA_seaice);
 [mt_Ih,nt_Ih] = size(t_seaice);
@@ -130,26 +123,10 @@ else
     error('gsw_melting_seaice_into_seawater: Inputs array dimensions arguments do not agree; check p')
 end 
 
-if (msf == 1) & (nsf == 1)                                    % saturation_fraction scalar
-    saturation_fraction = saturation_fraction*ones(size(SA));         % fill to size of SA
-elseif (ns == nsf) & (msf == 1)                        % saturation_fraction is row vector,
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (nsf == 1)                     % saturation_fraction is column vector,
-    saturation_fraction = saturation_fraction(:,ones(1,ns));        % copy across each row.
-elseif (ns == msf) & (nsf == 1)           % saturation_fraction is a transposed row vector,
-    saturation_fraction = saturation_fraction.';                           % transposed then
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (ns == nsf)
-    % ok
-else
-    error('gsw_melting_seaice_into_seawater: Inputs array dimensions arguments do not agree')
-end %if
-
 if ms == 1
     SA = SA.';
     CT = CT.';
     p = p.';
-    saturation_fraction = saturation_fraction.';
     w_seaice = w_seaice.';
     SA_seaice = SA_seaice.';
     t_seaice = t_seaice.';
@@ -163,6 +140,8 @@ end
 %--------------------------------------------------------------------------
 
 SA(SA < 0) = 0; % This line ensures that SA is non-negative.
+
+saturation_fraction = zeros(size(SA));
 
 if any(w_seaice(:) < 0 | w_seaice(:) > 1) % the w_seaice needs to be between 0 and 1
     [I] = find(w_seaice > 1 | w_seaice < 0);
@@ -198,7 +177,7 @@ end
 
 h = gsw_enthalpy_CT_exact(SA,CT,p);
 h_Ih = gsw_enthalpy_ice(t_seaice,p);
-SA_brine = gsw_brineSA_t(t_seaice,p,saturation_fraction);
+SA_brine = gsw_SA_freezing_from_t(t_seaice,p,saturation_fraction);
 h_brine = gsw_enthalpy_t_exact(SA_brine,t_seaice,p);
 
 SA_final = SA - w_seaice.*(SA - SA_seaice);
@@ -223,7 +202,7 @@ if any(h_final(:) < hf(:)) % Melting this much seaice is not possible as it woul
 end
 
 CT_final = gsw_CT_from_enthalpy_exact(SA_final,h_final,p);
-         
+
 if transposed
    SA_final = SA_final.';
    CT_final = CT_final.';

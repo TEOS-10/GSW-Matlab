@@ -1,6 +1,6 @@
 function pt0_ice = gsw_pt_from_pot_enthalpy_ice(pot_enthalpy_ice)
 
-% gsw_pt_from_pot_enthalpy_ice             potential temperature refered to
+% gsw_pt_from_pot_enthalpy_ice        potential temperature refered to
 %                                the surface from potential enthalpy of ice                              
 %==========================================================================
 %
@@ -21,7 +21,7 @@ function pt0_ice = gsw_pt_from_pot_enthalpy_ice(pot_enthalpy_ice)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -29,9 +29,13 @@ function pt0_ice = gsw_pt_from_pot_enthalpy_ice(pot_enthalpy_ice)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall, T.J. and S.J. Wotherspoon, 2013: A simple modification of 
-%   Newton’s method to achieve convergence of order 1 + sqrt(2).  Applied 
-%   Mathematics Letters, in press.   
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
+%
+%  McDougall T. J. and S. J. Wotherspoon, 2014: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -158,7 +162,7 @@ function dpt0_ice_dh = gsw_pt_from_pot_enthalpy_ice_poly_dh(pot_enthalpy_ice)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -210,7 +214,7 @@ function pt0_cold_ice_poly = gsw_pt0_cold_ice_poly(pot_enthalpy_ice)
 % AUTHOR: 
 %  Paul Barker                                         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

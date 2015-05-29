@@ -24,7 +24,7 @@ function f = gsw_f(lat)
 % MODIFIED:
 %  28th July, 2010 by Paul Barker  
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCE:
 %  Groten, E., 2004: Fundamental Parameters and Current (2004) Best 
@@ -46,14 +46,14 @@ function f = gsw_f(lat)
 
 if ~(nargin == 1)
    error('gsw_f:  Requires only one input argument, lat')
-end %if
+end
 
 %--------------------------------------------------------------------------
 % Start of the calculation
 %--------------------------------------------------------------------------
 
 deg2rad = pi/180;
-OMEGA = 7.292115e-5;                              %(1/s)   (Groten, 2004)
-f = 2*OMEGA*sin(lat*deg2rad);
+omega = 7.292115e-5;                              %(1/s)   (Groten, 2004)
+f = 2*omega*sin(lat*deg2rad);
 
 end

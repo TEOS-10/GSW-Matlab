@@ -7,18 +7,18 @@ function [h_SA, h_CT] = gsw_enthalpy_first_derivatives_CT_exact(SA,CT,p)
 %  [h_SA, h_CT] = gsw_enthalpy_first_derivatives_CT_exact(SA,CT,p)
 %
 % DESCRIPTION:
-%  Calculates the following two derivatives of specific enthalpy (h)
+%  Calculates the following two derivatives of specific enthalpy, h,
 %   (1) h_SA, the derivative with respect to Absolute Salinity at 
 %       constant CT and p, and
 %   (2) h_CT, derivative with respect to CT at constant SA and p. 
-%  Note that h_P is specific volume (1/rho) it can be calulated by calling
+%  Note that h_P is specific volume, v, it can be calulated by calling
 %  gsw_specvol_CT_exact(SA,CT,p).
 %
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
 %  gsw_enthalpy_first_derivatives(SA,CT,p) which uses the computationally
-%  efficient 48-term expression for density in terms of SA, CT and p 
-%  (IOC et al., 2010).   
+%  efficient 75-term expression for specific volume in terms of SA, CT and
+%  p (Roquet et al., 2015).   
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -39,7 +39,7 @@ function [h_SA, h_CT] = gsw_enthalpy_first_derivatives_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall.                                   [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -48,10 +48,14 @@ function [h_SA, h_CT] = gsw_enthalpy_first_derivatives_CT_exact(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See Eqns. (A.11.18), (A.11.15) and (A.11.12) of this TEOS-10 Manual.   
 %
-%  McDougall, T. J., 2003: Potential enthalpy: A conservative oceanic 
+%  McDougall, T.J., 2003: Potential enthalpy: A conservative oceanic 
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %    See Eqns. (18) and (22)
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -105,16 +109,15 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-SA(SA<0) = 0;
-
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 t = gsw_t_from_CT(SA,CT,p);
 pt0 = gsw_pt_from_CT(SA,CT);  
 
-temp_ratio = (273.15 + t)./(273.15 + pt0);
+temp_ratio = (gsw_T0 + t)./(gsw_T0 + pt0);
 
-h_CT = cp0.*temp_ratio;         % from Eqn. (A.11.15) of IOC et al. (2010).
+h_CT = gsw_cp0.*temp_ratio;         % from Eqn. (A.11.15) of IOC et al. (2010).
 
 db2Pa = 1e-4;
 sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).

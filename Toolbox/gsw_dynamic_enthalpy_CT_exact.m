@@ -14,8 +14,8 @@ function dynamic_enthalpy_CT_exact = gsw_dynamic_enthalpy_CT_exact(SA,CT,p)
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
 %  gsw_dynamic_enthalpy(SA,CT,p), which uses the computationally 
-%  efficient 48-term expression for density in terms of SA, CT and p 
-%  (IOC et al., 2010).   
+%  efficient 75-term expression for specific volume in terms of SA, CT 
+%  and p (Roquet et al., 2015).   
 %    
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -32,7 +32,7 @@ function dynamic_enthalpy_CT_exact = gsw_dynamic_enthalpy_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -41,10 +41,14 @@ function dynamic_enthalpy_CT_exact = gsw_dynamic_enthalpy_CT_exact(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See apendix A.30 of this TEOS-10 Manual. 
 %
-%  McDougall, T. J., 2003: Potential enthalpy: A conservative oceanic 
+%  McDougall, T.J., 2003: Potential enthalpy: A conservative oceanic 
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %    See Eqns. (18) and (22)
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  Young, W.R., 2010: Dynamic enthalpy, Conservative Temperature, and the
 %   seawater Boussinesq approximation. Journal of Physical Oceanography, 
@@ -98,10 +102,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-
 t = gsw_t_from_CT(SA,CT,p);
-dynamic_enthalpy_CT_exact = gsw_enthalpy_t_exact(SA,t,p) - cp0*CT;
+dynamic_enthalpy_CT_exact = gsw_enthalpy_t_exact(SA,t,p) - gsw_cp0*CT;
 
 if transposed
     dynamic_enthalpy_CT_exact = dynamic_enthalpy_CT_exact.';

@@ -25,7 +25,7 @@ function t = gsw_t_from_CT(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -89,7 +89,7 @@ t = gsw_pt_from_t(SA,pt0,pr0,p);
 
 %Find values that are out of range, set them to NaN. 
 t(p < 100 & (t > 80 | t < -12)) = NaN;
-t(p >= 100 & (t > 40 | t < -12)) = NaN;
+t(p >= 100 & (t > 50 | t < -12)) = NaN;
 
 if transposed
     t = t.';

@@ -1,7 +1,7 @@
 function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 
 % gsw_geo_strf_Montgomery                            Montgomery geostrophic 
-%                                         streamfunction (48-term equation)
+%                                         streamfunction (75-term equation)
 %==========================================================================
 %
 % USAGE:  
@@ -16,8 +16,8 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %  for flow in a specifc volume anomaly surface.  The reference values used
 %  for the specific volume anomaly are SA = SSO = 35.16504 g/kg and  
 %  CT = 0 deg C.  This function calculates specific volume anomaly using 
-%  the computationally efficient 48-term expression for specific volume of 
-%  IOC et al. (2010).
+%  the computationally efficient 75-term expression for specific volume of 
+%  Roquet et al. (2015).
 %
 %  Note that p_ref, is the reference pressure to which the streamfunction
 %  is referenced.  When p_ref is zero, "gsw_geo_strf_Montgomery" returns 
@@ -25,9 +25,9 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %  surface, otherwise, the function returns the geostrophic streamfunction
 %  with respect to the (deep) reference pressure p_ref.
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -51,7 +51,7 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,8 +60,17 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.28 of this TEOS-10 Manual. 
 %
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
 %  Montgomery, R. B., 1937: A suggested method for representing gradient 
 %   flow in isentropic surfaces.  Bull. Amer. Meteor. Soc. 18, 210-212.  
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -73,7 +82,7 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 
 if ~(nargin == 4)
     error('gsw_geo_strf_Montgomery: Requires four inputs')
-end %if
+end 
 
 unique_p_ref = unique(p_ref);
 if ~isscalar(unique_p_ref)
@@ -103,7 +112,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_geo_strf_Montgomery: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 transposed = 0;
 if ms == 1  
@@ -111,7 +120,7 @@ if ms == 1
    CT  =  CT(:);
    SA  =  SA(:);
    transposed = 1;
-end %if
+end 
 
 %--------------------------------------------------------------------------
 % Start of the calculation
@@ -121,26 +130,23 @@ db2Pa = 1e4;
 
 dyn_height  = gsw_geo_strf_dyn_height(SA,CT,p,p_ref);
 
-geo_strf_Montgomery = db2Pa*p.*(gsw_specvol(SA,CT,p) - ...
-                                 gsw_specvol_SSO_0_p(p)) + dyn_height;
+geo_strf_Montgomery = db2Pa*p.*gsw_specvol_anom_standard(SA,CT,p) + dyn_height;
                              
 %--------------------------------------------------------------------------
 % This function calculates the Montgomery streamfunction using the 
-% computationally efficient 48-term expression for density in terms of SA, 
-% CT and p.  If one wanted to compute this with the full TEOS-10 Gibbs 
-% function expression for density, the following lines of code will enable 
-% this.  Note that dynamic height will also need to be evaluated using the
-% full Gibbs function.
+% computationally efficient 75-term expression for specific volume in terms
+% of SA, CT and p.  If one wanted to compute this with the full TEOS-10 
+% Gibbs function expression for specific volume, the following lines of 
+% code will enable this.  Note that dynamic height will also need to be 
+% evaluated using the full Gibbs function.
 %
-%    SA_SSO = 35.16504*ones(size(SA));
-%    CT_0 = zeros(size(CT));
-%    geo_strf_Montgomery = db2Pa*p.*(gsw_specvol_CT_exact(SA,CT,p) - ...
-%                              gsw_enthalpy_CT_exact(SA_SSO,CT_0,p)) + dyn_height;
+%    geo_strf_Montgomery = db2Pa*p.*gsw_specvol_anom_standard_CT_exact(SA,CT,p) ...
+%                               + dyn_height;
 %
 %---------------This is the end of the alternative code--------------------
 
 if transposed
    geo_strf_Montgomery = geo_strf_Montgomery.';
-end %if
+end
 
 end

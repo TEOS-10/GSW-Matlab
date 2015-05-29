@@ -11,9 +11,9 @@ function enthalpy_CT_exact = gsw_enthalpy_CT_exact(SA,CT,p)
 %  Conservative Temperature and pressure.  
 %
 %  Note that this function uses the full Gibbs function.  There is an 
-%  alternative to calling this function, namely gsw_enthalpy_CT(SA,CT,p),
-%  which uses the computationally-efficient 48-term expression for density 
-%  in terms of SA, CT and p (IOC et al., 2010). 
+%  alternative to calling this function, namely gsw_enthalpy(SA,CT,p),
+%  which uses the computationally-efficient 75-term expression for specific
+%  volume in terms of SA, CT and p (Roquet et al., 2015). 
 %    
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -43,6 +43,10 @@ function enthalpy_CT_exact = gsw_enthalpy_CT_exact(SA,CT,p)
 %   variable for evaluating heat content and heat fluxes. Journal of 
 %   Physical Oceanography, 33, 945-963.  
 %    See Eqns. (18) and (22)
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %

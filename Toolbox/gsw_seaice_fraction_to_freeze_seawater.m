@@ -1,4 +1,4 @@
-function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawater(SA,CT,p,saturation_fraction,SA_seaice,t_seaice)
+function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawater(SA,CT,p,SA_seaice,t_seaice)
 
 % gsw_seaice_fraction_to_freeze_seawater  sea ice mass fraction, which when
 %                                          melted into seawater, brings the 
@@ -7,7 +7,7 @@ function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawat
 %
 % USAGE:
 %  [SA_freeze, CT_freeze, w_seaice] = ...
-%  gsw_seaice_fraction_to_freeze_seawater(SA,CT,p,saturation_fraction,SA_seaice,t_seaice)
+%        gsw_seaice_fraction_to_freeze_seawater(SA,CT,p,SA_seaice,t_seaice)
 %
 % DESCRIPTION:
 %  Calculates the mass fraction of sea ice (mass of sea ice divided by mass 
@@ -21,8 +21,6 @@ function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawat
 %  CT        =  Conservative Temperature of seawater (ITS-90)     [ deg C ]
 %  p         =  sea pressure                                       [ dbar ]
 %            ( i.e. absolute pressure - 10.1325 dbar )
-%  saturation_fraction = the saturation fraction of dissolved air in 
-%               seawater.  The saturation_fraction must be between 0 and 1.
 %  SA_seaice =  Absolute Salinity of sea ice, that is, the mass fraction of             
 %               salt in sea ice, expressed in g of salt per kg of sea ice.
 %                                                                  [ g/kg ]
@@ -52,7 +50,7 @@ function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawat
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -65,9 +63,9 @@ function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawat
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %
-%  McDougall, T.J., P.M. Barker and R. Feistel, 2013: Melting of ice and 
-%   sea ice into seawater and frazil ice formation. Journal of Physical 
-%   Oceanography, (Submitted).
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
 %    See Eqn. (23) of this manuscript.  
 %
 %  The software is available from http://www.TEOS-10.org
@@ -78,18 +76,13 @@ function [SA_freeze, CT_freeze, w_seaice] = gsw_seaice_fraction_to_freeze_seawat
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin == 6)
-    error('gsw_seaice_fraction_to_freeze_seawater:  Requires six inputs')
+if ~(nargin == 5)
+    error('gsw_seaice_fraction_to_freeze_seawater:  Requires five inputs')
 end 
-
-if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_seaice_fraction_to_freeze_seawater: saturation fraction MUST be between zero and one.')
-end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
 [mp,np] = size(p);
-[msf,nsf] = size(saturation_fraction);
 [mssi,nssi] = size(SA_seaice);
 [mtsi,ntsi] = size(t_seaice);
 
@@ -104,10 +97,6 @@ end
 if (mtsi ~= ms) & (ntsi ~= ns)
     error('gsw_seaice_fraction_to_freeze_seawater: The inputs SA and t_seaice must have the same dimensions')
 end 
-
-if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_seaice_fraction_to_freeze_seawater: saturation fraction MUST be between zero and one.')
-end
 
 if (mp == 1) & (np == 1)                    % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -124,26 +113,10 @@ else
     error('gsw_seaice_fraction_to_freeze_seawater: Inputs array dimensions arguments do not agree; check p')
 end
 
-if (msf == 1) & (nsf == 1)                                    % saturation_fraction scalar
-    saturation_fraction = saturation_fraction*ones(size(SA));         % fill to size of SA
-elseif (ns == nsf) & (msf == 1)                        % saturation_fraction is row vector,
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (nsf == 1)                     % saturation_fraction is column vector,
-    saturation_fraction = saturation_fraction(:,ones(1,ns));        % copy across each row.
-elseif (ns == msf) & (nsf == 1)           % saturation_fraction is a transposed row vector,
-    saturation_fraction = saturation_fraction.';                           % transposed then
-    saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == msf) & (ns == nsf)
-    % ok
-else
-    error('gsw_seaice_fraction_to_freeze_seawater: Inputs array dimensions arguments do not agree')
-end %if
-
 if ms == 1
     SA = SA.';
     CT = CT.';
     p = p.';
-    saturation_fraction = saturation_fraction.';
     SA_seaice = SA_seaice.';
     t_seaice = t_seaice.';
     transposed = 1;
@@ -159,6 +132,8 @@ end
 SA(SA < 0) = NaN; 
 
 SA0 = zeros(size(SA));
+
+saturation_fraction = zeros(size(SA));
 
 if any(SA_seaice(:) < 0 | SA_seaice(:) > 15) % SA_seaice must be between 0 and 15 g/kg
     [I] = find(SA_seaice < 0 | SA_seaice > 15);
@@ -186,9 +161,9 @@ end
 
 h = gsw_enthalpy_CT_exact(SA,CT,p);
 h_Ih = gsw_enthalpy_ice(t_seaice,p);
-SA_brine = gsw_brineSA_t(t_seaice,p,saturation_fraction); % Note that gsw_brineSA_t returns a NaN if SA_brine is greater than 120 g/kg. 
-h_brine = gsw_enthalpy_t_exact(SA_brine,t_seaice,p);
-salt_ratio = SA_seaice./SA_brine;
+SA_freezing = gsw_SA_freezing_from_t(t_seaice,p,saturation_fraction); % Note that gsw_SA_freezing_from_t returns a NaN if SA_freezing is greater than 120 g/kg. 
+h_brine = gsw_enthalpy_t_exact(SA_freezing,t_seaice,p);
+salt_ratio = SA_seaice./SA_freezing;
 
 CTf_plus1 = gsw_CT_freezing(SA+1,p,saturation_fraction);
 func_plus1 = (SA - SA_seaice).*(gsw_enthalpy_CT_exact(SA+1,CTf_plus1,p) - h) ...

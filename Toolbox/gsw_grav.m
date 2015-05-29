@@ -27,7 +27,7 @@ function grav = gsw_grav(lat,p)
 % AUTHOR:  
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -50,12 +50,12 @@ function grav = gsw_grav(lat,p)
 %--------------------------------------------------------------------------
 if ~(nargin == 1 | nargin == 2)
    error('gsw_grav:  Requires either one or two inputs, latitude and pressure')
-end %if
+end 
 
 if nargin == 1
 %    Assume no change in gravity with respect to pressure.
   p = zeros(size(lat));
-end %if
+end 
 
 [ml,nl] = size(lat);
 [mp,np] = size(p);
@@ -71,7 +71,7 @@ elseif (nl == mp) & (nl == 1)          % p is a transposed row vector,
     lat = lat(ones(1,mp), :);                % copy down each column.
 elseif (ml == mp) & (nl == np)               
     % ok
-end %if
+end
 
 [ml,nl] = size(lat);
 
@@ -88,7 +88,7 @@ elseif (mp == ml) & (np == nl)
     % ok
 else
     error('gsw_grav: p has wrong dimensions')
-end %if
+end
 
 if ml == 1
     lat = lat.';
@@ -103,9 +103,9 @@ end
 %--------------------------------------------------------------------------
 
 gamma = 2.26e-7;
-DEG2RAD = pi/180;
-X = sin(lat*DEG2RAD);  % convert to radians
-sin2 = X.*X;
+deg2rad = pi/180;
+sinlat = sin(lat*deg2rad);  % convert to radians
+sin2 = sinlat.*sinlat;
 gs = 9.780327*(1.0 + (5.2792e-3 + (2.32e-5*sin2)).*sin2) ;
 
 z = gsw_z_from_p(p,lat);

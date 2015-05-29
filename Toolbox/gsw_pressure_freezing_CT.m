@@ -24,7 +24,7 @@ function pressure_freezing = gsw_pressure_freezing_CT(SA,CT,saturation_fraction)
 %  saturation_fraction = the saturation fraction of dissolved air in 
 %                        seawater
 %  (i.e., saturation_fraction must be between 0 and 1, and the default 
-%    is 1, completely saturated) 
+%    is 0, air free) 
 %
 %  p & saturation_fraction (if provided) may have dimensions 1x1 or Mx1 or 
 %  1xN or MxN, where SA and CT are MxN.
@@ -36,7 +36,7 @@ function pressure_freezing = gsw_pressure_freezing_CT(SA,CT,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (3rd December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -62,7 +62,7 @@ if ~(nargin == 2 | nargin == 3)
 end
 
 if ~exist('saturation_fraction','var')
-    saturation_fraction = 1;
+    saturation_fraction = 0;
 end
 
 if (saturation_fraction < 0 | saturation_fraction > 1)
@@ -111,14 +111,14 @@ CT_freezing_p0 = gsw_CT_freezing(SA,zeros(size(SA)),saturation_fraction);
                       %  This is the CT_freezing at zero dbar. 
 CT_freezing_p10000 = gsw_CT_freezing(SA,1e4*ones(size(SA)),saturation_fraction);
                       %  This is the CT_freezing at 10,000 dbar.  
- 
+
 % Find CT > CT_freezing_p0.  If this is the case, the input CT value
 % represent seawater that will not be frozen at any positive p.  
 [Itw] = find(CT > CT_freezing_p0);         % Itw stands for "I_too_warm"
- if ~isempty(Itw)
-    SA(Itw) = NaN; 
+if ~isempty(Itw)
+    SA(Itw) = NaN;
     CT(Itw) = NaN;
- end
+end
  
 % Find CT < CT_freezing_p10000.  If this is the case, the input CT value
 % represent seawater that is frozen even at p = 10,000 dbar.   
@@ -163,7 +163,7 @@ end
 % which is equivialnt to a pressure error of 6x10^-10 dbar.  This is the 
 % machine precision of the computer.  
 %
-% SA(SA < 0) = NaN;  
+% SA(SA < 0) = 0;  
 % 
 % CT_freezing = gsw_CT_freezing(SA,pf,saturation_fraction);
 % 

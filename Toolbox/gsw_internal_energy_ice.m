@@ -22,7 +22,7 @@ function internal_energy_ice = gsw_internal_energy_ice(t,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -75,8 +75,8 @@ end
 db2Pa = 1e4;
 
 internal_energy_ice = gsw_gibbs_ice(0,0,t,p) ...
-                      - (273.15 + t).*gsw_gibbs_ice(1,0,t,p) ...
-                      - (db2Pa*p + 101325).*gsw_gibbs_ice(0,1,t,p);
+                      - (gsw_T0 + t).*gsw_gibbs_ice(1,0,t,p) ...
+                      - (db2Pa*p + gsw_P0).*gsw_gibbs_ice(0,1,t,p);
 
 if transposed
     internal_energy_ice = internal_energy_ice.';

@@ -12,6 +12,10 @@ function Arsol = gsw_Arsol_SP_pt(SP,pt)
 %  saturated water vapor  This function uses the solubility coefficients
 %  as listed in Hamme and Emerson (2004).
 %
+%  Note that this algorithm has not been approved by IOC and is not work 
+%  from SCOR/IAPSO Working Group 127. It is included in the GSW
+%  Oceanographic Toolbox as it seems to be oceanographic best practice.
+%
 % INPUT:  
 %  SP  =  Practical Salinity  (PSS-78)                         [ unitless ]
 %  pt  =  potential temperature (ITS-90) referenced               [ deg C ]
@@ -25,7 +29,7 @@ function Arsol = gsw_Arsol_SP_pt(SP,pt)
 % AUTHOR:  Roberta Hamme, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (4th September, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

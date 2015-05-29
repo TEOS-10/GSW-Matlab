@@ -24,7 +24,7 @@ function internal_energy_t_exact = gsw_internal_energy_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall                                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -52,7 +52,6 @@ end %if
 if (mt ~= ms | nt ~= ns)
     error('gsw_internal_energy_t_exact: SA and t must have same dimensions')
 end
-
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -83,12 +82,10 @@ end
 %--------------------------------------------------------------------------
 
 db2Pa = 1e4;
-n0 = 0;
-n1 = 1;
 
-internal_energy_t_exact = gsw_gibbs(n0,n0,n0,SA,t,p) ...
-    - (273.15 + t).*gsw_gibbs(n0,n1,n0,SA,t,p) ...
-    - (db2Pa*p + 101325).*gsw_gibbs(n0,n0,n1,SA,t,p);
+internal_energy_t_exact = gsw_gibbs(0,0,0,SA,t,p) ...
+    - (t + gsw_T0).*gsw_gibbs(0,1,0,SA,t,p) ...
+    - (db2Pa*p + gsw_P0).*gsw_gibbs(0,0,1,SA,t,p);
 
 if transposed
     internal_energy_t_exact = internal_energy_t_exact.';

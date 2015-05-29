@@ -20,7 +20,7 @@ function pot_enthalpy_ice = gsw_pot_enthalpy_from_pt_ice(pt0_ice)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -56,7 +56,7 @@ end
 Tt = 273.16;                        % Triple-point temperature, kelvin (K).  
 rec_Tt = 3.660858105139845e-3;               % 1/Tt = 3.660858105139845e-3; 
 
-T = pt0_ice + 273.15;    % The input temperature t is potential temperature
+T = pt0_ice + gsw_T0;    % The input temperature t is potential temperature
                       % refered to 0 dbar (the surface) in units of degrees 
                    % Celcius.  T is the in-situ Absolute Temperature of the 
                                                % ice in degrees kelvin (K).  

@@ -33,7 +33,7 @@ function pt_ice = gsw_pt_from_t_ice(t,p,p_ref)
 % AUTHOR:
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -42,9 +42,9 @@ function pt_ice = gsw_pt_from_t_ice(t,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See appendix I of this TEOS-10 Manual.
 %
-%  McDougall, T.J. and S.J. Wotherspoon, 2013: A simple modification of 
-%   Newton’s method to achieve convergence of order 1 + sqrt(2).  Applied 
-%   Mathematics Letters, in press.   
+%  McDougall T. J. and S. J. Wotherspoon, 2014: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %

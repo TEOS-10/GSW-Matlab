@@ -20,7 +20,7 @@ function gibbs_ice_part_t = gsw_gibbs_ice_part_t(t,p)
 % AUTHOR:
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IAPWS, 2009: Revised Release on the Equation of State 2006 for H2O Ice

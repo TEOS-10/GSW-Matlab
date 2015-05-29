@@ -8,15 +8,15 @@ function [SA_iref_cast, CT_iref_cast, p_iref_cast] = gsw_interp_ref_cast(spycnl,
 % McDougall (1997) Neutral Density computer code.  This function finds the 
 % values of SA, CT and p on this reference cast which correspond to the 
 % value of isopycnal which is passed to this function from the function 
-% "gsw_geo_strf_isopycnal_CT".  The isopycnal could be either gamma_n or 
+% "gsw_geo_strf_isopycnal".  The isopycnal could be either gamma_n or 
 % sigma_2. If A is set to any of the following 's2','S2','sigma2','sigma_2'
 % the interpolation will take place in sigma 2 space, any other input
 % will result in the programme working in gamma_n space.
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCE:
-%  Jackett, D. R. and T. J. McDougall, 1997: A neutral density variable
+%  Jackett, D.R. and T.J. McDougall, 1997: A neutral density variable
 %   for the world’s oceans. Journal of Physical Oceanography, 27, 237-263.
 %
 % This fuction was adapted from Matlab's interp1q.

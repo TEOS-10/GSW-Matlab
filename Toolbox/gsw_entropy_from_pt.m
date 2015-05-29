@@ -1,14 +1,14 @@
 function entropy = gsw_entropy_from_pt(SA,pt)
 
-% gsw_entropy_from_pt                     specific entropy of seawater as a 
-%                                         function of potential temperature 
+% gsw_entropy_from_pt                          specific entropy of seawater  
 %==========================================================================
 %
 % USAGE:
 %  entropy  =  gsw_entropy_from_pt(SA,pt)
 %
 % DESCRIPTION:
-%  Calculates specific entropy of seawater. 
+%  Calculates specific entropy of seawater as a function of potential
+%  temperature. 
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -22,7 +22,7 @@ function entropy = gsw_entropy_from_pt(SA,pt)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -65,11 +65,9 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-n0 = 0; 
-n1 = 1;
+pr0 = zeros(size(SA));
 
-pr0 = zeros(size(SA)); 
-entropy = -gsw_gibbs(n0,n1,n0,SA,pt,pr0);
+entropy = -gsw_gibbs(0,1,0,SA,pt,pr0);
 
 if transposed
     entropy = entropy.';

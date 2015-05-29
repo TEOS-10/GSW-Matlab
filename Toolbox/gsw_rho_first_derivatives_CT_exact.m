@@ -1,14 +1,14 @@
-function [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives_CT_exact(SA,CT,p)
+function [rho_SA, rho_CT, rho_P] = gsw_rho_first_derivatives_CT_exact(SA,CT,p)
 
 % gsw_rho_first_derivatives_CT_exact       SA, CT and p partial derivatives
 %                                                                of density
 %==========================================================================
 % 
 % USAGE:  
-% [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives_CT_exact(SA,CT,p)
+% [rho_SA, rho_CT, rho_P] = gsw_rho_first_derivatives_CT_exact(SA,CT,p)
 %
 % DESCRIPTION:
-%  Calculates the three (3) partial derivatives of in situ density with 
+%  Calculates the three (3) partial derivatives of in-situ density with 
 %  respect to Absolute Salinity, Conservative Temperature and pressure.  
 %  Note that the pressure derivative is done with respect to pressure in 
 %  Pa, not dbar.  
@@ -16,8 +16,8 @@ function [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives_CT_exact(SA,C
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
 %  gsw_rho_first_derivatives(SA,CT,p), which uses the computationally
-%  efficient 48-term expression for density in terms of SA, CT and p
-%  (IOC et al., 2010).    
+%  efficient 75-term expression for specific volume in terms of SA, CT and 
+%  p (Roquet et al., 2015)
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -29,17 +29,17 @@ function [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives_CT_exact(SA,C
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & CT are MxN.
 %
 % OUTPUT:
-%  drho_dSA  =  partial derivatives of density             [ kg^2/(g m^3) ]
+%  rho_SA  =  partial derivative of density           [ (kg/m^3)(g/kg)^-1 ]
 %                 with respect to Absolute Salinity
-%  drho_dCT  =  partial derivatives of density               [ kg/(K m^3) ]
+%  rho_CT  =  partial derivative of density                  [ kg/(m^3 K) ]
 %                 with respect to Conservative Temperature
-%  drho_dP   =  partial derivatives of density              [ kg/(Pa m^3) ]
+%  rho_P   =  partial derivative of density                 [ kg/(m^3 Pa) ]
 %                 with respect to pressure in Pa
 %
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -47,6 +47,10 @@ function [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives_CT_exact(SA,C
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See appendix A.20 and appendix K of this TEOS-10 Manual. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2014: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -103,10 +107,8 @@ end
 SA(SA < 0) = 0;
 
 t = gsw_t_from_CT(SA,CT,p);
+T0 = gsw_T0;
 
-n0 = 0; 
-n1 = 1; 
-n2 = 2;
 db2Pa = 1e-4;
 sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
 
@@ -118,7 +120,7 @@ y = 0.025*t;
 y_pt = 0.025*pt0;
 z = db2Pa*p; %Note.The input pressure (p) is sea pressure in units of dbar.
 
-g_SA_T_mod = 1187.3715515697959 + z.*(1458.233059470092 + ...
+g_SA_T_mod_part = 1187.3715515697959 + z.*(1458.233059470092 + ...
         z.*(-687.913805923122 + z.*(249.375342232496 + z.*(-63.313928772146 + 14.09317606630898.*z)))) + ...
         x.*(-1480.222530425046 + x.*(2175.341332000392 + x.*(-980.14153344888 + 220.542973797483.*x) + ...
         y.*(-548.4580073635929 + y.*(592.4012338275047 + y.*(-274.2361238716608 + 49.9394019139016.*y))) - ...
@@ -131,9 +133,9 @@ g_SA_T_mod = 1187.3715515697959 + z.*(1458.233059470092 + ...
         z.*(4165.4688847996085 + z.*(-1229.337851789418 + (681.370187043564 - 66.7696405958478.*z).*z))) + ...
         z.*(-3443.057215135908 + z.*(1349.638121077468 + ...
         z.*(-713.258224830552 + (176.8161433232 - 31.68006188846728.*z).*z))));
-g_SA_T_mod = 0.5*sfac*0.025*g_SA_T_mod;
+g_SA_T_mod = 0.5*sfac*0.025*g_SA_T_mod_part;
    
-g_SA_mod = 8645.36753595126 + ...
+g_SA_mod_part = 8645.36753595126 + ...
         x.*(-7296.43987145382 + x.*(8103.20462414788 + ...
         y_pt.*(2175.341332000392 + y_pt.*(-274.2290036817964 + ...
         y_pt.*(197.4670779425016 + y_pt.*(-68.5590309679152 + 9.98788038278032.*y_pt)))) + ...
@@ -145,28 +147,28 @@ g_SA_mod = 8645.36753595126 + ...
         y_pt.*(1187.3715515697959 + ...
         y_pt.*(1760.062705994408 + y_pt.*(-450.535298526802 + ...
         y_pt.*(182.8520895502518 + y_pt.*(-43.3206481750622 + 4.26033941694366.*y_pt)))));
-g_SA_mod = 0.5*sfac*g_SA_mod;   
+g_SA_mod = 0.5*sfac*g_SA_mod_part;   
 
-g_p = gsw_gibbs(n0,n0,n1,SA,t,p);
+g_p = gsw_gibbs(0,0,1,SA,t,p);
 
-g_psq_g_tt = g_p.*g_p.*gsw_gibbs(n0,n2,n0,SA,t,p);
+g_psq_g_tt = g_p.*g_p.*gsw_gibbs(0,2,0,SA,t,p);
 
-g_tp = gsw_gibbs(n0,n1,n1,SA,t,p);
+g_tp = gsw_gibbs(0,1,1,SA,t,p);
 
-factora = g_SA_T_mod - g_SA_mod./(273.15+pt0);
+factora = g_SA_T_mod - g_SA_mod./(T0+pt0);
 
 factor = factora./g_psq_g_tt;
 
-drho_dSA = g_tp.*factor - gsw_gibbs(n1,n0,n1,SA,t,p)./(g_p.*g_p);
+rho_SA = g_tp.*factor - gsw_gibbs(1,0,1,SA,t,p)./(g_p.*g_p);
 
-drho_dCT = g_tp.*gsw_cp0./((273.15+pt0).*g_psq_g_tt);
+rho_CT = g_tp.*gsw_cp0./((T0 + pt0).*g_psq_g_tt);
 
-drho_dP = (g_tp.^2 - gsw_gibbs(n0,n2,n0,SA,t,p).*gsw_gibbs(n0,n0,n2,SA,t,p))./(g_psq_g_tt);
+rho_P = (g_tp.^2 - gsw_gibbs(0,2,0,SA,t,p).*gsw_gibbs(0,0,2,SA,t,p))./(g_psq_g_tt);
 
 if transposed
-    drho_dSA = drho_dSA.'; 
-    drho_dCT = drho_dCT.';
-    drho_dP = drho_dP.';
+    rho_SA = rho_SA.'; 
+    rho_CT = rho_CT.';
+    rho_P = rho_P.';
 end
 
 end

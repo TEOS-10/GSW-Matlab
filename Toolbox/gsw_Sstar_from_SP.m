@@ -33,7 +33,7 @@ function [Sstar, in_ocean] = gsw_Sstar_from_SP(SP,p,long,lat)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall & Paul Barker       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -159,7 +159,7 @@ in_ocean = Sstar;
 
 [SAAR(Iocean), in_ocean(Iocean)] = gsw_SAAR(p(Iocean),long(Iocean),lat(Iocean));
 
-Sstar(Iocean) = (35.16504/35)*SP(Iocean).*(1 - r_1.*SAAR(Iocean));
+Sstar(Iocean) = gsw_uPS*SP(Iocean).*(1 - r_1.*SAAR(Iocean));
 
 %In the Baltic Sea, Sstar = SA.
 

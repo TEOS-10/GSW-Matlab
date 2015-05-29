@@ -36,7 +36,7 @@ function pt = gsw_pt_from_t(SA,t,p,p_ref)
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -123,8 +123,7 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-SSO = 35.16504;                    % from section 2.4 of IOC et al. (2010).
+SSO = gsw_SSO;                    % from section 2.4 of IOC et al. (2010).
 
 s1 = SA*(35./SSO);
 
@@ -136,7 +135,7 @@ pt = t + (p-p_ref).*( 8.65483913395442e-6  ...
              +  t .*  1.77803965218656e-8   ...
        + (p+p_ref).*  1.71155619208233e-10));
 
-dentropy_dt = cp0./((273.15 + pt).*(1-0.05.*(1 - SA./SSO)));
+dentropy_dt = gsw_cp0./((273.15 + pt).*(1-0.05.*(1 - SA./SSO)));
 
 true_entropy_part = gsw_entropy_part(SA,t,p);
 

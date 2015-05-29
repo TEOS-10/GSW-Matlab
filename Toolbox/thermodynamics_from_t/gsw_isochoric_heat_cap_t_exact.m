@@ -24,7 +24,7 @@ function isochoric_heat_cap_t_exact = gsw_isochoric_heat_cap_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall                                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -43,7 +43,7 @@ function isochoric_heat_cap_t_exact = gsw_isochoric_heat_cap_t_exact(SA,t,p)
 
 if ~(nargin==3)
    error('gsw_isochoric_heat_cap_t_exact:  Requires three inputs')
-end %if
+end 
 
 [ms,ns] = size(SA);
 [mt,nt] = size(t);
@@ -81,15 +81,11 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1; 
-n2 = 2;
+g_tt = gsw_gibbs(0,2,0,SA,t,p); 
+g_tp = gsw_gibbs(0,1,1,SA,t,p);
+g_pp = gsw_gibbs(0,0,2,SA,t,p);
 
-g_tt = gsw_gibbs(n0,n2,n0,SA,t,p); 
-g_tp = gsw_gibbs(n0,n1,n1,SA,t,p);
-g_pp = gsw_gibbs(n0,n0,n2,SA,t,p);
-
-isochoric_heat_cap_t_exact = -(273.15 + t).*(g_tt - g_tp.*g_tp./g_pp);
+isochoric_heat_cap_t_exact = -(t + gsw_T0).*(g_tt - g_tp.*g_tp./g_pp);
 
 if transposed
     isochoric_heat_cap_t_exact = isochoric_heat_cap_t_exact.';

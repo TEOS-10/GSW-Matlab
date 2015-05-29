@@ -1,7 +1,7 @@
 function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delta_p)
 
 % gsw_geo_strf_dyn_height_pc                     dynamic height anomaly for
-%                            piecewise constant profiles (48-term equation)
+%                            piecewise constant profiles (75-term equation)
 %==========================================================================
 %
 % USAGE:  
@@ -23,12 +23,12 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 %  and CT = 0 deg C.  The output values of geo_strf_dyn_height_pc are 
 %  given at the mid-point pressures, p_mid, of each layer in which SA and 
 %  CT are vertically piecewice constant (pc).  This function calculates 
-%  specific volume anomaly using the computationally-efficient 48-term 
-%  expression for specific volume of IOC et al. (2010). 
+%  enthalpy using the computationally-efficient 75-term expression for 
+%  specific volume of Roquet et al., (2015). 
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -51,7 +51,7 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 % AUTHOR: 
 %  Trevor McDougall and Claire Roberts-Thomson         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,11 +60,20 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.32.2) and (A.30.6) of this TEOS-10 Manual. 
 %
-%  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  McDougall, T.J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces. Ocean Modelling, 32,
 %   105-117.  
 %    See section 8 of this paper.  
 % 
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
+%
 %  The software is available from http://www.TEOS-10.org
 %
 %==========================================================================
@@ -75,7 +84,8 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 
 if ~(nargin == 3)
    error('gsw_geo_strf_dyn_height_pc:  Requires three inputs')
-end %if
+end 
+
 if ~(nargout == 2)
    error('gsw_geo_strf_dyn_height_pc:  Requires two outputs')
 end %if
@@ -103,7 +113,7 @@ else
 end %if
 
 transposed = 0;
-if ms == 1  % row vector
+if ms == 1 
    delta_p  =  delta_p(:);
    CT  =  CT(:);
    SA  =  SA(:);
@@ -129,23 +139,23 @@ dyn_height_deep = -cumsum(delta_h);
 p_mid = 0.5*(p_shallow  + p_deep);
 delta_h_half = gsw_enthalpy_diff(SA,CT,p_mid,p_deep);
 
-geo_strf_dyn_height_pc = gsw_enthalpy_SSO_0_p(p_mid) + ...
+geo_strf_dyn_height_pc = gsw_enthalpy_SSO_0(p_mid) + ...
                            dyn_height_deep + delta_h_half;
 
 %--------------------------------------------------------------------------
 % This function calculates dynamic height anomaly piecewise constant using 
-% the computationally-efficient 48-term expression for density in terms of
-% SA, CT and p. If one wanted to compute dynamic height anomaly with the 
-% full TEOS-10 Gibbs function expression for density, the following lines 
-% of code will enable this.
+% the computationally-efficient 75-term expression for specific volume in
+% terms of SA, CT and p. If one wanted to compute dynamic height anomaly 
+% with the full TEOS-10 Gibbs function expression for specific volume, the 
+% following lines of code will enable this.
 %
 %   delta_h = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_deep);
 %   dyn_height_deep = -cumsum(delta_h);
 %   p_mid = 0.5*(p_shallow  + p_deep);
 %   delta_h_half = gsw_enthalpy_diff_CT_exact(SA,CT,p_mid,p_deep);
-%   SA_SSO = 35.16504*ones(size(SA));
-%   CT_0 = zeros(size(CT));
-%   geo_strf_dyn_height_pc = gsw_enthalpy_CT_exact(SA_SSO,CT_0,p_mid) + ...
+%   SSO = gsw_SSO*ones(size(SA));
+%   CT_0 = zeros(size(SSO));
+%   geo_strf_dyn_height_pc = gsw_enthalpy_CT_exact(SSO,CT_0,p_mid) + ...
 %                               dyn_height_deep + delta_h_half;
 %
 %---------------This is the end of the alternative code--------------------

@@ -26,7 +26,7 @@ function pt = gsw_pt_from_entropy(SA,entropy)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -52,7 +52,7 @@ if ~(nargin == 2)
 end %if
 
 [ms,ns] = size(SA);
-[me,ne]   = size(entropy);
+[me,ne] = size(entropy);
 
 if (ms ~= me | ns ~= ne )
     error('gsw_pt_from_entropy: Input arguments do not have the same dimensions')
@@ -73,21 +73,21 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-SSO = 35.16504;                    % from section 2.4 of IOC et al. (2010).
+cp0 = gsw_cp0;           % from Eqn. (3.3.3) of IOC et al. (2010).
+T0 = gsw_T0;
 
-%  Find the initial value of pt
-part1 = 1 - SA./SSO;
+% Find the initial value of pt
+part1 = 1 - SA./gsw_SSO;
 part2 = 1 - 0.05.*part1;
-ent_SA = (cp0/273.15).*part1.*(1 - 1.01.*part1);
+ent_SA = (cp0/T0).*part1.*(1 - 1.01.*part1);
 c = (entropy - ent_SA).*(part2./cp0);
-pt = 273.15*(exp(c) - 1);
-dentropy_dt = cp0./((273.15 + pt).*part2); %this is the intial value of dentropy_dt
+pt = T0*(exp(c) - 1);
+dentropy_dt = cp0./((T0 + pt).*part2); %this is the intial value of dentropy_dt
 
 for Number_of_iterations = 1:2
     pt_old = pt;
     dentropy = gsw_entropy_from_pt(SA,pt_old) - entropy;
-    pt = pt_old - dentropy./dentropy_dt ; % this is half way through the modified method (McDougall and Wotherspoon, 2012)
+    pt = pt_old - dentropy./dentropy_dt ; % this is half way through the modified method (McDougall and Wotherspoon, 2013)
     ptm = 0.5*(pt + pt_old);
     dentropy_dt = -gsw_gibbs_pt0_pt0(SA,ptm);
     pt = pt_old - dentropy./dentropy_dt;

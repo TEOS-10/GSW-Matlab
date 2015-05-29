@@ -10,8 +10,8 @@ function pt0 = gsw_pt0_from_t(SA,t,p)
 % DESCRIPTION:
 %  Calculates potential temperature with reference pressure, p_ref = 0 dbar.
 %  The present routine is computationally faster than the more general
-%  function "gsw_pt_from_t(SA,t,p,p_ref)" which can be used for any reference
-%  pressure value.
+%  function "gsw_pt_from_t(SA,t,p,p_ref)" which can be used for any 
+%  reference pressure value.
 %  This subroutine calls "gsw_entropy_part(SA,t,p)",
 %  "gsw_entropy_part_zerop(SA,pt0)" and "gsw_gibbs_pt0_pt0(SA,pt0)".
 %
@@ -97,8 +97,7 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-SSO = 35.16504;                    % from section 2.4 of IOC et al. (2010).
+SSO = gsw_SSO;                    % from section 2.4 of IOC et al. (2010).
 
 s1 = SA*(35./SSO);
 
@@ -110,7 +109,7 @@ pt0 = t + p.*( 8.65483913395442e-6  - ...
           t.*  1.77803965218656e-8  + ...
           p.*  1.71155619208233e-10));
 
-dentropy_dt = cp0./((273.15 + pt0).*(1-0.05.*(1 - SA./SSO)));
+dentropy_dt = gsw_cp0./((gsw_T0 + pt0).*(1 - 0.05.*(1 - SA./SSO)));
 
 true_entropy_part = gsw_entropy_part(SA,t,p);
 

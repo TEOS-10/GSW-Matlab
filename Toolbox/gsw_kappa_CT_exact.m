@@ -1,6 +1,6 @@
 function kappa_CT_exact = gsw_kappa_CT_exact(SA,CT,p)
 
-% gsw_kappa_CT_exact                              isentropic compressibility
+% gsw_kappa_CT_exact                             isentropic compressibility
 %==========================================================================
 %
 % USAGE:  
@@ -9,6 +9,11 @@ function kappa_CT_exact = gsw_kappa_CT_exact(SA,CT,p)
 % DESCRIPTION:
 %  Calculates the isentropic compressibility of seawater. 
 %  
+%  Note that this function uses the full Gibbs function.  There is an 
+%  alternative to calling this function, namely gsw_kappa(SA,CT,p),
+%  which uses the computationally efficient 75-term expression for density 
+%  in terms of SA, CT and p (Roquet et al., 2015).  
+%
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
 %  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
@@ -25,7 +30,7 @@ function kappa_CT_exact = gsw_kappa_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -34,6 +39,10 @@ function kappa_CT_exact = gsw_kappa_CT_exact(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (2.16.1) and the row for kappa in Table P.1 of appendix P  
 %    of this TEOS-10 Manual. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -83,17 +92,13 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1; 
-n2 = 2;
-
 t = gsw_t_from_CT(SA,CT,p);
 
-g_tt = gsw_gibbs(n0,n2,n0,SA,t,p); 
-g_tp = gsw_gibbs(n0,n1,n1,SA,t,p);
+g_tt = gsw_gibbs(0,2,0,SA,t,p); 
+g_tp = gsw_gibbs(0,1,1,SA,t,p);
 
-kappa_CT_exact = (g_tp.*g_tp - g_tt.*gsw_gibbs(n0,n0,n2,SA,t,p))./ ...
-                  (gsw_gibbs(n0,n0,n1,SA,t,p).*g_tt);
+kappa_CT_exact = (g_tp.*g_tp - g_tt.*gsw_gibbs(0,0,2,SA,t,p))./ ...
+                  (gsw_gibbs(0,0,1,SA,t,p).*g_tt);
 
 if transposed
     kappa_CT_exact = kappa_CT_exact.';

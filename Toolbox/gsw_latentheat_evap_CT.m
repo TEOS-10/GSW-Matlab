@@ -25,7 +25,7 @@ function latentheat_evap = gsw_latentheat_evap_CT(SA,CT)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall & Rainer Feistel      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -93,15 +93,14 @@ c25 =  1.797443329095446e2;
 c26 = -2.389853928747630e1;
 c27 =  1.021046205356775e2;
 
-S_u = 40*(35.16504/35);
-x = sqrt(SA./S_u);
-y = CT./40;
+sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
+x = sqrt(SA.*sfac);
+y = CT.*0.025;
 
-latentheat_evap = c0 + x.*(c1 + c4*y + x.*(c3   ...
-    + y.*(c7 + c12*y) + x.*(c6 + y.*(c11 + y.*(c17 + c24*y)) ...
-    + x.*(c10 + y.*(c16 + c23*y) + x.*(c15 + c22*y + c21*x)))))  ...
-    + y.*(c2 + y.*(c5 + c8*x + y.*(c9 + x.*(c13 + c18*x) ...
-    + y.*(c14 + x.*(c19 + c25*x) + y.*(c20 + c26*x + c27*y)))));
+latentheat_evap = c0 + x.*(c1 + c4*y + x.*(c3 + y.*(c7 + c12*y) + x.*(c6 ...
+    + y.*(c11 + y.*(c17 + c24*y)) + x.*(c10 + y.*(c16 + c23*y) + x.*(c15 ...
+    + c22*y + c21*x))))) + y.*(c2 + y.*(c5 + c8*x + y.*(c9 + x.*(c13 ...
+    + c18*x) + y.*(c14 + x.*(c19 + c25*x) + y.*(c20 + c26*x + c27*y)))));
 
 if transposed
     latentheat_evap = latentheat_evap.';

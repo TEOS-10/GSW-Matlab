@@ -19,7 +19,7 @@ function p = gsw_p_from_Abs_Pressure(Absolute_Pressure)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -38,6 +38,6 @@ end %if
 
 Pa2db = 1e-4;
 
-p = (Absolute_Pressure - 101325)*Pa2db;
+p = (Absolute_Pressure - gsw_P0)*Pa2db;
 
 end

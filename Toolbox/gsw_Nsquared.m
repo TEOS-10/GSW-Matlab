@@ -1,7 +1,7 @@
 function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 
 % gsw_Nsquared             buoyancy (Brunt-Vaisala) frequency squared (N^2)
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 % 
 % USAGE:  
@@ -19,11 +19,13 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %  The pressure increment, dP, in the above formula is in Pa, so that it is
 %  10^4 times the pressure increment dp in dbar. 
 %
-%  Note. This routine uses rho from "gsw_rho", which is the computationally
-%  efficient 48-term expression for density in terms of SA, CT and p.  The    
-%  48-term equation has been fitted in a restricted range of parameter 
-%  space, and is most accurate inside the "oceanographic funnel" described 
-%  in IOC et al. (2010).  The GSW library function 
+%  Note. This routine uses rho from "gsw_rho", which is based on the
+%  computationally efficient expression for specific volume in terms of 
+%  SA, CT and p (Roquet et al., 2015).
+%
+%  Note that this 75-term equation has been fitted in a restricted range of 
+%  parameter space, and is most accurate inside the "oceanographic funnel" 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -49,7 +51,7 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -61,6 +63,15 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.10 and Eqn. (3.10.2) of this TEOS-10 Manual. 
 %
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
+%
 %   The software is available from http://www.TEOS-10.org
 %
 %==========================================================================
@@ -71,10 +82,11 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 
 if ~(nargin == 3 | nargin == 4)
    error('gsw_Nsquared:  Requires three or four inputs')
-end %if
+end 
+
 if ~(nargout == 2)
    error('gsw_Nsquared:  Requires two outputs')
-end %if
+end 
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -101,7 +113,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_Nsquared: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 if ms == 1
     SA = SA.';
@@ -130,11 +142,11 @@ if exist('lat','var')
         % ok
     else
         error('gsw_Nsquared: Inputs array dimensions arguments do not agree')
-    end %if
+    end 
     grav = gsw_grav(lat,p);
 else
     grav = 9.7963*ones(size(p));             % (Griffies, 2004)
-end %if
+end 
 
 %--------------------------------------------------------------------------
 % Start of the calculation
@@ -157,9 +169,9 @@ p_mid = 0.5*(p(Ishallow,:) + p(Ideep,:));
 
 %--------------------------------------------------------------------------
 % This function calculates rho, alpha & beta using the computationally
-% efficient 48-term expression for density in terms of SA, CT and p.  If 
-% one wanted to use the full TEOS-10 Gibbs function expression for density,
-% the following lines of code will enable this.
+% efficient expression for specific volume in terms of SA, CT and p.  If 
+% one wanted to use the full TEOS-10 Gibbs function expression for specific
+% volume, the following lines of code will enable this.
 %
 %    rho_mid = gsw_rho_CT_exact(SA_mid,CT_mid,p_mid);
 %    alpha_mid = gsw_alpha_CT_exact(SA_mid,CT_mid,p_mid);

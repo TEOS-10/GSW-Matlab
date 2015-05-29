@@ -13,8 +13,8 @@ function alpha_on_beta_CT_exact = gsw_alpha_on_beta_CT_exact(SA,CT,p)
 %
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely gsw_alpha_on_beta(SA,CT,p),
-%  which uses the computationally efficient 48-term expression for density 
-%  in terms of SA, CT and p (IOC et al., 2010).  
+%  which uses the computationally efficient 75-term expression for specific 
+%  volume in terms of SA, CT and p (Roquet et al., 2015).  
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -34,7 +34,7 @@ function alpha_on_beta_CT_exact = gsw_alpha_on_beta_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -42,6 +42,10 @@ function alpha_on_beta_CT_exact = gsw_alpha_on_beta_CT_exact(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See appendix A.20 and appendix K of this TEOS-10 Manual. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -54,6 +58,7 @@ function alpha_on_beta_CT_exact = gsw_alpha_on_beta_CT_exact(SA,CT,p)
 if ~(nargin == 3)
    error('gsw_alpha_on_beta_CT_exact:  Requires three inputs')
 end %if
+
 if ~(nargout == 1)
    error('gsw_alpha_on_beta_CT_exact:  Requires one outputs')
 end %if
@@ -97,7 +102,7 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-[dummy, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_exact(SA,CT,p);
+[dummy, alpha_CT_exact, beta_CT_exact] = gsw_specvol_alpha_beta_CT_exact(SA,CT,p);
 alpha_on_beta_CT_exact = alpha_CT_exact./beta_CT_exact;
          
 if transposed

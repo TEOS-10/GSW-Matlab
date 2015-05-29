@@ -25,7 +25,7 @@ function pt0_ice = gsw_pt0_from_t_ice(t,p)
 % AUTHOR:
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -34,9 +34,9 @@ function pt0_ice = gsw_pt0_from_t_ice(t,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See appendix I of this TEOS-10 Manual.
 %
-%  McDougall, T.J. and S.J. Wotherspoon, 2013: A simple modification of 
-%   Newton’s method to achieve convergence of order 1 + sqrt(2).  Applied 
-%   Mathematics Letters, in press.   
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -125,8 +125,8 @@ if any (t < -45)
     for Number_of_iterations = 1:3
         pt0_ice_old = pt0_ice(I_cold);
         dentropy = -gsw_gibbs_ice_pt0(pt0_ice_old) - true_entropy(I_cold);
-        pt0_ice = pt0_ice_old - dentropy./dentropy_dt; % this is half way through the modified method (McDougall and Wotherspoon, 2013)
-        ptm_ice = 0.5.*(pt0_ice + pt0_ice_old);
+        pt0_ice(I_cold) = pt0_ice_old - dentropy./dentropy_dt; % this is half way through the modified method (McDougall and Wotherspoon, 2013)
+        ptm_ice = 0.5.*(pt0_ice(I_cold) + pt0_ice_old);
         dentropy_dt = -gsw_gibbs_ice_pt0_pt0(ptm_ice);
         pt0_ice(I_cold) = pt0_ice_old - dentropy./dentropy_dt; % this is the end of a full iteration of the modified Newton's method
     end
@@ -162,8 +162,8 @@ if any (t < -45)
             pt0_ice(Icold) = pt0_ice_old - dentropy./dentropy_dt; % this is the end of a full iteration of the modified Newton's method
         end
     end
-    
 end
+
 if transposed
     pt0_ice = pt0_ice.';
 end

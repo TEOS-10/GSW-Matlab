@@ -27,7 +27,7 @@ function kappa_const_t_exact = gsw_kappa_const_t_exact(SA,t,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,7 +46,7 @@ function kappa_const_t_exact = gsw_kappa_const_t_exact(SA,t,p)
 
 if ~(nargin == 3)
    error('gsw_kappa_const_t_exact:  Requires three inputs')
-end %if
+end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(t);
@@ -69,7 +69,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_kappa_const_t_exact: Inputs array dimensions arguments do not agree')
-end %if
+end
 
 if ms == 1
     SA = SA.';
@@ -84,11 +84,7 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1; 
-n2 = 2;
-
-kappa_const_t_exact = -gsw_gibbs(n0,n0,n2,SA,t,p)./gsw_gibbs(n0,n0,n1,SA,t,p);
+kappa_const_t_exact = -gsw_gibbs(0,0,2,SA,t,p)./gsw_gibbs(0,0,1,SA,t,p);
 
 if transposed
     kappa_const_t_exact = kappa_const_t_exact.';

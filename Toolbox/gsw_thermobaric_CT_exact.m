@@ -15,8 +15,8 @@ function thermobaric_CT_exact = gsw_thermobaric_CT_exact(SA,CT,p)
 %
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely gsw_thermobaric(SA,CT,p) 
-%  which uses the computationally efficient 48-term expression for density 
-%  in terms of SA, CT and p (IOC et al., 2010).   
+%  which uses the computationally efficient 75-term expression for specific
+%  volume in terms of SA, CT and p (Roquet et al., 2015).   
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -44,6 +44,10 @@ function thermobaric_CT_exact = gsw_thermobaric_CT_exact(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.8.2) and (P.2) of this TEOS-10 manual.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -93,19 +97,16 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-beta = gsw_beta_CT_exact(SA,CT,p);
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
-dp = 0.1;                        % pressure increment is 0.1 dbar (1000 Pa)
-p_u = p - dp;
-p_l = p + dp;
+rho = gsw_rho_CT_exact(SA,CT,p);
 
-alpha_on_beta_u = gsw_alpha_on_beta_CT_exact(SA,CT,p_u);
-alpha_on_beta_l = gsw_alpha_on_beta_CT_exact(SA,CT,p_l);
+[v_SA, v_CT, dummy] = gsw_specvol_first_derivatives_CT_exact(SA,CT,p);
 
-thermobaric_CT_exact = beta.*(alpha_on_beta_u - alpha_on_beta_l)./(p_u - p_l);
-Pa2db = 1e-4;  % To have units of 1/(K Pa)
-thermobaric_CT_exact = thermobaric_CT_exact.*Pa2db;  
+[dummy, dummy, dummy, v_SA_P, v_CT_P] = gsw_specvol_second_derivatives_CT_exact(SA,CT,p);
 
+thermobaric_CT_exact = rho.*(v_CT_P - (v_CT./v_SA).*v_SA_P);
 
 if transposed
     thermobaric_CT_exact = thermobaric_CT_exact.';

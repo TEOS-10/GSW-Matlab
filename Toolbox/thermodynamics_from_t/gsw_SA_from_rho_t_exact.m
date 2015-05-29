@@ -29,7 +29,7 @@ function SA = gsw_SA_from_rho_t_exact(rho,t,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -94,13 +94,10 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1;
-
 v_lab = ones(size(rho))./rho;
 
-v_0 = gsw_gibbs(n0,n0,n1,0,t,p);
-v_120 = gsw_gibbs(n0,n0,n1,120,t,p);
+v_0 = gsw_gibbs(0,0,1,0,t,p);
+v_120 = gsw_gibbs(0,0,1,120,t,p);
 
 SA = 120*(v_lab - v_0)./(v_120 - v_0);            % initial estimate of SA.
 SA(SA < 0 | SA > 120) = NaN;
@@ -109,11 +106,11 @@ v_SA = (v_120 - v_0)./120; %initial estimate of v_SA, the SA derivative of v
 
 for Number_of_iterations = 1:2
     SA_old = SA;
-    delta_v = gsw_gibbs(n0,n0,n1,SA_old,t,p) - v_lab;
+    delta_v = gsw_gibbs(0,0,1,SA_old,t,p) - v_lab;
     SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2012)
     SA(SA < 0 | SA > 120) = NaN;
     SA_mean = 0.5*(SA + SA_old);
-    v_SA = gsw_gibbs(n1,n0,n1,SA_mean,t,p);
+    v_SA = gsw_gibbs(1,0,1,SA_mean,t,p);
     SA = SA_old - delta_v./v_SA;
     SA(SA < 0 | SA > 120) = NaN;
 end

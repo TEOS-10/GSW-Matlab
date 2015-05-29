@@ -1,6 +1,6 @@
 function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 
-% gsw_p_from_z                                         pressure from height
+% gsw_p_from_z                      pressure from height (76-term equation)
 %==========================================================================
 %
 % USAGE:
@@ -8,8 +8,8 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %
 % DESCRIPTION:
 %  Calculates sea pressure from height using computationally-efficient 
-%  48-term expression for density, in terms of SA, CT and p (IOC et
-%  al., 2010).  Dynamic height anomaly, geo_strf_dyn_height, if provided,
+%  75-term expression for density, in terms of SA, CT and p (Roquet et al.,
+%  2015).  Dynamic height anomaly, geo_strf_dyn_height, if provided,
 %  must be computed with its p_ref = 0 (the surface). Also if provided,
 %  sea_surface_geopotental is the geopotential at zero sea pressure. This 
 %  function solves Eqn.(3.32.3) of IOC et al. (2010) iteratively for p.  
@@ -17,9 +17,9 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %  Note. Height (z) is NEGATIVE in the ocean.  Depth is -z.  
 %    Depth is not used in the GSW computer software library. 
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -48,7 +48,7 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %  Trevor McDougall, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -56,13 +56,22 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  McDougall T.J. and S.J. Wotherspoon, 2013: A simple modification of 
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %
-%  Moritz (2000) Goedetic reference system 1980. J. Geodesy, 74, 128-133.
+%  Moritz, 2000: Goedetic reference system 1980. J. Geodesy, 74, 128-133.
 %
-%  Saunders, P. M., 1981: Practical conversion of pressure to depth. 
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
+%
+%  Saunders, P.M., 1981: Practical conversion of pressure to depth. 
 %   Journal of Physical Oceanography, 11, 573-574.
 %
 %  This software is available from http://www.TEOS-10.org
@@ -78,7 +87,7 @@ if ~(nargin == 2 | nargin == 3 | nargin == 4)
 end %if
 
 if any(z > 5)
-   error('gsw_p_from_z: The input z should be negative and values must be less than 5 m.')
+   error('gsw_p_from_z: The input z is generally negative and values must be less than 5 m.')
 end
 
 if ~exist('geo_strf_dyn_height','var')
@@ -136,8 +145,8 @@ gamma = 2.26e-7; % If the graviational acceleration were to be regarded as
                  % ocean models, then gamma would be set to be zero here,
                  % and the code below works perfectly well.  
 deg2rad = pi/180;
-X = sin(lat*deg2rad);
-sin2 = X.*X;
+sinlat = sin(lat*deg2rad);
+sin2 = sinlat.*sinlat;
 gs = 9.780327*(1.0 + (5.2792e-3 + (2.32e-5*sin2)).*sin2);
 
 % get the first estimate of p from Saunders (1981)
@@ -145,18 +154,18 @@ c1 =  5.25e-3*sin2 + 5.92e-3;
 p  = -2.*z./((1-c1) + sqrt((1-c1).*(1-c1) + 8.84e-6.*z)) ;
 % end of the first estimate from Saunders (1981)
 
-df_dp = db2Pa * gsw_specvol_SSO_0_p(p); % initial value of the derivative of f
+df_dp = db2Pa*gsw_specvol_SSO_0(p); % initial value of the derivative of f
 
-f = gsw_enthalpy_SSO_0_p(p) + gs.*(z - 0.5*gamma*(z.*z)) ...
+f = gsw_enthalpy_SSO_0(p) + gs.*(z - 0.5*gamma*(z.*z)) ...
                 - (geo_strf_dyn_height + sea_surface_geopotental);
 p_old = p;
 p = p_old - f./df_dp;
 p_mid = 0.5*(p + p_old);
-df_dp = db2Pa * gsw_specvol_SSO_0_p(p_mid);
+df_dp = db2Pa*gsw_specvol_SSO_0(p_mid);
 p = p_old - f./df_dp;
 
 % After this one iteration through this modified Newton-Raphson iterative
-% procedure (McDougall and Wotherspoon, 2012), the remaining error in p is 
+% procedure (McDougall and Wotherspoon, 2013), the remaining error in p is 
 % at computer machine precision, being no more than 1.6e-10 dbar. 
 
 if transposed

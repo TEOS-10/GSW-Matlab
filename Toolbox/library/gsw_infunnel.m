@@ -1,6 +1,6 @@
 function in_funnel = gsw_infunnel(SA,CT,p)
 
-% gsw_infunnel        "oceanographic funnel" check for the 48-term equation
+% gsw_infunnel        "oceanographic funnel" check for the 76-term equation
 %==========================================================================
 % 
 % USAGE:  
@@ -18,20 +18,24 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 % OUTPUT:
 %  in_funnel  =  0, if SA, CT and p are outside the "funnel" 
 %             =  1, if SA, CT and p are inside the "funnel"
-%  Note. The term "funnel" describes the range of SA, CT and p over which 
-%    the error in the fit of the computationally-efficient 48-term 
-%    expression for density in terms of SA, CT and p was calculated
-%    (McDougall et al., 2013).
+%  Note. The term "funnel" (McDougall et al., 2003) describes the range of
+%    SA, CT and p over which the error in the fit of the computationally
+%    efficient 76-term expression for specific volume in terms of SA, CT 
+%    and p was calculated (Roquet et al., 2015).
 %
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -40,6 +44,10 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %--------------------------------------------------------------------------
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
+
+if ~nargin == 3 
+   error('gsw_infunnel:  Requires three inputs')
+end 
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -62,7 +70,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_infunnel: Inputs array dimensions arguments do not agree')
-end %if
+end
 
 %--------------------------------------------------------------------------
 % Start of the calculation

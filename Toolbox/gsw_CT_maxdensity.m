@@ -1,7 +1,7 @@
 function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 
 % gsw_CT_maxdensity                     Conservative Temperature of maximum 
-%                                    density of seawater (48-term equation)
+%                                    density of seawater (75-term equation)
 % =========================================================================
 %
 % USAGE:
@@ -12,12 +12,12 @@ function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 %  This function returns the Conservative temperature at which the density
 %  of seawater is a maximum, at given Absolute Salinity, SA, and sea 
 %  pressure, p (in dbar).  This function uses the computationally-efficient
-%  48-term expression for density in terms of SA, CT and p (IOC et
-%  al., 2010).
+%  expression for specific volume in terms of SA, CT and p
+%  (Roquet et al., 2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -36,7 +36,7 @@ function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -45,9 +45,13 @@ function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.42 of this TEOS-10 Manual.  
 %
-%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation. 
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -91,14 +95,11 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% n0 = 0; 
-% n1 = 1;
-
 dCT = 0.001;                      % the Conservative Temperature increment.
 
 CT = 3.978 - 0.22072*SA;                         % the initial guess of CT.
 
-dalpha_dCT = 1.1e-5;                 % the initial guess for d(alpha)_dCT.
+dalpha_dCT = 1.1e-5;                  % the initial guess for d(alpha)_dCT.
 
 for Number_of_iterations = 1:3
     CT_old = CT;
@@ -111,7 +112,7 @@ for Number_of_iterations = 1:3
 end
 
 % After three iterations of this modified Newton-Raphson (McDougall and 
-% Wotherspoon, 2012) iteration, the error in CT_maxdensity is typically no
+% Wotherspoon, 2013) iteration, the error in CT_maxdensity is typically no
 % larger than 1x10^-15 degress C.  
 
 CT_maxdensity = CT;

@@ -36,7 +36,7 @@ function [SA, Sstar, in_ocean] = gsw_SA_Sstar_from_SP(SP,p,long,lat)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -156,7 +156,7 @@ end
 % This ensures that SP is non-negative.
 SP(SP < 0) = 0;
 
-uPS = 1.004715428571429;   % uPS = 35.16504/35;
+uPS = gsw_uPS;   % uPS = 35.16504/35;
 r_1 = 0.35;
 
 [Iocean] = find(~isnan(SP + p + lat + long));

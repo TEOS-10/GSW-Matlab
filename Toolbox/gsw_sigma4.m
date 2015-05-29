@@ -1,7 +1,7 @@
 function sigma4 = gsw_sigma4(SA,CT)
 
 % gsw_sigma4                       potential density anomaly with reference
-%                              sea pressure of 4000 dbar (48-term equation)
+%                              sea pressure of 4000 dbar (75-term equation)
 %==========================================================================
 % 
 % USAGE:  
@@ -10,12 +10,13 @@ function sigma4 = gsw_sigma4(SA,CT)
 % DESCRIPTION:
 %  Calculates potential density anomaly with reference pressure of 4000 
 %  dbar, this being this particular potential density minus 1000 kg/m^3.
-%  This function has inputs of Absolute Salinity and Conservative
-%  Temperature.
+%  Temperature.  This function uses the computationally-efficient 
+%  expression for specific volume in terms of SA, CT and p (Roquet et al.,
+%  2015).
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -33,7 +34,7 @@ function sigma4 = gsw_sigma4(SA,CT)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -41,6 +42,15 @@ function sigma4 = gsw_sigma4(SA,CT)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (A.30.1) of this TEOS-10 Manual. 
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -79,9 +89,9 @@ rho4 = gsw_rho(SA,CT,pr4000);
 
 %--------------------------------------------------------------------------
 % This function calculates rho using the computationally-efficient 
-% 48-term expression for density in terms of SA, CT and p.  If one wanted 
-% to compute rho with the full TEOS-10 Gibbs function expression for 
-% density, the following lines of code will enable this.
+% 75-term expression for specific volume in terms of SA, CT and p.  If one
+% wanted to compute rho with the full TEOS-10 Gibbs function expression for 
+% specific volume, the following lines of code will enable this.
 %
 %  rho4 = gsw_rho_CT_exact(SA,CT,pr4000);
 %

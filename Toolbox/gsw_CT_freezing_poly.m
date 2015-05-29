@@ -13,7 +13,7 @@ function CT_freezing = gsw_CT_freezing_poly(SA,p,saturation_fraction)
 %  with the Conservative Temperature calculated from the exact in-situ 
 %  freezing temperature which is found by a Newton-Raphson iteration of the 
 %  equality of the chemical potentials of water in seawater and in ice.  
-%  Note that the Conservative temperature freezing temperature can be found
+%  Note that the Conservative Temperature freezing temperature can be found
 %  by this exact method using the function gsw_CT_freezing.
 %
 % INPUT:
@@ -25,7 +25,7 @@ function CT_freezing = gsw_CT_freezing_poly(SA,p,saturation_fraction)
 %  saturation_fraction = the saturation fraction of dissolved air in 
 %                        seawater
 %  (i.e., saturation_fraction must be between 0 and 1, and the default 
-%    is 1, completely saturated) 
+%    is 0, completely unsaturated) 
 %
 %  p & saturation_fraction (if provided) may have dimensions 1x1 or Mx1 or 
 %  1xN or MxN, where SA is MxN.
@@ -38,7 +38,7 @@ function CT_freezing = gsw_CT_freezing_poly(SA,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall, Paul Barker and Rainer Feistal    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,6 +46,10 @@ function CT_freezing = gsw_CT_freezing_poly(SA,p,saturation_fraction)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %    See sections 3.33 and 3.34 of this TEOS-10 Manual.  
+%
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -60,7 +64,7 @@ if ~(nargin == 2 | nargin == 3)
 end %if
 
 if ~exist('saturation_fraction','var')
-    saturation_fraction = 1;
+    saturation_fraction = 0;
 end
 
 if (saturation_fraction < 0 | saturation_fraction > 1)
@@ -114,10 +118,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-if any(SA < 0)
-    error(' gsw_CT_freezing_poly: SA must be non-negative!')
-end
+% This lines ensures that SA is non-negative.
+SA(SA<0) = 0; 
 
 c0  =  0.017947064327968736;
 %

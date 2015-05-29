@@ -9,14 +9,13 @@ function cabbeling = gsw_cabbeling_CT_exact(SA,CT,p)
 % DESCRIPTION:
 %  Calculates the cabbeling coefficient of seawater with respect to  
 %  Conservative Temperature.  This routine calculates the cabbeling
-%  coefficient with the full TEOS-10 Gibbs function expression for density.
-%  This function uses finite differences to calculate the temperature and
-%  pressure derivatives.
+%  coefficient with the full TEOS-10 Gibbs function expression for specific
+%  volume.  
 %   
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely gsw_cabbeling(SA,CT,p) 
-%  which uses the computationally efficient 48-term expression for density 
-%  in terms of SA, CT and p (IOC et al., 2010).   
+%  which uses the computationally efficient 75-term expression for specific
+%  volume in terms of SA, CT and p (Roquet et al., 2015).   
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -34,7 +33,7 @@ function cabbeling = gsw_cabbeling_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -42,6 +41,10 @@ function cabbeling = gsw_cabbeling_CT_exact(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.9.2) and (P.4) of this TEOS-10 manual.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -91,26 +94,19 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
+[v_SA, v_CT, dummy] = gsw_specvol_first_derivatives_CT_exact(SA,CT,p);
+     
+[v_SA_SA, v_SA_CT, v_CT_CT, dummy, dummy] = gsw_specvol_second_derivatives_CT_exact(SA,CT,p);
+
+rho = gsw_rho_CT_exact(SA,CT,p);
+     
+alpha_CT = rho.*(v_CT_CT - rho.*v_CT.^2);
+
+alpha_SA = rho.*(v_SA_CT - rho.*v_SA.*v_CT);
+
+beta_SA = -rho.*(v_SA_SA - rho.*v_SA.^2);
+
 alpha_on_beta = gsw_alpha_on_beta_CT_exact(SA,CT,p);
-
-dCT = 1e-3;             % increment in Conservative Temperature is 1e-3 deg C
-CT_u = CT + dCT;
-CT_l = CT - dCT;
-
-alpha_CT = (gsw_alpha_CT_exact(SA,CT_u,p) ...
-           - gsw_alpha_CT_exact(SA,CT_l,p))./(CT_u-CT_l);
-
-dSA = 1e-3;                   %increment in Absolute Salinity is 1e-3 g/kg
-SA_l = nan(size(SA));
-SA_l(SA>=dSA) = SA(SA>=dSA)-dSA;
-SA_l(SA<dSA) = 0;
-SA_u = SA + dSA;
-
-alpha_SA = (gsw_alpha_CT_exact(SA_u,CT,p)...
-           - gsw_alpha_CT_exact(SA_l,CT,p))./(SA_u-SA_l);
-       
-beta_SA = (gsw_beta_CT_exact(SA_u,CT,p) ...
-          - gsw_beta_CT_exact(SA_l,CT,p))./(SA_u-SA_l);
 
 cabbeling = alpha_CT + alpha_on_beta.*(2.*alpha_SA - alpha_on_beta.*beta_SA);
 

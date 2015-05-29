@@ -1,7 +1,7 @@
 function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 
 % gsw_geo_strf_dyn_height                            dynamic height anomaly
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 %
 % USAGE:  
@@ -19,24 +19,23 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %  anomaly is the geostrophic streamfunction in an isobaric surface.  The 
 %  reference values used for the specific volume anomaly are 
 %  SSO = 35.16504 g/kg and CT = 0 deg C.  This function calculates 
-%  specific volume anomaly using the computationally efficient 48-term 
-%  expression for specific volume of IOC et al. (2010). 
+%  specific volume anomaly using the computationally efficient 
+%  expression for specific volume of Roquet et al. (2015). 
 %
 %  This function evaluates the pressure integral of specific volume using 
-%  SA and CT “interpolated” with respect to pressure using a scheme based 
-%  on the method of Reiniger and Ross (1968).  Our method uses a weighted 
-%  mean of (i) values obtained from linear interpolation of the two nearest
-%  data points, and (ii) a linear extrapolation of the pairs of data above 
-%  and below.  This "curve fitting" method resembles the use of cubic 
-%  splines.  
+%  SA and CT interpolated with respect to pressure using the method of 
+%  Reiniger and Ross (1968).  It uses a weighted mean of (i) values 
+%  obtained from linear interpolation of the two nearest data points, and 
+%  (ii) a linear extrapolation of the pairs of data above and below.  This 
+%  "curve fitting" method resembles the use of cubic splines.  
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  For dynamical oceanography we may 
-%  take the 48-term rational function expression for density as essentially 
-%  reflecting the full accuracy of TEOS-10.  The GSW library function 
-%  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
-%  some of one's data lies outside this "funnel".  
+%  described in McDougall et al. (2003).  For dynamical oceanography we may 
+%  take the 75-term rational function expression for specific volume as
+%  essentially reflecting the full accuracy of TEOS-10.  The GSW library 
+%  function "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to
+%  test if some of one's data lies outside this "funnel".  
 %
 % INPUT:
 %  SA    =  Absolute Salinity                                      [ g/kg ]
@@ -58,9 +57,9 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %     on the whole vertical profile is returned as NaN.
 %
 % AUTHOR:  
-%  Paul Barker, Jeff Dunn and Trevor McDougall         [ help@teos-10.org ]
+%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -69,9 +68,18 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.7.3) and section 3.27 of this TEOS-10 Manual. 
 %
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
 %  Reiniger, R. F. and C. K. Ross, 1968: A method of interpolation with
 %   application to oceanographic data. Deep-Sea Res. 15, 185-193.
 % 
+%  Roquet, F., G. Madec, T.J. McDougall and P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
+%
 %  The software is available from http://www.TEOS-10.org
 %
 %==========================================================================
@@ -81,8 +89,8 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 4)
-   error('gsw_geo_strf_dyn_height:  Requires four inputs')
-end %if
+   error('gsw_geo_strf_dyn_height: Requires four inputs')
+end 
 
 unique_p_ref = unique(p_ref);
 if ~isscalar(unique_p_ref)
@@ -95,10 +103,6 @@ if p_ref < 0
     error('gsw_geo_strf_dyn_height: The reference pressure p_ref must be positive')
 end
 
-if any(SA < 0)
-    error('gsw_geo_strf_dyn_height: The Absolute Salinity must be positive!')
-end
-
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
 [mp,np] = size(p);
@@ -109,20 +113,20 @@ elseif (ms*ns == 1)
     error('gsw_geo_strf_dyn_height: There must be at least 2 values')
 end
 
-if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
-    error('gsw_geo_strf_dyn_height: need more than one pressure')
-elseif (ns == np) & (mp == 1)         % p is row vector,
-    p = p(ones(1,ms), :);              % copy down each column.
-elseif (ms == mp) & (np == 1)         % p is column vector,
-    p = p(:,ones(1,ns));               % copy across each row.
-elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
-    p = p.';                              % transposed then
-    p = p(ones(1,ms), :);                % copy down each column.
+if (mp == 1) & (np == 1)              
+    error('gsw_geo_strf_dyn_height: Need more than one pressure')
+elseif (ns == np) & (mp == 1)         
+    p = p(ones(1,ms), :);             
+elseif (ms == mp) & (np == 1)       
+    p = p(:,ones(1,ns));             
+elseif (ns == mp) & (np == 1)         
+    p = p.';                        
+    p = p(ones(1,ms), :);              
 elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_geo_strf_dyn_height: Inputs array dimensions arguments do not agree')
-end %if
+end
 
 [Inan] = find(isnan(SA + CT + p));
 SA(Inan) = NaN;
@@ -142,6 +146,9 @@ end
 %--------------------------------------------------------------------------
 % Start of the calculation
 %--------------------------------------------------------------------------
+
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 if max(p(:)) < p_ref
     error('gsw_geo_strf_dyn_height: The reference pressure p_ref is deeper than all bottles')
@@ -215,24 +222,21 @@ if isempty(Ibg) & isempty(Inz) & isempty(Ibp_ref)
     % & each vertical profile contains a "bottle" at exactly p_ref. 
     geo_strf_dyn_height0 = nan(size(SA));
     geo_strf_dyn_height_p_ref = nan(size(SA));
-    B = gsw_specvol(SA(:,Idha),CT(:,Idha),p(:,Idha));
-    C = gsw_enthalpy_SSO_0_p(p(:,Idha));
+    
+    B = gsw_specvol_anom_standard(SA(:,Idha),CT(:,Idha),p(:,Idha));
     
 %--------------------------------------------------------------------------
 % This function calculates dynamic height anomaly using the computationally
-% efficient 48-term expression for density in terms of SA, CT and p. If one
-% wanted to compute dynamic height anomaly with the full TEOS-10 Gibbs 
-% function expression for density, the following lines of code will enable 
-% this.
+% efficient 75-term expression for specific volume in terms of SA, CT and 
+% p. If one wanted to compute dynamic height anomaly with the full TEOS-10
+% Gibbs function expression for specific volume, the following lines of 
+% code will enable this.
 %
-%    B = gsw_specvol_CT_exact(SA(:,Idha),CT(:,Idha),p(:,Idha));
-%    SA_SSO = 35.16504*ones(size(SA));
-%    CT_0 = zeros(size(CT));
-%    C = gsw_enthalpy_CT_exact(SA_SSO(:,Idha),CT_0(:,Idha),p(:,Idha));
+%    B = gsw_specvol_anom_standard_CT_exact(SA(:,Idha),CT(:,Idha),p(:,Idha));
 %
 % Further down the page is a second section which also needs to be
 % activated in order to compute dynamic height anomaly with the full 
-% TEOS-10 Gibbs function expression for density.
+% TEOS-10 Gibbs function expression for specific volume.
 %
 %---------------This is the end of the alternative code--------------------
 
@@ -241,8 +245,9 @@ if isempty(Ibg) & isempty(Inz) & isempty(Ibp_ref)
     dp = zeros(size(SA(:,Idha)));
     dp(2:mp,:) = d_p(:,Idha);
     D = B_av.*dp.*db2Pa;
-
-    geo_strf_dyn_height0(:,Idha) = C - cumsum(D);
+    
+    geo_strf_dyn_height0(:,Idha) = -cumsum(D);   
+   
 % "geo_strf_dyn_height0" is the dynamic height anomaly with respect
 % to p_ref = 0 (the surface).  
 
@@ -276,7 +281,7 @@ else
 % reference pressure.
             [Ibg_i] = find(d_p(:,Iprofile) > max_dp_i);
             [Ibrp] = find(p(Inn,Iprofile) == p_ref);
-            if isempty(Ibg_i) & isempty(Ibrp) 
+            if isempty(Ibg_i) & ~isempty(Ibrp) 
 % Vertical resultion is already good (no larger than max_dp_i, and on this 
 % vertical profile there is a "bottle" at exactly p_ref. 
                 
@@ -304,7 +309,7 @@ else
             else
                 % interpolation is needed.
                 p_i = nan(2*round(max(p(Inn,Iprofile)/max_dp_i)),1);
-                
+               
 % Test if there is a bottle at p = 0.
                 if min(p(Inn,Iprofile)) > 0
                     % there is not a bottle at p = 0.
@@ -378,49 +383,44 @@ else
 
                 [dummy, Iidata, Ibdata] = intersect(p_i,p(:,Iprofile));
                 [Ibpr] = find(p_i == p_ref);
-                                              
+                                           
 %---------------------------------------------------------------------------
 % "Cowboy/cowgirl" oceanographers would not action the next 7 lines of
 % code.  Instead these "rough & ready" oceanographers would implement the
 % one line of code which linearly interpolates.  
                 [Intrp] = top_pad:length(p_i);
-                SA_i(Intrp) = pinterp_from_p(p(:,Iprofile),SA(:,Iprofile),p_i(Intrp));
-                CT_i(Intrp) = pinterp_from_p(p(:,Iprofile),CT(:,Iprofile),p_i(Intrp));
+                [SA_i(Intrp),CT_i(Intrp)] = gsw_rr68_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
                 if any(isnan(SA_i))
                     [Inan] = find(isnan(SA_i));
-                    [SA_i(Inan), CT_i(Inan)] = gsw_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
+                    [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
                 end
                 
 % The linear interpolation below is for use by "cowboy/cowgirl" oceanographers only 
 % (i.e. those "rough & ready" oceanographers who do not care about accuracy).
-%              [SA_i, CT_i] = gsw_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i);
+%              [SA_i, CT_i] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i);
 %---------------------------------------------------------------------------
             end
             
             p_i = p_i(:);
-            B_i = gsw_specvol(SA_i(:),CT_i(:),p_i(:));
-            C_i = gsw_enthalpy_SSO_0_p(p_i(2:end));
-            
+            B_i = gsw_specvol_anom_standard(SA_i(:),CT_i(:),p_i(:));
+
 %--------------------------------------------------------------------------
 % This function calculates dynamic height anomaly using the computationally
-% efficient 48-term expression for density in terms of SA, CT and p.  If 
-% one wanted to compute dynamic height anomaly with the full TEOS-10 Gibbs
-% function expression for density, the following lines of code will enable
-% this.
+% efficient 75-term expression for specific volume in terms of SA, CT and  
+% p.  If one wanted to compute dynamic height anomaly with the full TEOS-10 
+% Gibbs function expression for specific volume, the following lines of 
+% code will enable this.
 %
-%    B_i = gsw_specvol_CT_exact(SA_i,CT_i,p_i);
+%    B_i = gsw_specvol_anom_standard_CT_exact(SA_i,CT_i,p_i);
 %    B_i = B_i(:);
-%    SA_SSO = 35.16504*ones(size(SA_i));
-%    CT_0 = zeros(size(CT_i));
-%    C_i = gsw_enthalpy_CT_exact(SA_SSO(2:end),CT_0(2:end),p_i(2:end));
-%    C_i = C_i(:);
 %
 %---------------This is the end of the alternative code--------------------
             
             B_i_av = 0.5*(B_i(1:(end-1)) + B_i(2:end));
-            Da_i = (B_i_av.*diff(p_i).*db2Pa);
-            D_i(2:length(C_i)+1) = C_i - cumsum(Da_i);
-            geo_strf_dyn_height(Ibdata,Iprofile) = D_i(Iidata) - D_i(Ibpr);
+            D_i = B_i_av.*diff(p_i).*db2Pa;
+            D0_i(2:length(B_i_av)+1) = -cumsum(D_i);
+           
+            geo_strf_dyn_height(Ibdata,Iprofile) = D0_i(Iidata) - D0_i(Ibpr);
             clear SA_i CT_i p_i
         end
     end
@@ -428,240 +428,7 @@ end
 
 if transposed
    geo_strf_dyn_height = geo_strf_dyn_height.';
-end %if
+end 
 
 end
-
-%##########################################################################
-
-function [sdat] = pinterp_from_p(odep,obs,sdep)
-% pinterp_from_p.
-%==========================================================================
-% Interpolate values on arbitrary pressures (Designed for bottle data, but 
-% fine for 2db CTD data because it handles any gaps safely).
-% INPUT:
-%  odep  - vector of pressures of the data.
-%  obs   - corresponding data values, with nan indicating any gaps.
-%  sdep  - pressure to interpolate to.
-% OUTPUT:
-%  sdat - interpolated values on at the required pressures.
-% AUTHOR: Jeff Dunn.  
-%==========================================================================
-
-global rr_int_cnt lin_int_cnt dir_sub_cnt r_extrp_cnt;
-grad_lim = [];
-maxdis = rr_int([],[],sdep);
-odep = odep(:);
-obs = obs(:);
-sdep = sdep(:);
-nlvl = length(sdep);
-xfn = [0 300 1200 8000];
-yfn = [7 15 75 150];
-near_lim = interp1(xfn,yfn,sdep);
-far_lim = 2*near_lim;
-dir_lim = near_lim/5;
-sdat = repmat(NaN,nlvl,1);
-jj = find(isnan(obs) | isnan(odep) | odep<0 | odep>12000);
-if ~isempty(jj)
-    obs(jj) = [];
-    odep(jj) = [];
-end
-if ~isempty(obs)
-    jj = find((odep(2:end)-odep(1:end-1))<=0);
-    if ~isempty(jj)
-        obs(jj+1) = [];
-        odep(jj+1) = [];
-    end
-end
-ndeps = length(obs);
-if ndeps == 0
-    % RETURN if no data
-    return;
-end
-
-if nargin<3 | isempty(maxdis);
-    maxdis = 1;
-end
-
-if ndeps < 4 | maxdis == -1
-    sidx = (1:nlvl)';
-else
-    % Reiniger & Ross INTERPOLATION (Reiniger and Ross, 1968)
-    sdat = rr_int(obs,odep,sdep,1,maxdis);
-    sidx = find(isnan(sdat));
-    rr_int_cnt = rr_int_cnt + nlvl - length(sidx);
-end
-
-% if ~isempty(sidx)  & ndeps >= 2
-%     idx = sidx(find(sdep(sidx)>odep(1) & sdep(sidx)<odep(ndeps)));
-%     if ~isempty(idx)
-%         oidx = interp1(odep,1:ndeps,sdep(idx));
-%         dists = [sdep(idx)-odep(floor(oidx)) odep(ceil(oidx))-sdep(idx)];
-%         near = min(dists')';
-%         far = max(dists')';
-%         interp = idx(find(near<near_lim(idx) | far<far_lim(idx)));
-%         if ~isempty(interp)
-%             sdat(interp) = interp1(odep,obs,sdep(interp));
-%             sidx = find(isnan(sdat));
-%             lin_int_cnt = lin_int_cnt + length(interp);
-%         end
-%     end
-% end
-
-% if ~isempty(sidx)
-%     idx = round(interp1([-99999; odep; 99999],0:ndeps+1,sdep(sidx)));
-%     kk = find(abs(odep(idx)-sdep(sidx)) < near_lim(sidx));
-%     for jj = kk(:)'
-%         sdj = sdep(sidx(jj));
-%         odj = odep(idx(jj));
-%         x = sdj-odj;
-%         new = nan;
-%         if abs(x) > 1.5
-%             jll = find(abs(odep-sdj) < far_lim(sidx(jj)));
-%             if x > 0
-%                 jll = flipud(jll);
-%             end
-%             if length(jll)<2 | max(abs(odep(jll)-odj)) < abs(x)
-%                 jll = [];
-%             elseif any(abs(diff(odep(jll))) < 1.5)
-%                 ll = jll(1);
-%                 for mm = jll(2:end)'
-%                     if abs(odep(ll(end))-odep(mm))>1.5  & ...
-%                             (length(ll) < 4 | abs(odj-odep(mm)) < abs(x))
-%                         ll = [ll mm];
-%                     end
-%                 end
-%                 jll = ll;
-%             end
-%             if length(jll) >= 2
-%                 if abs(max(obs(jll))-min(obs(jll)))<.005
-%                     new = obs(jll(1));
-%                 else
-%                     xog = min(odep(jll));
-%                     cc = ([ones([length(jll) 1]) odep(jll)-xog]) \ obs(jll);
-%                     new = cc(1) + (sdj-xog)*cc(2);
-%                 end
-%                 r_extrp_cnt = r_extrp_cnt + 1;
-%                 if ~isempty(grad_lim)
-%                     ofset = abs(obs(idx(jj))-new);
-%                     if ofset>abs(x*grad_lim) | ofset>offlim
-%                         new = nan;
-%                     end
-%                 end
-%                 sdat(sidx(jj)) = new;
-%             end
-%         end
-%         if isnan(new) & abs(x)<dir_lim(sidx(jj))
-%             sdat(sidx(jj)) = obs(idx(jj));
-%             dir_sub_cnt = dir_sub_cnt + 1;
-%         end
-%     end
-%     sidx = find(isnan(sdat));
-% end
-
-end
-
-%##########################################################################
-
-function [yi,maxdis] = rr_int(y,x,xi,limchk,maxdis)
-%==========================================================================
-% References:
-%  Reiniger RF & Ross CK. 1968.  A method for interpolation with application
-%   to oceanographic data.  Deep-Sea Res. 15: 185-193
-% AUTHOR: Jeff Dunn  (12th May 1997)  
-%==========================================================================
-
-cfrac = 1/15;
-coincid_frac = 1/200;
-if nargin<4
-    limchk = 1;
-elseif isempty(limchk)
-    limchk = 1;
-end
-limchk = 0;
-xfn = [0 300 1800 8000];
-yfn = [50 200 650 1250];
-maxdis = interp1(xfn,yfn,xi);
-maxdis = [maxdis(:) maxdis(:).*3];
-nobs = length(x);
-if nobs < 4
-    yi = [];
-    return;
-end
-if size(x,1) == 1;  
-    x =x';
-end
-if size(y,1) == 1;  
-    y = y';
-end
-if size(xi,1) == 1;
-    xi =xi';
-end
-tidx = (1:length(xi))';
-yi = repmat(NaN,size(tidx));
-if x(nobs)>x(1)
-    tidx = tidx(find(xi>=x(2) & xi<=x(nobs-1)));
-else
-    tidx = tidx(find(xi>=x(nobs-1) & xi<=x(2)));
-end
-if ~isempty(tidx)
-    oidx = interp1(x,(1:length(x))',xi(tidx));
-    if ~isempty(tidx)
-        ridx = round(oidx);
-        coincid = find(abs(xi(tidx)-x(ridx)) < (min(maxdis(:))*coincid_frac));
-        if ~isempty(coincid)
-            yi(tidx(coincid)) = y(ridx(coincid));
-            oidx(coincid) = [];
-            tidx(coincid) = [];
-        end
-    end
-    rej = find(oidx<2 | oidx>(length(x)-1));
-    if ~isempty(rej)
-        oidx(rej) = [];
-        tidx(rej) = [];
-    end
-    if ~isempty(tidx)
-        fidx = floor(oidx);
-        cidx = ceil(oidx);
-        inn = [xi(tidx)-x(fidx) x(cidx)-xi(tidx)];
-        out = [x(fidx)-x(fidx-1) x(cidx+1)-x(cidx)];
-        sumin = inn(:,1) + inn(:,2);
-        outtest = abs(out(:,1) + out(:,2) + sumin);
-        minsep = abs(min(out')'./sumin);
-        rej = find(sumin>maxdis(tidx,1) | outtest>maxdis(tidx,2) | minsep<cfrac);
-        if ~isempty(rej)
-            tidx(rej) = [];
-            inn(rej,:) = [];
-            out(rej,:) = [];
-            sumin(rej) = [];
-            fidx(rej) = [];
-            cidx(rej) = [];
-        end
-    end
-    if ~isempty(tidx)
-        % Calculate the inner interpolated and 2 outer extrapolated values:
-        intp = y(fidx) + ((y(cidx)-y(fidx)).*inn(:,1)./sumin);
-        ext1 = y(fidx) + ((y(fidx)-y(fidx-1)).*inn(:,1)./out(:,1));
-        ext2 = y(cidx) + ((y(cidx)-y(cidx+1)).*inn(:,2)./out(:,2));
-        % Construct the Reiniger&Ross reference curve equation
-        % m = the power variable
-        m = 1.7;
-        top = (abs(ext1-intp).^m).*ext2 + (abs(intp-ext2).^m).*ext1;
-        bot = abs(ext1-intp).^m + abs(intp-ext2).^m;
-        kk = find(abs(bot)<1E-4);
-        if ~isempty(kk)
-            yi(tidx(kk)) = intp(kk);
-            kk = find(abs(bot)>=1E-4);
-            yi(tidx(kk)) = (intp(kk)+(top(kk)./bot(kk)))./2;
-        else
-            yi(tidx) = (intp+(top./bot))./2;
-        end
-        gt = y(fidx) > y(cidx);
-        yi(tidx) = max([yi(tidx)'; y(fidx+gt)']);
-        yi(tidx) = min([yi(tidx)'; y(cidx-gt)']);
-    end
-end
-end
-
-%##########################################################################
 

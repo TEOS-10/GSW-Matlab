@@ -25,7 +25,7 @@ function osmotic_coefficient_t_exact = gsw_osmotic_coefficient_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -99,7 +99,7 @@ SA(SA < 0) = 0;
 
 k = 3.777007343340624e-3;                                      % k = M_S/R
                                          
-part = k.*(1000 - SA)./(273.15 + t); 
+part = k.*(1000 - SA)./(gsw_T0 + t); 
 
 sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
 

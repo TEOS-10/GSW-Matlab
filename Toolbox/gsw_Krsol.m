@@ -12,6 +12,10 @@ function Krsol = gsw_Krsol(SA,CT,p,long,lat)
 %  including saturated water vapor.  This function uses the solubility 
 %  coefficients derived from the data of Weiss and Kyser (1978).
 %
+%  Note that this algorithm has not been approved by IOC and is not work 
+%  from SCOR/IAPSO Working Group 127. It is included in the GSW
+%  Oceanographic Toolbox as it seems to be oceanographic best practice.
+%
 % INPUT:  
 %  SA    =  Absolute Salinity                                      [ g/kg ]
 %  CT    =  Conservative Temperature (ITS-90)                     [ deg C ]
@@ -30,7 +34,7 @@ function Krsol = gsw_Krsol(SA,CT,p,long,lat)
 % AUTHOR:  Roberta Hamme, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (6th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -136,7 +140,7 @@ pt = gsw_pt_from_CT(SA,CT); % pt is potential temperature referenced to
                             % the sea surface.
 pt68 = pt.*1.00024; % pt68 is the potential temperature in degress C on 
               % the 1968 International Practical Temperature Scale IPTS-68.
-y = pt68 + 273.15;
+y = pt68 + gsw_T0;
 y_100 = y.*1e-2;
 
 % Table 2 (Weiss and Kyser, 1978)

@@ -32,7 +32,7 @@ function [eta_SA, eta_CT] = gsw_entropy_first_derivatives(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall.                                   [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -75,15 +75,13 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-n0 = 0; 
-n1 = 1;
+T0 = gsw_T0;
 pr0 = zeros(size(SA)); 
 pt = gsw_pt_from_CT(SA,CT);
 
-eta_SA = -(gsw_gibbs(n1,n0,n0,SA,pt,pr0))./(273.15 + pt);
+eta_SA = -(gsw_gibbs(1,0,0,SA,pt,pr0))./(T0 + pt);
 
-eta_CT = (cp0*ones(size(pt)))./(273.15 + pt);
+eta_CT = (gsw_cp0*ones(size(pt)))./(T0 + pt);
 
 if transposed
     eta_SA = eta_SA.';

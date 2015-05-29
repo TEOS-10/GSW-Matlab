@@ -1,6 +1,6 @@
 function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 
-% gsw_Turner_Rsubrho              Turner angle & Rsubrho (48-term equation)
+% gsw_Turner_Rsubrho              Turner angle & Rsubrho (75-term equation)
 %==========================================================================
 % 
 % USAGE:  
@@ -13,16 +13,16 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %  and Absolute Salinity to the vertical stability (the square of the 
 %  Brunt-Vaisala Frequency squared, N^2).  Tu and Rsubrho are evaluated at 
 %  the mid pressure between the individual data points in the vertical.  
-%  This function uses computationally-efficient 48-term expression for 
-%  density in terms of SA, CT and p (IOC et al., 2010).  Note that 
-%  in the double-diffusive literature, papers concerned with the 
+%  This function uses computationally-efficient 75-term expression for 
+%  specific volume in terms of SA, CT and p (Roquet et al., 2015).  Note
+%  that in the double-diffusive literature, papers concerned with the 
 %  "diffusive" form of double-diffusive convection often define the 
 %  stability ratio as the reciprocal of what is defined here as the 
 %  stability ratio. 
 %
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -55,6 +55,15 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.15.1) and (3.16.1) of this TEOS-10 Manual. 
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %   The software is available from http://www.TEOS-10.org
 %
@@ -126,17 +135,15 @@ CT_mid = 0.5*(CT(Ishallow,:) + CT(Ideep,:));
 dSA = SA(Ishallow,:) - SA(Ideep,:);
 dCT = CT(Ishallow,:) - CT(Ideep,:);
 
-[dummy, alpha, beta] = gsw_rho_alpha_beta(SA_mid,CT_mid,p_mid);
+[dummy, alpha, beta] = gsw_specvol_alpha_beta(SA_mid,CT_mid,p_mid);
 
 %--------------------------------------------------------------------------
 % This function evaluates Tu and Rsubrho using the computationally-efficient
-% 48-term expression for density in terms of SA, CT and p. If one wanted to
-% compute Tu and Rsubrho using the full TEOS-10 Gibbs function expression 
-% for density, the following lines of code would do that.  
+% 75-term expression for specific volume in terms of SA, CT and p. If one 
+% wanted to compute Tu and Rsubrho using the full TEOS-10 Gibbs function 
+% expression, the following lines of code would do that.  
 %
-%    pt_mid = gsw_pt_from_CT(SA_mid,CT_mid);
-%    pr0 = zeros(size(SA_mid)); 
-%    t_mid = gsw_pt_from_t(SA_mid,pt_mid,pr0,p_mid);
+%    t_mid = gsw_t_from_CT(SA_mid,CT_mid,p_mid);
 %    beta = gsw_beta_const_CT_t_exact(SA_mid,t_mid,p_mid);
 %    alpha = gsw_alpha_wrt_CT_t_exact(SA_mid,t_mid,p_mid);
 %

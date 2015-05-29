@@ -5,7 +5,8 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 %==========================================================================
 % 
 % USAGE:  
-% [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_exact(SA,CT,p)
+% [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = ...
+%                                      gsw_rho_alpha_beta_CT_exact(SA,CT,p)
 %
 % DESCRIPTION:
 %  Calculates in-situ density, the appropiate thermal expansion coefficient
@@ -15,8 +16,8 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
 %  gsw_rho_alpha_beta(SA,CT,p), which uses the computationally-efficient
-%  48-term expression for density in terms of SA, CT and p (IOC et 
-%  al., 2010).  
+%  75-term expression for density in terms of SA, CT and p (Roquet et al.,
+%  2015)
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -37,7 +38,7 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -45,6 +46,10 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %     See sections (2.8), (2.18) and (2.19) of this TEOS-10 Manual.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -99,6 +104,7 @@ end
 %--------------------------------------------------------------------------
 
 t = gsw_t_from_CT(SA,CT,p);
+
 rho_CT_exact = gsw_rho_t_exact(SA,t,p);
 alpha_CT_exact = gsw_alpha_wrt_CT_t_exact(SA,t,p);
 beta_CT_exact = gsw_beta_const_CT_t_exact(SA,t,p);

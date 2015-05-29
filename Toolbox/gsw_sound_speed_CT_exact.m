@@ -10,6 +10,11 @@ function sound_speed_CT_exact = gsw_sound_speed_CT_exact(SA,CT,p)
 %  Calculates the speed of sound in seawater from Absolute Salinity and 
 %  Conservative Temperature and pressure.  
 %  
+%  Note that this function uses the full Gibbs function.  There is an 
+%  alternative to calling this function, namely gsw_sound_speed(SA,CT,p) 
+%  which uses the computationally efficient 75-term expression for specific
+%  volume in terms of SA, CT and p (Roquet et al., 2015).   
+%
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
 %  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
@@ -25,7 +30,7 @@ function sound_speed_CT_exact = gsw_sound_speed_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  David Jackett, Paul Barker and Trevor McDougall     [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (17th January, 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -33,6 +38,10 @@ function sound_speed_CT_exact = gsw_sound_speed_CT_exact(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (2.17.1) of this TEOS-10 Manual. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %

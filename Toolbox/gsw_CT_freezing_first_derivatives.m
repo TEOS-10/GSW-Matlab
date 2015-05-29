@@ -22,7 +22,7 @@ function [CTfreezing_SA, CTfreezing_P] = gsw_CT_freezing_first_derivatives(SA,p,
 %  saturation_fraction = the saturation fraction of dissolved air in 
 %                        seawater
 %  (i.e., saturation_fraction must be between 0 and 1, and the default 
-%    is 1, completely saturated) 
+%    is 0, completely unsaturated) 
 %
 %  p & saturation_fraction (if provided) may have dimensions 1x1 or Mx1 or 
 %  1xN or MxN, where SA is MxN.
@@ -39,7 +39,7 @@ function [CTfreezing_SA, CTfreezing_P] = gsw_CT_freezing_first_derivatives(SA,p,
 % AUTHOR:
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -60,11 +60,11 @@ if ~(nargin == 2 | nargin == 3)
 end %if
 
 if ~exist('saturation_fraction','var')
-    saturation_fraction = 1;
+    saturation_fraction = 0;
 end
 
 if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_tCT_freezing_first_derivatives: saturation fraction MUST be between zero and one.')
+   error('gsw_CT_freezing_first_derivatives: saturation fraction MUST be between zero and one.')
 end
 
 [ms,ns] = size(SA);

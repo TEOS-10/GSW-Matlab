@@ -22,7 +22,7 @@ function CT = gsw_CT_from_entropy(SA,entropy)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -40,14 +40,14 @@ function CT = gsw_CT_from_entropy(SA,entropy)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 2)
-    error('gsw_pt_from_entropy: Requires 2 inputs - Absolute Salinity and entropy')
+    error('gsw_CT_from_entropy: Requires 2 inputs - Absolute Salinity and entropy')
 end %if
 
 [ms,ns] = size(SA);
 [me,ne] = size(entropy);
 
 if (ms ~= me | ns ~= ne )
-    error('gsw_pt_from_entropy: Input arguments do not have the same dimensions')
+    error('gsw_CT_from_entropy: Input arguments do not have the same dimensions')
 end %if
 
 if ms == 1

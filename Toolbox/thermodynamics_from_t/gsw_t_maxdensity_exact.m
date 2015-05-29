@@ -28,7 +28,7 @@ function t_maxdensity_exact = gsw_t_maxdensity_exact(SA,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -37,9 +37,9 @@ function t_maxdensity_exact = gsw_t_maxdensity_exact(SA,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.42 of this TEOS-10 Manual.  
 %
-%  McDougall, T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation.  
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -83,9 +83,6 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1;
-
 dt = 0.001; % the temperature increment for calculating the gibbs_PTT derivative.
 
 t = 3.978 - 0.22072*SA;                    % the initial guess of t_maxden.
@@ -94,11 +91,11 @@ gibbs_PTT = 1.1e-8;                          % the initial guess for g_PTT.
 
 for Number_of_iterations = 1:3
     t_old = t;
-    gibbs_PT = gsw_gibbs(n0,n1,n1,SA,t_old,p);
-    t = t_old - gibbs_PT./gibbs_PTT ; % this is half way through the modified method (McDougall and Wotherspoon, 2012)
+    gibbs_PT = gsw_gibbs(0,1,1,SA,t_old,p);
+    t = t_old - gibbs_PT./gibbs_PTT ; % this is half way through the modified method (McDougall and Wotherspoon, 2013)
     t_mean = 0.5*(t + t_old);
-    gibbs_PTT = (gsw_gibbs(n0,n1,n1,SA,t_mean + dt,p) - ...
-        gsw_gibbs(n0,n1,n1,SA,t_mean - dt,p))./(dt + dt);
+    gibbs_PTT = (gsw_gibbs(0,1,1,SA,t_mean + dt,p) - ...
+        gsw_gibbs(0,1,1,SA,t_mean - dt,p))./(dt + dt);
     t = t_old - gibbs_PT./gibbs_PTT;
 end
 

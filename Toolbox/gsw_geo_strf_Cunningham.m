@@ -1,7 +1,7 @@
 function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 
 % gsw_geo_strf_Cunningham             Cunningham geostrophic streamfunction
-%                                                        (48-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 %
 % USAGE:  
@@ -13,7 +13,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %  difference between the horizontal velocity at the pressure concerned,
 %  p, and the horizontal velocity on the pressure surface, p_ref.  This 
 %  function calculates specific volume anomaly using the computationally 
-%  efficient 48-term expression for specific volume of IOC et al. (2010).  
+%  efficient 75-term expression for specific volume (Roquet et al., 2015).  
 %  
 %  Note that p_ref, is the reference pressure to which the streamfunction
 %  is referenced.  When p_ref is zero, "gsw_geo_strf_Cunningham" returns 
@@ -21,9 +21,9 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %  surface, otherwise, the function returns the geostrophic streamfunction 
 %  with respect to the (deep) reference pressure p_ref.
 %  
-%  Note that the 48-term equation has been fitted in a restricted range of 
+%  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in IOC et al. (2010).  The GSW library function 
+%  described in McDougall et al. (2003).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -59,6 +59,15 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.29 of this TEOS-10 Manual. 
+%
+%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+%   Accurate and computationally efficient algorithms for potential 
+%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+%   pp. 730-741.
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -115,25 +124,23 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
-
 dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref);
 
-geo_strf_Cunningham = dyn_height - gsw_enthalpy_SSO_0_p(p) + ...
-                            gsw_enthalpy(SA,CT,p) - cp0*CT; 
+geo_strf_Cunningham = dyn_height - gsw_enthalpy_SSO_0(p) ...
+                           + gsw_enthalpy(SA,CT,p) - gsw_cp0*CT; 
                         
 %--------------------------------------------------------------------------
 % This function calculates the Cunningham streamfunction using the 
-% computationally-efficient 48-term expression for density in terms of SA, 
+% computationally-efficient 75-term expression for density in terms of SA, 
 % CT and p.  If one wanted to compute this with the full TEOS-10 Gibbs 
-% function expression for density, the following lines of code will enable 
-% this.  Note that dynamic height will also need to be evaluated using the
-% full Gibbs function.
+% function expression for specific volume, the following lines of code will
+% enable this.  Note that dynamic height will also need to be evaluated 
+% using the full Gibbs function.
 %
-%   SA_SSO = 35.16504*ones(size(SA));
-%   CT_0 = zeros(size(CT));
-%   geo_strf_Cunningham = dyn_height - gsw_enthalpy_CT_exact(SA_SSO,CT_0,p) + ...
-%                            gsw_enthalpy_CT_exact(SA,CT,p) - cp0*CT; 
+%   SSO = gsw_SSO.*ones(size(SA));
+%   CT_0 = zeros(size(SSO));
+%   geo_strf_Cunningham = dyn_height - gsw_enthalpy_CT_exact(SSO,CT_0,p) ...
+%                        + gsw_enthalpy_CT_exact(SA,CT,p) - gsw_cp0*CT; 
 %
 %---------------This is the end of the alternative code--------------------
 

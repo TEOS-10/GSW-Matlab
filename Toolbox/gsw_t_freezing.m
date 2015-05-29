@@ -26,7 +26,7 @@ function t_freezing = gsw_t_freezing(SA,p,saturation_fraction)
 %  saturation_fraction = the saturation fraction of dissolved air in 
 %                        seawater
 %  (i.e., saturation_fraction must be between 0 and 1, and the default 
-%    is 1, completely saturated) 
+%    is 0, air free) 
 %
 %  p & saturation_fraction (if provided) may have dimensions 1x1 or Mx1 or 
 %  1xN or MxN, where SA is MxN.
@@ -38,7 +38,7 @@ function t_freezing = gsw_t_freezing(SA,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall, Paul Barker and Rainer Feistal    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -64,7 +64,7 @@ if ~(nargin == 2 | nargin == 3)
 end %if
 
 if ~exist('saturation_fraction','var')
-    saturation_fraction = 1;
+    saturation_fraction = 0;
 end
     
 if (saturation_fraction < 0 | saturation_fraction > 1)
@@ -118,10 +118,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-if any(SA < 0)
-    error('gsw_t_freezing: SA must be non-negative!')
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 %   The following code gives a rather accurate polynomial-based expression 
 %   for the freezing temperature, adjsted for the saturation fraction.  
@@ -168,7 +166,7 @@ tf = c0 ...
      + x.*(c11 + p_r.*(c14 + c18.*p_r)  + SA_r.*(c16 + c20.*p_r + c22.*SA_r)));
 
 df_dt = 1000.*gsw_t_deriv_chem_potential_water_t_exact(SA,tf,p) - gsw_gibbs_ice(1,0,tf,p);
-%  df_dt here is the initial value of the derivative of the function  f whose
+%  df_dt here is the initial value of the derivative of the function f whose
 %  zero (f = 0) we are finding (see Eqn. (3.33.2) of IOC et al (2010)).  
 
 tf_old = tf;
@@ -183,12 +181,12 @@ f = 1000.*gsw_chem_potential_water_t_exact(SA,tf_old,p) - gsw_gibbs_ice(0,0,tf_o
 tf = tf_old - f./df_dt ; % this is half way through the modified method (McDougall and Wotherspoon, 2013)
 
 % Adjust for the effects of dissolved air
-t_freezing = tf  - saturation_fraction.*(1e-3).*(2.4 - SA./70.33008); 
+t_freezing = tf - saturation_fraction.*(1e-3).*(2.4 - SA./70.33008); 
 
 %  If the data is outside the range of applicability of TEOS-10, set the
 %  output to NaN.  
- t_freezing(p > 10000 | SA > 120 | ...
-     p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
+t_freezing(p > 10000 | SA > 120 | ...
+    p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 
 if transposed
     t_freezing = t_freezing.';

@@ -26,7 +26,7 @@ function latentheat_melting = gsw_latentheat_melting(SA,p)
 % AUTHOR:  
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 % IAPWS, 2008: Release on the IAPWS Formulation 2008 for the Thermodynamic 
@@ -82,11 +82,11 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-saturation_fraction_0 = zeros(size(SA));
+saturation_fraction = zeros(size(SA));
 
-tf = gsw_t_freezing(SA,p,saturation_fraction_0);
+tf = gsw_t_freezing(SA,p,saturation_fraction);
 latentheat_melting = 1000.*(gsw_chem_potential_water_t_exact(SA,tf,p) ... 
-                     - (273.15 + tf).*gsw_t_deriv_chem_potential_water_t_exact(SA,tf,p)) ... 
+                     - (gsw_T0 + tf).*gsw_t_deriv_chem_potential_water_t_exact(SA,tf,p)) ... 
                      - gsw_enthalpy_ice(tf,p);
 
 if transposed

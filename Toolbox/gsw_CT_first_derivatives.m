@@ -34,7 +34,7 @@ function [CT_SA, CT_pt] = gsw_CT_first_derivatives(SA,pt)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -78,8 +78,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-cp0 = 3991.86795711963;             % from Eqn. 3.3.3 of IOC et al. (2010).
-abs_pt = 273.15 + pt; 
+cp0 = gsw_cp0;             % from Eqn. 3.3.3 of IOC et al. (2010).
+abs_pt = gsw_T0 + pt; 
 
 CT_pt = - (abs_pt.*gsw_gibbs_pt0_pt0(SA,pt))./cp0;
 

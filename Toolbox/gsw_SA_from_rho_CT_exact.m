@@ -13,8 +13,8 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
 %  gsw_SA_from_rho(rho,CT,p), which uses the computationally 
-%  efficient 48-term expression for density in terms of SA, CT and p 
-%  (IOC et al., 2013).   
+%  efficient 75-term expression for density in terms of SA, CT and p 
+%  (Roquet et al., 2015).   
 %
 % INPUT:
 %  rho =  density of a seawater sample (e.g. 1026 kg/m^3).       [ kg/m^3 ]
@@ -35,7 +35,7 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.05 (27th January 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -47,6 +47,10 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 %  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 
 %   The composition of Standard Seawater and the definition of the 
 %   Reference-Composition Salinity Scale, Deep-Sea Res. I, 55, 50-72. 
+%
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%   polynomial expressions for the density and specifc volume of seawater
+%   using the TEOS-10 standard. Ocean Modelling.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -112,10 +116,9 @@ v_SA = (v_120 - v_0)./120; %initial estimate of v_SA, the SA derivative of v
 for Number_of_iterations = 1:2 
     SA_old = SA;
     delta_v = gsw_specvol_CT_exact(SA_old,CT,p) - v_lab;
-    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2012)
+    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2013)
     SA_mean = 0.5*(SA + SA_old);
-    [rho,alpha,beta] = gsw_rho_alpha_beta_CT_exact(SA_mean,CT,p);
-    v_SA = - beta./rho; 
+    [v_SA, dummy, dummy] = gsw_specvol_first_derivatives_CT_exact(SA_mean,CT,p);
     SA = SA_old - delta_v./v_SA;
     SA(SA < 0 | SA > 120) = NaN; 
 end

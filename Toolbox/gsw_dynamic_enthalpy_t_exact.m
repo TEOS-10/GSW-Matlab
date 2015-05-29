@@ -27,9 +27,9 @@ function dynamic_enthalpy_t_exact = gsw_dynamic_enthalpy_t_exact(SA,t,p)
 %  dynamic_enthalpy_t_exact  =  dynamic enthalpy                   [ J/kg ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker.                  [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (11th April, 2011)
+% VERSION NUMBER: 3.0 (11th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

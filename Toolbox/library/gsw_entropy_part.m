@@ -10,7 +10,7 @@ function entropy_part = gsw_entropy_part(SA,t,p)
 % but are not needed when calculating potential temperature from in-situ 
 % temperature.  
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 %==========================================================================

@@ -25,9 +25,9 @@ function grav = gsw_grav(lat,p)
 %  grav  =  gravitational acceleration                           [ m s^-2 ]
 %
 % AUTHOR:  
-%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
+%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

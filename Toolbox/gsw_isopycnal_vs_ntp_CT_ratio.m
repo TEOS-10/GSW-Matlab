@@ -49,9 +49,9 @@ function [G_CT, p_mid] = gsw_isopycnal_vs_ntp_CT_ratio(SA,CT,p,p_ref)
 %            p_mid has units of:                                   [ dbar ]
 %
 % AUTHOR:  
-%  Trevor McDougall, Paul Barker & David Jackett       [ help@teos-10.org ]
+%  Trevor McDougall, Paul Barker & David Jackett      [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.0 (23rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -50,9 +50,9 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 %  p_mid                 =  mid-point pressure in each layer       [ dbar ]
 %                                                                 
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (17th March, 2011)
+% VERSION NUMBER: 3.0 (17th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of

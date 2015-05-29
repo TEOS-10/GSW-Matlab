@@ -37,9 +37,9 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 %                  pressure, p, to that at reference pressure, p_ref.        
 %
 % AUTHOR: 
-%  Trevor McDougall, Paul Barker & David Jackett       [ help@teos-10.org ]
+%  Trevor McDougall, Paul Barker & David Jackett      [ gsw_help@csiro.au ]
 %      
-% VERSION NUMBER: 3.01 (26th March, 2011).
+% VERSION NUMBER: 3.0 (26th March, 2011).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

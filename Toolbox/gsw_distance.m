@@ -36,14 +36,14 @@ function distance = gsw_distance(long,lat,p)
 %  Note. The output is in m not km.
 % 
 % AUTHOR:  
-%  6th November, 2000 by Rich Pawlowicz                [ help@teos-10.org ]
+%  6th November, 2000 by Rich Pawlowicz               [ help_gsw@csiro.au ]
 %  Note. This function was extracted from Rich Pawlowicz's m_map package,
 %    which is available from http://www.eos.ubc.ca/~rich/map.html
 %
 % MODIFIED:
 %  4th April, 2011 by Paul Barker and Trevor McDougall. 
 %
-% VERSION NUMBER: 3.01 (4th April, 2011)
+% VERSION NUMBER: 3.0 (4th April, 2011)
 %
 % REFERENCE:
 %  http://www.eos.ubc.ca/~rich/map.html

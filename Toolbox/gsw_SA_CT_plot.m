@@ -40,14 +40,14 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 %  isopycs can be either 1x1 or 1xN or Mx1
 %
 % AUTHOR: 
-%  Rich Pawlowicz                                      [ help@teos-10.org ]
+%  Rich Pawlowicz                                     [ help_gsw@csiro.au ]
 %  Note. This function was extracted and adapted from Rich Pawlowicz's 
 %    ocean toolbox.
 %
 % MODIFIED:
 %  Paul Barker & Trevor McDougall
 %
-% VERSION NUMBER: 3.01 (6th March, 2012)
+% VERSION NUMBER: 3.0 (29th March, 2011)
 %
 % REFERENCES:
 %  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
@@ -68,25 +68,10 @@ if ~exist('p_ref','var'),
     isopycs = 5;
 end
 
-if ischar(p_ref) == 1
-    title_string = p_ref;
-    p_ref = 0;
-    isopycs = 5;
-end
-
 if ~isscalar(unique(p_ref))
     error('gsw_SA_CT_plot: Multiple reference pressures');
 else
     p_ref = unique(p_ref);
-end
-
-if ~exist('isopycs','var'),
-    isopycs = 5;
-end
-
-if ischar(isopycs) == 1
-    title_string = isopycs;
-    isopycs = 5;
 end
 
 isopycs = isopycs(:);
@@ -118,7 +103,7 @@ if ~isempty(isopycs)
     [c1,h] = contour(SA_gridded,CT_gridded,isopycs_gridded,isopycs,':','Color',[.5 .5 .5]);
 end
 hold on;
-[c2] = plot(SA,CT,'.','linewidth',2);
+[c2] = plot(SA(:,1),CT(:,1),'k.','linewidth',2);
 
 if exist('c1','var')
     clabel(c1,h,'labelspacing',360,'fontsize',8,'color',[.5 .5 .5]);

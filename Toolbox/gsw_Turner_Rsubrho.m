@@ -45,9 +45,9 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %              p_mid has units of:                                 [ dbar ]
 %
 % AUTHOR:  
-%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
+%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.0 (26th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

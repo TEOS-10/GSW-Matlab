@@ -36,9 +36,9 @@ function specvol_CT = gsw_specvol_CT(SA,CT,p)
 %  specvol_CT  =  specific volume                                [ m^3/kg ]
 %
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
+%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (18th March, 2011)
+% VERSION NUMBER: 3.0 (18th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

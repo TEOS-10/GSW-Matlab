@@ -38,9 +38,9 @@ function dynamic_enthalpy_CT = gsw_dynamic_enthalpy_CT(SA,CT,p)
 %  dynamic_enthalpy_CT  =  dynamic enthalpy                        [ J/kg ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (5th April, 2011)
+% VERSION NUMBER: 3.0 (5th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

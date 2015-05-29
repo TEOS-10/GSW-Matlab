@@ -22,9 +22,9 @@ function latentheat_evap_t = gsw_latentheat_evap_t(SA,t)
 %  latentheat_evap_t = latent heat of evaporation                  [ J/kg ]
 %
 % AUTHOR:  
-%  Paul Barker, Trevor McDougall & Rainer Feistel      [ help@teos-10.org ]
+%  Paul Barker, Trevor McDougall & Rainer Feistel     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

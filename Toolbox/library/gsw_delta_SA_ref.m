@@ -36,12 +36,12 @@ function [delta_SA_ref, in_ocean] = gsw_delta_SA_ref(p,long,lat)
 %    hundred kilometres inland from the coast. 
 %
 % AUTHOR: 
-%  David Jackett                                       [ help@teos-10.org ]
+%  David Jackett                                      [ help_gsw@csiro.au ]
 %
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.0 (23rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

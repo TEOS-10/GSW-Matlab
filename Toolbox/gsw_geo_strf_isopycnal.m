@@ -72,9 +72,9 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 %                       McDougall & Klocker (2010)       
 %                            
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (21st March, 2011)
+% VERSION NUMBER: 3.0 (21st March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of

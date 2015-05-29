@@ -20,9 +20,9 @@ function entropy = gsw_entropy_from_CT(SA,CT)
 %  entropy  =  specific entropy                                [ J/(kg*K) ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 3.01 (4th April, 2011)
+% VERSION NUMBER: 3.0 (4th April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -24,9 +24,9 @@ function adiabatic_lapse_rate_t_exact = gsw_adiabatic_lapse_rate_t_exact(SA,t,p)
 %      (or equivilently K/Pa) not in units of K/dbar. 
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

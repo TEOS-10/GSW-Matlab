@@ -18,9 +18,9 @@ function t90 = gsw_t90_from_t48(t48)
 %  t90  =  in-situ temperature  (ITS-90)                          [ deg C ]
 %
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
+%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

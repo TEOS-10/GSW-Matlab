@@ -30,9 +30,9 @@ function [eta_SA, eta_CT] = gsw_entropy_first_derivatives(SA,CT)
 %            eta_CT has units of:                            [ J/(kg K^2) ]
 %
 % AUTHOR: 
-%  Trevor McDougall.                                   [ help@teos-10.org ]
+%  Trevor McDougall.                                  [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

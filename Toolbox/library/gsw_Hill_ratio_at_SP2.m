@@ -21,9 +21,9 @@ function Hill_ratio = gsw_Hill_ratio_at_SP2(t)
 %  Hill_ratio  =  Hill ratio at SP of 2                        [ unitless ]
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.0 (26th March, 2011)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee & D.J. Woods, 1986: The extension of the 

@@ -36,7 +36,7 @@ function [SA, Sstar, in_ocean] = gsw_SA_Sstar_from_SP(SP,p,long,lat)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (11th November, 2011)
+% VERSION NUMBER: 3.0 (11th November, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

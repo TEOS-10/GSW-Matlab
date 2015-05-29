@@ -35,9 +35,9 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 %                     at constant Conservative Temperature
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.0 (23rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

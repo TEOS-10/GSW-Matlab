@@ -32,9 +32,9 @@ function Fdelta = gsw_Fdelta(p,long,lat)
 %  Fdelta  =  ratio of SA to Sstar, minus 1                    [ unitless ]
 % 
 % AUTHOR: 
-%  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
+%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (26th May, 2011)
+% VERSION NUMBER: 3.0 (26th May, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

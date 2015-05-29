@@ -39,9 +39,9 @@ function ntp_pt_vs_CT_ratio = gsw_ntp_pt_vs_CT_ratio(SA,CT,p)
 %                         neutral tangent plane (ntp).         [ unitless ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ gsw_help@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.0 (23rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

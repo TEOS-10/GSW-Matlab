@@ -9,7 +9,7 @@ function enthalpy_SSO_0_p = gsw_enthalpy_SSO_0_p(p)
 %  version of the Gibbs function, that is, a streamlined version of the 
 %  code "gsw_enthalpy(SA,CT,p)".
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 %==========================================================================
 

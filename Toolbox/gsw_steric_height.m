@@ -73,9 +73,9 @@ function steric_height = gsw_steric_height(SA,CT,p,p_ref)
 %     on the whole vertical profile is returned as NaN.
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (20th May, 2011) 
+% VERSION NUMBER: 3.0 (20th May, 2011) 
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 

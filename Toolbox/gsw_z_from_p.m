@@ -43,9 +43,9 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height)
 %
 % AUTHOR:  
 %  Trevor McDougall, Claire Roberts-Thomson & Paul Barker.
-%                                                      [ help@teos-10.org ]
+%                                                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.0 (26th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -25,9 +25,9 @@ function pt = gsw_pt_from_CT(SA,CT)
 %
 % AUTHOR: 
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
-%                                                      [ help@teos-10.org ]
+%                                                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (21st September, 2012) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -104,7 +104,7 @@ pt = (pt_num)./(pt_den);
 
 dCT_dpt = (pt_den)./(CT_factor + a5CT - (b2 + b3CT + b3CT).*pt);
 
-% start the 1.5 iterations through the modified Newton-Raphson iterative method. 
+% start the 1.5 iterations through the modified Newton-Rapshon iterative method. 
 
 CT_diff = gsw_CT_from_pt(SA,pt) - CT;
 pt_old = pt;

@@ -26,9 +26,9 @@ function beta_const_pt_t_exact = gsw_beta_const_pt_t_exact(SA,t,p)
 %                            and with a reference pressure of 0 dbar.
 %  
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (10th April 2011)
+% VERSION NUMBER: 3.0 (10th April 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

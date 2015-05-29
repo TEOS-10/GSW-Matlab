@@ -49,9 +49,9 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 %  p_mid                  =  mid-point pressure in each layer      [ dbar ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Claire Roberts-Thomson         [ help@teos-10.org ]
+%  Trevor McDougall and Claire Roberts-Thomson        [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (28th March, 2011)
+% VERSION NUMBER: 3.0 (28th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -30,9 +30,9 @@ function SP = gsw_SP_salinometer(Rt,t)
 %  t may have dimensions 1x1 or Mx1 or 1xN or MxN, where Rt is MxN.
 %
 % AUTHOR:  
-%  Paul Barker, Trevor McDougall and Rich Pawlowicz    [ help@teos-10.org ]
+%  Paul Barker, Trevor McDougall and Rich Pawlowicz   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (30th March, 2011)
+% VERSION NUMBER: 3.0 (30th March, 2011)
 %
 % REFERENCES:
 %  Fofonoff, P. and R.C. Millard Jr. 1983: Algorithms for computation of 

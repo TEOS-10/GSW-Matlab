@@ -22,9 +22,9 @@ function SA_baltic = gsw_SA_from_SP_Baltic(SP,long,lat)
 %  SA_baltic  =  Absolute Salinity in the Baltic Sea            [ g kg^-1 ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall & Paul Barker       [ help@teos-10.org ]
+%  David Jackett, Trevor McDougall & Paul Barker      [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (23rd July, 2010)
+% VERSION NUMBER: 2.0 (23rd July, 2010)
 %
 % REFERENCES:
 %  Feistel, R., S. Weinreben, H. Wolf, S. Seitz, P. Spitzer, B. Adel, 

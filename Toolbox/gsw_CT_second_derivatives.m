@@ -42,9 +42,9 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 %               CT_pt_pt has units of:                              [ 1/K ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

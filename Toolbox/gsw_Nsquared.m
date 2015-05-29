@@ -46,9 +46,9 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %  p_mid  =  Mid pressure between p grid      (M-1xN)              [ dbar ]
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (22nd March, 2011)
+% VERSION NUMBER: 3.0 (22nd March, 2011)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 

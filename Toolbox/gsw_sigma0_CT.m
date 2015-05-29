@@ -38,9 +38,9 @@ function sigma0_CT = gsw_sigma0_CT(SA,CT)
 %                that is, this potential density - 1000 kg/m^3.
 %
 % AUTHOR: 
-%  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
+%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.0 (26th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

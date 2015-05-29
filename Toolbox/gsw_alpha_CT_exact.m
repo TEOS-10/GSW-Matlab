@@ -31,9 +31,9 @@ function alpha_CT_exact = gsw_alpha_CT_exact(SA,CT,p)
 %                     with respect to Conservative Temperature
 %    
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
+%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.0 (23rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

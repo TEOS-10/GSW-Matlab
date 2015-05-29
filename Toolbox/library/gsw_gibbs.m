@@ -43,12 +43,12 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 %    withstanding that the pressure input into this routine is in dbar.
 %
 % AUTHOR: 
-%  David Jackett                                       [ help@teos-10.org ]
+%  David Jackett                     [ help_gsw@csiro.au ]
 %
 % MODIFIED:
 %  Trevor McDougall and Paul Barker 
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

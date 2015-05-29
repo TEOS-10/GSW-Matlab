@@ -29,9 +29,9 @@ function [SP, in_ocean] = gsw_SP_from_Sstar(Sstar,p,long,lat)
 %    hundred kilometres inland from the coast. 
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
+%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (27th March, 2011)
+% VERSION NUMBER: 3.0 (27th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

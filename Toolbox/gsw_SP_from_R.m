@@ -28,9 +28,9 @@ function SP = gsw_SP_from_R(R,t,p)
 %  SP  =   Practical Salinity on the PSS-78 scale              [ unitless ]
 %
 % AUTHOR:  
-%  Paul Barker, Trevor McDougall and Rich Pawlowicz    [ help@teos-10.org ]
+%  Paul Barker, Trevor McDougall and Rich Pawlowicz   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (1st April, 2011)
+% VERSION NUMBER: 3.0 (1st April, 2011)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee & D.J. Woods, 1986: The extension of the 

@@ -15,9 +15,9 @@ function C3515 = gsw_C3515
 %  C3515  =  Conductivity at (SP=35, t_68=15, p=0)                [ mS/cm ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 % REFERENCES:
 %  Culkin and Smith, 1980:  Determination of the Concentration of Potassium  

@@ -43,7 +43,7 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -115,7 +115,7 @@ CT_multiple = CT;
 % SA out of range, set to NaN.
 SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;
 
-rho_40 = gsw_rho_CT(SA,40*ones(size(SA)),p);
+rho_40 = gsw_rho(SA,40*ones(size(SA)),p);
 % rho too light, set to NaN.
 SA((rho - rho_40) < 0) = NaN;
 

@@ -37,7 +37,7 @@ function alpha_on_beta = gsw_alpha_on_beta(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (10th May, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -56,9 +56,6 @@ function alpha_on_beta = gsw_alpha_on_beta(SA,CT,p)
 
 if ~(nargin == 3)
    error('gsw_alpha_on_beta:  Requires three inputs')
-end %if
-if ~(nargout == 1)
-   error('gsw_alpha_on_beta:  Requires one outputs')
 end %if
 
 [ms,ns] = size(SA);

@@ -20,8 +20,7 @@ function t90 = gsw_t90_from_t68(t68)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  International Temperature Scales of 1948, 1968 and 1990, an ICES

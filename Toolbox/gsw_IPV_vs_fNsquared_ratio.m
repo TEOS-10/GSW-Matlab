@@ -41,19 +41,18 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %  p & p_ref may have dimensions 1x1 or 1xN or MxN, where SA & CT are MxN.
 %
 % OUTPUT:
-%  IPV_vs_fNsquared_ratio
-%         =  The ratio of the vertical gradient of potential density
-%            referenced to p_ref, to the vertical gradient of locally-
-%            referenced potential density.  It is ouput on the same
-%            vertical (M-1)xN grid as p_mid. 
-%            IPV_vs_fNsquared_ratio is dimensionless.          [ unitless ]
+%  IPV_vs_fNsquared_ratio = The ratio of the vertical gradient of 
+%               potential density referenced to p_ref, to the vertical 
+%               gradient of locally-referenced potential density.  It is 
+%               output on the same vertical (M-1)xN grid as p_mid. 
+%               IPV_vs_fNsquared_ratio is dimensionless.       [ unitless ]
 %  p_mid  =  mid pressure between the individual points of the p grid.
 %            That is, p_mid is on a (M-1)xN grid.                  [ dbar ]
 %
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

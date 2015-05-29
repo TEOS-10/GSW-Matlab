@@ -1,6 +1,6 @@
 function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 
-% gsw_brineSA_t         Absolute Salinity of seawater at the freezing point
+% gsw_brineSA_t   Absolute Salinity of seawater at the freezing temperature
 %==========================================================================
 %
 % USAGE:
@@ -12,7 +12,7 @@ function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 %  fraction saturation_fraction of dissolved air, that is in equilibrium 
 %  with ice at in-situ temperature t and pressure p.  If the input values 
 %  are such that there is no positive value of Absolute Salinity for which 
-%  seawater is frozen, the output, brineSA_t, is put equal to -99.  
+%  seawater is frozen, the output, brineSA_t, is set to NaN.  
 %
 % INPUT:
 %  t  =  in-situ Temperature (ITS-90)                             [ deg C ]
@@ -36,7 +36,7 @@ function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (4th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -44,6 +44,14 @@ function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %    See section 3.33 of this TEOS-10 Manual.  
+%
+%  McDougall, T.J., P.M. Barker and R. Feistel, 2014: Melting of ice and 
+%   sea ice into seawater, and frazil ice formation.  submitted to the 
+%   Journal of Physical Oceanography.  
+%
+%  McDougall, T.J., and S.J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -69,7 +77,7 @@ end
 [mp,np] = size(p);
 [map,nap] = size(saturation_fraction);
 
-if (mp == 1) & (np == 1)                   % p scalar - fill to size of t
+if (mp == 1) & (np == 1)                    % p scalar - fill to size of t
     p = p*ones(size(t));
 elseif (nt == np) & (mp == 1)                            % p is row vector,
     p = p(ones(1,mt), :);                          % copy down each column.
@@ -85,7 +93,7 @@ else
 end %if
 
 if (map == 1) & (nap == 1)                                    % saturation_fraction scalar
-    saturation_fraction = saturation_fraction*ones(size(t));         % fill to size of SA
+    saturation_fraction = saturation_fraction*ones(size(t));         % fill to size of t
 elseif (nt == nap) & (map == 1)                        % saturation_fraction is row vector,
     saturation_fraction = saturation_fraction(ones(1,mt), :);      % copy down each column.
 elseif (mt == map) & (nap == 1)                     % saturation_fraction is column vector,
@@ -112,7 +120,7 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-a = 0.014289763856964;             % Note that a = 0.502500117621/35.16504.
+aa = 0.014289763856964;           % Note that aa = 0.502500117621/35.16504.
 b = 0.057000649899720;
 
 p0  =  2.570124672768757e-1;
@@ -131,52 +139,29 @@ p12 =  1.256474634100811e-12;
 p13 =  2.105103897918125e-15;
 p14 =  8.663811778227171e-19;
 
-% Coefficients from gsw_t_freezing
-% t0 = 0.002519;
- t1 = -5.946302841607319;
- t2 =  4.136051661346983;
- t3 = -1.115150523403847e1;
- t4 =  1.476878746184548e1;
- t5 = -1.088873263630961e1;
- t6 =  2.961018839640730;
-% t7 = -7.433320943962606;
-% t8 = -1.561578562479883;
-% t9 =  4.073774363480365e-2;
- t10 =  1.158414435887717e-2;
- t11 = -4.122639292422863e-1;
- t12 = -1.123186915628260e-1;
- t13 =  5.715012685553502e-1;
- t14 =  2.021682115652684e-1;
- t15 =  4.140574258089767e-2;
- t16 = -6.034228641903586e-1;
- t17 = -1.205825928146808e-2;
- t18 = -2.812172968619369e-1;
- t19 =  1.877244474023750e-2;
- t20 = -1.204395563789007e-1;
- t21 =  2.349147739749606e-1;
- t22 =  2.748444541144219e-3;
+% Set the upper and lower limits where the TEOS-10 Gibbs function is defined.
+t(t < -12 | t > 80 | p > 12000) = NaN;
+p(t < -12 | t > 80 | p > 12000) = NaN;
 
-p_r = p.*1e-4;
-
-%--------------------------------------------------------------------------
-% Form the first estimate of brineSA_t, called SA here, from a polynomial 
-% in CT and p_r. 
-%--------------------------------------------------------------------------
-SA = -(t + 9*p_r)./0.06; % A rough estimate to get the saturated CT.
-
-% This line ensures that SA is non-negative.
-SA(SA < 0) = 0;
+SA = -(t + 9e-4*p)./0.06;  % Firstly, this is a very rough estimate of SA 
+                            % simply to get the saturated CT, CTsat.
+                            
+SA(SA < 0) = 0;  % This line ensures that SA is non-negative. 
 
 CT = gsw_CT_from_t(SA,t,p);
-CTsat = CT ...
-    - (1-saturation_fraction).*(1e-3).*(2.4-a.*SA).*(1+b.*(1-SA./35.16504));
 
+% CTsat is the estimated value of CT if the seawater were saturated with
+% dissolved air, recognizing that it actually has the air fraction
+% saturation_fraction; see McDougall, Barker and Feistel, 2014).  
+CTsat = CT ...
+    - (1-saturation_fraction).*(1e-3).*(2.4-aa.*SA).*(1+b.*(1-SA./35.16504));
+
+% This is the inital guess of SA using a purpose-built polynomial in CTsat and p.  
 SA = p0 + p.*(p2 + p4*CTsat + p.*(p5 + CTsat.*(p7 + p9*CTsat) ...
     + p.*(p8  + CTsat.*(p10 + p12*CTsat) + p.*(p11 + p13*CTsat + p14*p)))) ...
     + CTsat.*(p1 + CTsat.*(p3 + p6*p));
 
 t_freezing_zero_SA = gsw_t_freezing(zeros(size(t)),p,saturation_fraction);
-
 % Find t > t_freezing_zero_SA.  If this is the case, the input values
 % represent seawater that is not frozen (at any positive SA). 
 [Itw] = find(t > t_freezing_zero_SA);         % Itw stands for "I_too_warm"
@@ -196,70 +181,52 @@ SA(SA < 0 & SA >= -SA_cut_off) = 0;
 % Find SA < -SA_cut_off, set them to NaN.
 SA(SA < -SA_cut_off) = NaN;
 
-%---------------------------------------------------------------------------
-% Form the first estimate of dt_dSA, the derivative of t with respect 
-% to SA at fixed p, using the coefficients, t0 ... t22 from gsw_t_freezing. 
 %--------------------------------------------------------------------------
-SA_r = 0.01*SA;
-x = sqrt(SA_r);
-dt_dSA_part = 2*t1 + x.*(3*t2 + x.*(4*t3 + x.*(5*t4 + x.*(6*t5 + 7*t6.*x))))...
-    + p_r.*(2*t10 + p_r.*(2*t12 + p_r.*(2*t15 + 4*t21.*x.*x))...
-    + x.*x.*(4*t13 + 4*t17.*p_r + 6*t19.*x.*x)...
-    + x.*(3*t11 + 3*p_r.*(t14 + t18.*p_r)...
-    + x.*x.*(5*t16 + 5*t20.*p_r + 7*t22.*x.*x)));
-dt_dSA = 0.5*0.01*dt_dSA_part ...
-    + saturation_fraction.*(1e-3)./70.33008;
-
+% Form the first estimate of tfreezing_SA, the derivative of CT_freezing  
+% with respect to SA at fixed p.    
+%--------------------------------------------------------------------------
+[tfreezing_SA, dummy] = gsw_t_freezing_first_derivatives(SA,p,saturation_fraction);
 % Now replace the estimate of SA with the one based on 
 % (t_freezing_zero_SA - t) when (abs(SA) < SA_cut_off). 
 if ~isempty(Ico)
-    SA(Ico) = (t(Ico) - t_freezing_zero_SA(Ico))./dt_dSA(Ico);
+    SA(Ico) = (t(Ico) - t_freezing_zero_SA(Ico))./tfreezing_SA(Ico);
 end
 
 %---------------------------------------------------------------------------
 % Begin the modified Newton-Raphson method to find the root of 
-% t_freezing = t for SA. 
+% f = (t_freezing - t) = 0 for SA. 
 %---------------------------------------------------------------------------
-Number_of_Iterations = 5;
+Number_of_Iterations = 2;
 for I_iter = 1:Number_of_Iterations
     
     SA_old = SA;
-    
-    t_freezing = gsw_t_freezing(SA_old,p,saturation_fraction);
-    
-    SA = SA_old - (t_freezing - t)./dt_dSA;
-    % This is the half-way point of the modified Newton-Raphson solution method.
-    SA_r = 0.5*0.01*(SA + SA_old); % This is now the mean value of SA and SA_old.
-    x = sqrt(SA_r);
-    dt_dSA_part = 2*t1 + x.*(3*t2 + x.*(4*t3 + x.*(5*t4 + x.*(6*t5 + 7*t6.*x))))...
-        + p_r.*(2*t10 + p_r.*(2*t12 + p_r.*(2*t15 + 4*t21.*x.*x))...
-        + x.*x.*(4*t13 + 4*t17.*p_r + 6*t19.*x.*x)...
-        + x.*(3*t11 + 3*p_r.*(t14 + t18.*p_r)...
-        + x.*x.*(5*t16 + 5*t20.*p_r + 7*t22.*x.*x)));
-    dt_dSA = 0.5*0.01*dt_dSA_part ...
-        + saturation_fraction.*(1e-3)./70.33008;
-    
-    SA = SA_old - (t_freezing - t)./dt_dSA;
+    f = gsw_t_freezing(SA_old,p,saturation_fraction) - t;
+    SA = SA_old - f./tfreezing_SA;
+    % This is the half-way point of the modified Newton-Raphson
+    % method of McDougall and Wotherspoon (2013).
+    SA_mean = 0.5*(SA + SA_old);
+    [tfreezing_SA, dummy] = gsw_t_freezing_first_derivatives(SA_mean,p,saturation_fraction);
+    SA = SA_old - f./tfreezing_SA;   
     
 end
 
 %--------------------------------------------------------------------------
 % The following lines of code, if implemented, calculate the error of 
 % this function in terms of in-situ temperature, t.  
-% With Number_of_Iterations = 4, the maximum error in t is 3x10^-13 C.
-% With Number_of_Iterations = 5, the maximum error in t is 2x10^-14 C, 
-% which is the machine precision of the computer. 
-% Number_of_Iterations = 5 is what we recommend. 
+% After 2 iterations the maximum error in t is 4.2x10^-13 C and in SA it is
+% 8x10^-12 g/kg.
 %
-% SA(SA < 0) = NaN;  
+% SA(SA < 0) = NaN;
 % 
 % t_freezing = gsw_t_freezing(SA,p,saturation_fraction);
-%  
-% t_error = abs(t_freezing - t);
-%  
-% t_error(p > 10000 | SA > 120 | ...
-%      p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 % 
+% t_error = abs(t_freezing - t);
+% t_error(p > 10000 | SA > 120 | ...
+%     p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
+% if ~isempty(Itw)
+%     t_error(Itw) = NaN;      % If the t input is too warm, then there is
+%              % no (positive) value of SA that represents frozen seawater.
+% end
 %-----------------This is the end of the error calculation-----------------
 
 brineSA_t = SA;
@@ -269,7 +236,7 @@ brineSA_t(p > 10000 | SA > 120 | ...
     p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 
 if ~isempty(Itw)
-    brineSA_t(Itw) = -99;       % If the t input is too warm, then there is 
+    brineSA_t(Itw) = NaN;      % If the t input is too warm, then there is 
 %                no (positive) value of SA that represents frozen seawater. 
 end
 

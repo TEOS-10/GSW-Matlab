@@ -27,7 +27,7 @@ function adiabatic_lapse_rate = gsw_adiabatic_lapse_rate_from_CT(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

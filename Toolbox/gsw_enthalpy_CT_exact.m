@@ -4,7 +4,7 @@ function enthalpy_CT_exact = gsw_enthalpy_CT_exact(SA,CT,p)
 %==========================================================================
 %
 % USAGE:
-%  enthalpy_CT_exact  =  gsw_enthalpy_CT_exact(SA,CT,p)
+%  enthalpy_CT_exact = gsw_enthalpy_CT_exact(SA,CT,p)
 %
 % DESCRIPTION:
 %  Calculates specific enthalpy of seawater from Absolute Salinity and 
@@ -30,7 +30,7 @@ function enthalpy_CT_exact = gsw_enthalpy_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (12th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

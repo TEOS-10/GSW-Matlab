@@ -87,6 +87,10 @@ pr0 = zeros(size(SA));
 pt0 = gsw_pt_from_CT(SA,CT);
 t = gsw_pt_from_t(SA,pt0,pr0,p);
 
+%Find values that are out of range, set them to NaN. 
+t(p < 100 & (t > 80 | t < -12)) = NaN;
+t(p >= 100 & (t > 40 | t < -12)) = NaN;
+
 if transposed
     t = t.';
 end

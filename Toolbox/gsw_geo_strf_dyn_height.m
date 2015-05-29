@@ -60,7 +60,7 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker, Jeff Dunn and Trevor McDougall         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -262,7 +262,10 @@ else
     % will need to interpolate profiles, doing so one profile at a time.
     for Iprofile = 1:np
         [Inn] = find(~isnan(p(:,Iprofile)));
-        
+% test that there is more than 1 bottle in the profile        
+        if isempty(Inn) | length(Inn) == 1
+            continue
+        end
 % Test if the depth of the cast extends to the reference pressure
         if (max(p(Inn,Iprofile)) >= p_ref)     
 % p_ref is shallower than the pressure of the deepest “bottle” on the
@@ -333,7 +336,7 @@ else
                 
 % Test for bottle at p_ref, if it does not exist then the reference 
 % pressure will need to be an interpolated pressure.
-                if any(p - p_ref == 0)
+                if any(p(Inn,Iprofile) - p_ref == 0)
                     %There is a bottle at p_ref. Define interpolation
                     %pressures.
                     for Ibottle = 1:(length(Inn)-1)

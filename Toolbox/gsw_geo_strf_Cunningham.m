@@ -47,7 +47,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  Cunningham, S.A., 2000: Circulation and volume flux of the North 

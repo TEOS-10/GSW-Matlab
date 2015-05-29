@@ -48,8 +48,7 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 % MODIFIED:
 %  Trevor McDougall and Paul Barker 
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  Feistel, R., 2003: A new extended Gibbs thermodynamic potential of 
@@ -87,6 +86,11 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
+
+% Set the upper and lower limits where the Gibbs function is defined.
+SA(SA > 120 | t < -12 | t > 80 | p > 12000) = NaN;
+t(SA > 120 | t < -12 | t > 80 | p > 12000) = NaN;
+p(SA > 120 | t < -12 | t > 80 | p > 12000) = NaN;
 
 sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
 
@@ -197,7 +201,7 @@ elseif ns==0 & nt==1 & np==0
     
      g08(x>0) = g08(x>0) + 851.226734946706.*x2(x>0).*log(x(x>0));
     
-    gibbs = (g03 + g08).*0.025d0;
+    gibbs = (g03 + g08).*0.025;
     
 elseif ns==0 & nt==0 & np==1
     
@@ -252,7 +256,7 @@ elseif ns==1 & nt==1 & np==0
      g08(x>0) = g08(x>0) + 1702.453469893412.*log(x(x>0));
      g08(SA==0) = nan;
     
-    gibbs = 0.5.*sfac.*0.025d0.*g08;
+    gibbs = 0.5.*sfac.*0.025.*g08;
   
 elseif ns==1 & nt==0 & np==1
     
@@ -271,7 +275,7 @@ elseif ns==1 & nt==0 & np==1
         z.*(-819.558567859612 + (681.370187043564 - 89.0261874611304.*z).*z)) + ...
         z.*(1349.638121077468 + z.*(-1069.887337245828 + (353.6322866464 - 79.20015472116819.*z).*z))));
     
-    gibbs = g08.*sfac.*0.5d-8;
+    gibbs = g08.*sfac.*0.5e-8;
     % Note. This derivative of the Gibbs function is in units of (m^3/kg)/(g/kg) = m^3/g,
     % that is, it is the derivative of specific volume with respect to Absolute
     % Salinity measured in g/kg.

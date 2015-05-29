@@ -34,7 +34,7 @@ function alpha_on_beta_CT_exact = gsw_alpha_on_beta_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (13th May, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

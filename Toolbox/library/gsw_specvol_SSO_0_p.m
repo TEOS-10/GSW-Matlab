@@ -9,7 +9,7 @@ function specvol_SSO_0_p = gsw_specvol_SSO_0_p(p)
 %  version of specific volume, that is, a streamlined version of the code
 %  "gsw_specvol(SA,CT,p)".
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 

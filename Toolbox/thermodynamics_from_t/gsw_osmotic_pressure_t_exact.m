@@ -24,18 +24,18 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
-%    See section 3.41 of this TEOS-10  Manual
+%    See section 3.41 of this TEOS-10 Manual.
 %
-%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation.  
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %

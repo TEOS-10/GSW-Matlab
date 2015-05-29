@@ -39,7 +39,7 @@ function [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives_CT_exact(SA,C
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (10th May, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

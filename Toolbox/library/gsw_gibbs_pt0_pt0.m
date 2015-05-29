@@ -9,8 +9,7 @@ function gibbs_pt0_pt0 = gsw_gibbs_pt0_pt0(SA,pt0)
 % "gsw_pt_from_CT(SA,CT)" ,"gsw_pt0_from_t(SA,t,p)" and
 % "gsw_pt_from_entropy(SA,entropy)".
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 %==========================================================================
 

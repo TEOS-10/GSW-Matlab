@@ -51,7 +51,7 @@ function [G_CT, p_mid] = gsw_isopycnal_vs_ntp_CT_ratio(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall, Paul Barker & David Jackett       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

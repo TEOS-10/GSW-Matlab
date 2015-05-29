@@ -27,7 +27,7 @@ function pt = gsw_pt_from_CT(SA,CT)
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -36,9 +36,9 @@ function pt = gsw_pt_from_CT(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See sections 3.1 and 3.3 of this TEOS-10 Manual.
 %
-%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation.  
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -76,7 +76,7 @@ SA(SA < 0) = 0;
 
 cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 
-s1 = SA*35./35.16504; 
+s1 = SA*(35./35.16504); 
 
 a0 = -1.446013646344788d-2;     
 a1 = -3.305308995852924d-3;     
@@ -95,9 +95,9 @@ b3CT = b3*CT;
 CT_factor = (a3 + a4*s1 + a5CT);
 pt_num = a0 + s1.*(a1 + a2*s1) + CT.*CT_factor;
 pt_den = b0 + b1*s1 + CT.*(b2 + b3CT);
-pt = (pt_num)./(pt_den);
+pt = pt_num./pt_den;
 
-dCT_dpt = (pt_den)./(CT_factor + a5CT - (b2 + b3CT + b3CT).*pt);
+dCT_dpt = pt_den./(CT_factor + a5CT - (b2 + b3CT + b3CT).*pt);
 
 % start the 1.5 iterations through the modified Newton-Rapshon iterative 
 % method (McDougall and Wotherspoon, 2012). 

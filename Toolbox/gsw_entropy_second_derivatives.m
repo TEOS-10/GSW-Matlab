@@ -37,7 +37,7 @@ function [eta_SA_SA, eta_SA_CT, eta_CT_CT] = gsw_entropy_second_derivatives(SA,C
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 % 
-% VERSION NUMBER: 3.03 (16th April, 2012)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -1,10 +1,10 @@
-function latentheat_evap_t = gsw_latentheat_evap_t(SA,t)
+function latentheat_evap = gsw_latentheat_evap_t(SA,t)
 
 % gsw_latentheat_evap_t                          latent heat of evaporation 
 %==========================================================================
 %
 % USAGE: 
-%  latentheat_evap_t = gsw_latentheat_evap_t(SA,t)
+%  latentheat_evap = gsw_latentheat_evap_t(SA,t)
 %
 % DESCRIPTION:
 %  Calculates latent heat, or enthalpy, of evaporation at p = 0 (the 
@@ -19,12 +19,12 @@ function latentheat_evap_t = gsw_latentheat_evap_t(SA,t)
 %  SA & CT need to have the same dimensions.
 %
 % OUTPUT:
-%  latentheat_evap_t = latent heat of evaporation                  [ J/kg ]
+%  latentheat_evap = latent heat of evaporation                    [ J/kg ]
 %
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall & Rainer Feistel      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -66,10 +66,10 @@ end
  
 CT = gsw_CT_from_pt(SA,t);
 
-latentheat_evap_t = gsw_latentheat_evap_CT(SA,CT);
+latentheat_evap = gsw_latentheat_evap_CT(SA,CT);
 
 if transposed
-    latentheat_evap_t = latentheat_evap_t.';
+    latentheat_evap = latentheat_evap.';
 end
 
 end

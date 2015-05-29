@@ -24,8 +24,7 @@ function f = gsw_f(lat)
 % MODIFIED:
 %  28th July, 2010 by Paul Barker  
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
-%  This function is unchanged from version 2.0 (28th July, 2010).
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCE:
 %  Groten, E., 2004: Fundamental Parameters and Current (2004) Best 
@@ -53,8 +52,8 @@ end %if
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-DEG2RAD = pi/180;
-OMEGA   = 7.292115e-5;                              %(1/s)   (Groten, 2004)
-f       = 2*OMEGA*sin(lat*DEG2RAD);
+deg2rad = pi/180;
+OMEGA = 7.292115e-5;                              %(1/s)   (Groten, 2004)
+f = 2*OMEGA*sin(lat*deg2rad);
 
 end

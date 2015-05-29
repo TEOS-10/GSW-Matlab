@@ -48,7 +48,7 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %  Trevor McDougall, Claire Roberts-Thomson & Paul Barker.
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (19th July, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

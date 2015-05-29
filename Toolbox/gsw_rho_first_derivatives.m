@@ -40,7 +40,7 @@ function [drho_dSA, drho_dCT, drho_dP] = gsw_rho_first_derivatives(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -281,7 +281,6 @@ dvhatnum_dp = c10 + CT.*(c11 + CT.*(c12 + c13*CT)) ...
 rec_num = ones(size(v_hat_numerator))./v_hat_numerator;
        
 rho = rec_num.*v_hat_denominator;
-
 drho_dSA = (dvhatden_dSA - dvhatnum_dSA.*rho).*rec_num;
 
 drho_dCT = (dvhatden_dCT - dvhatnum_dCT.*rho).*rec_num;

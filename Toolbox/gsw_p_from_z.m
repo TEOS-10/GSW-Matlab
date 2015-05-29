@@ -34,7 +34,7 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %  geo_strf_dyn_height = dynamic height anomaly                 [ m^2/s^2 ]
 %    Note that the reference pressure, p_ref, of geo_strf_dyn_height must
 %     be zero (0) dbar.
-%  sea_surface_geopotental = geopotential at zero sea pressure.       [ m ]
+%  sea_surface_geopotental = geopotential at zero sea pressure  [ m^2/s^2 ]
 %
 %  lat may have dimensions 1x1 or Mx1 or 1xN or MxN, where z is MxN.
 %  geo_strf_dyn_height and geo_strf_dyn_height, if provided, must have 
@@ -48,7 +48,7 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %  Trevor McDougall, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (19th July, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -56,9 +56,9 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation. 
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  Moritz (2000) Goedetic reference system 1980. J. Geodesy, 74, 128-133.
 %

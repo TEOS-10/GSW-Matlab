@@ -20,7 +20,7 @@ function SonCl = gsw_SonCl
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 

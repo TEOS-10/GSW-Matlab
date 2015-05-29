@@ -37,7 +37,7 @@ function enthalpy_diff_CT_exact = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_d
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -36,7 +36,7 @@ function pt = gsw_pt_from_t(SA,t,p,p_ref)
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -45,9 +45,9 @@ function pt = gsw_pt_from_t(SA,t,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.1 of this TEOS-10 Manual.
 %
-%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation.  
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -125,10 +125,8 @@ SA(SA < 0) = 0;
 
 cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 SSO = 35.16504;                    % from section 2.4 of IOC et al. (2010).
-n0 = 0;
-n2 = 2;
 
-s1 = SA*35./SSO;
+s1 = SA*(35./SSO);
 
 pt = t + (p-p_ref).*( 8.65483913395442e-6  ...
              - s1 .*  1.41636299744881e-6  ...
@@ -147,7 +145,7 @@ for Number_of_iterations = 1:2
     dentropy = gsw_entropy_part(SA,pt_old,p_ref) - true_entropy_part;
     pt = pt_old - dentropy./dentropy_dt ; % this is half way through the modified method (McDougall and Wotherspoon, 2012)
     ptm = 0.5*(pt + pt_old);
-    dentropy_dt = -gsw_gibbs(n0,n2,n0,SA,ptm,p_ref);
+    dentropy_dt = -gsw_gibbs(0,2,0,SA,ptm,p_ref);
     pt = pt_old - dentropy./dentropy_dt;
 end
 

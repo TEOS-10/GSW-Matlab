@@ -31,7 +31,7 @@ function t = gsw_t_from_pt0(SA,pt0,p)
 % AUTHOR:
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (22nd May, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -40,9 +40,9 @@ function t = gsw_t_from_pt0(SA,pt0,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.1 of this TEOS-10 Manual.
 %
-%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation.  
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -53,7 +53,7 @@ function t = gsw_t_from_pt0(SA,pt0,p)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 3)
-    error('gsw_t_from_pt0:  Requires either three inputs.')
+    error('gsw_t_from_pt0:  Requires three inputs.')
 end %if
 
 [ms,ns] = size(SA);

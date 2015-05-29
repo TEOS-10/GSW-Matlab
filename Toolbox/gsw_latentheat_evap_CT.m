@@ -1,10 +1,10 @@
-function latentheat_evap_CT = gsw_latentheat_evap_CT(SA,CT)
+function latentheat_evap = gsw_latentheat_evap_CT(SA,CT)
 
 % gsw_latentheat_evap_CT                         latent heat of evaporation 
 %==========================================================================
 %
 % USAGE: 
-%  latentheat_evap_CT = gsw_latentheat_evap_CT(SA,CT)
+%  latentheat_evap = gsw_latentheat_evap_CT(SA,CT)
 %
 % DESCRIPTION:
 %  Calculates latent heat, or enthalpy, of evaporation at p = 0 (the 
@@ -20,12 +20,12 @@ function latentheat_evap_CT = gsw_latentheat_evap_CT(SA,CT)
 %  SA & CT need to have the same dimensions.
 %
 % OUTPUT:
-%  latentheat_evap_CT = latent heat of evaporation                 [ J/kg ]
+%  latentheat_evap = latent heat of evaporation                    [ J/kg ]
 %
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall & Rainer Feistel      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -97,14 +97,14 @@ S_u = 40*(35.16504/35);
 x = sqrt(SA./S_u);
 y = CT./40;
 
-latentheat_evap_CT = c0 + x.*(c1 + c4*y + x.*(c3   ...
+latentheat_evap = c0 + x.*(c1 + c4*y + x.*(c3   ...
     + y.*(c7 + c12*y) + x.*(c6 + y.*(c11 + y.*(c17 + c24*y)) ...
     + x.*(c10 + y.*(c16 + c23*y) + x.*(c15 + c22*y + c21*x)))))  ...
     + y.*(c2 + y.*(c5 + c8*x + y.*(c9 + x.*(c13 + c18*x) ...
     + y.*(c14 + x.*(c19 + c25*x) + y.*(c20 + c26*x + c27*y)))));
 
 if transposed
-    latentheat_evap_CT = latentheat_evap_CT.';
+    latentheat_evap = latentheat_evap.';
 end
 
 end

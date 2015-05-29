@@ -1,13 +1,22 @@
 function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 
-% gsw_CT_freezing        Conservative Temperature at which seawater freezes
+% gsw_CT_freezing                               Conservative Temperature at
+%                                                    which seawater freezes
 %==========================================================================
 %
 % USAGE:
 %  CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %
 % DESCRIPTION:
-%  Calculates the Conservative Temperature at which seawater freezes.
+%  Calculates the Conservative Temperature at which seawater freezes.  The 
+%  Conservative Temperature freezing point is calculated from the exact 
+%  in-situ freezing temperature which is found by a modified Newton-Raphson
+%  iteration (McDougall and Wotherspoon, 2013) of the equality of the 
+%  chemical potentials of water in seawater and in ice.
+%
+%  An alternative GSW function, gsw_CT_freezing_poly, it is based on a 
+%  computationally-efficient polynomial, and is accurate to within -5e-4 K 
+%  and 6e-4 K, when compared with this function.
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -25,13 +34,13 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %
 % OUTPUT:
 %  CT_freezing = Conservative Temperature at freezing of seawater [ deg C ]
-%                That is, the freezing temperature expressed in
-%                terms of Conservative Temperature (ITS-90).                
+%                That is, the freezing temperature expressed in terms of
+%                Conservative Temperature (ITS-90).    
 %
 % AUTHOR: 
-%  Trevor McDougall, Paul Barker and Rainer Feistal    [ help@teos-10.org ]
+%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -39,6 +48,10 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %    See sections 3.33 and 3.34 of this TEOS-10 Manual.  
+%
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -49,7 +62,7 @@ function CT_freezing = gsw_CT_freezing(SA,p,saturation_fraction)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 2 | nargin == 3) 
-   error('gsw_CT_freezing:  Requires either two or three inputs')
+   error('gsw_CT_freezing_:  Requires either two or three inputs')
 end %if
 
 if ~exist('saturation_fraction','var')
@@ -57,12 +70,12 @@ if ~exist('saturation_fraction','var')
 end
 
 if (saturation_fraction < 0 | saturation_fraction > 1)
-   error('gsw_CT_freezing: saturation_fraction MUST be between zero and one.')
+   error('gsw_CT_freezing: saturation fraction MUST be between zero and one.')
 end
 
 [ms,ns] = size(SA);
 [mp,np] = size(p);
-[map,nap] = size(saturation_fraction);
+[msf,nsf] = size(saturation_fraction);
 
 if (mp == 1) & (np == 1)                    % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -79,16 +92,16 @@ else
     error('gsw_CT_freezing: Inputs array dimensions arguments do not agree')
 end %if
 
-if (map == 1) & (nap == 1)                                    % saturation_fraction scalar
+if (msf == 1) & (nsf == 1)                                    % saturation_fraction scalar
     saturation_fraction = saturation_fraction*ones(size(SA));         % fill to size of SA
-elseif (ns == nap) & (map == 1)                        % saturation_fraction is row vector,
+elseif (ns == nsf) & (msf == 1)                        % saturation_fraction is row vector,
     saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == map) & (nap == 1)                     % saturation_fraction is column vector,
+elseif (ms == msf) & (nsf == 1)                     % saturation_fraction is column vector,
     saturation_fraction = saturation_fraction(:,ones(1,ns));        % copy across each row.
-elseif (ns == map) & (nap == 1)           % saturation_fraction is a transposed row vector,
+elseif (ns == msf) & (nsf == 1)           % saturation_fraction is a transposed row vector,
     saturation_fraction = saturation_fraction.';                           % transposed then
     saturation_fraction = saturation_fraction(ones(1,ms), :);      % copy down each column.
-elseif (ms == map) & (ns == nap)
+elseif (ms == msf) & (ns == nsf)
     % ok
 else
     error('gsw_CT_freezing: Inputs array dimensions arguments do not agree')
@@ -109,61 +122,13 @@ end
 
 % These few lines ensure that SA is non-negative.
 if any(SA < 0)
-    error(' gsw_CT_freezing: SA must be non-negative!')
+    error('gsw_CT_freezing: SA must be non-negative!')
 end
 
-c0  =  0.017947064327968736;
-%
-c1 =  -6.076099099929818;
-c2 =   4.883198653547851;
-c3 =  -11.88081601230542;
-c4 =   13.34658511480257;
-c5 =  -8.722761043208607;
-c6 =   2.082038908808201;
-%
-c7 =  -7.389420998107497;
-c8 =  -2.110913185058476;
-c9 =   0.2295491578006229; 
-%  
-c10 = -0.9891538123307282;
-c11 = -0.08987150128406496;
-c12 =  0.3831132432071728;
-c13 =  1.054318231187074;
-c14 =  1.065556599652796;
-c15 = -0.7997496801694032;
-c16 =  0.3850133554097069;
-c17 = -2.078616693017569;
-c18 =  0.8756340772729538;
-c19 = -2.079022768390933;
-c20 =  1.596435439942262;
-c21 =  0.1338002171109174;
-c22 =  1.242891021876471;
+t_freezing = gsw_t_freezing(SA,p,saturation_fraction);
+CT_freezing = gsw_CT_from_t(SA,t_freezing,p);
 
-SA_r = SA.*1e-2;
-x = sqrt(SA_r);
-p_r = p.*1e-4;
-
-CT_freezing = c0 ...
- + SA_r.*(c1 + x.*(c2 + x.*(c3 + x.*(c4 + x.*(c5 + c6.*x))))) ...
- + p_r.*(c7 + p_r.*(c8 + c9.*p_r)) ...
- + SA_r.*p_r.*(c10 + p_r.*(c12 + p_r.*(c15 + c21.*SA_r)) + SA_r.*(c13 + c17.*p_r + c19.*SA_r) ...
-   + x.*(c11 + p_r.*(c14 + c18.*p_r)  + SA_r.*(c16 + c20.*p_r + c22.*SA_r)));
-
-% The error of this fit ranges between -5e-4 K and 6e-4 K when compared 
-% with the Conservative Temperature calculated from the exact in-situ 
-% freezing temperature which is found by a Newton-Raphson iteration of the 
-% equality of the chemical potentials of water in seawater and in ice.  
-% (Note that the in-situ freezing temperature can be found by this exact 
-% method using the function sea_ice_freezingtemperature_si in the SIA 
-% library).  
-
-% Adjust for the effects of dissolved air 
-a = 0.014289763856964;             % Note that a = 0.502500117621/35.16504.
-b = 0.057000649899720;
-CT_freezing = CT_freezing ...
-    - saturation_fraction.*(1e-3).*(2.4 - a.*SA).*(1 + b.*(1 - SA./35.16504));
-
-% set any values that are out of range to be NaN. 
+% set any values that are out of the valid TEOS-10 range to be NaN. 
 CT_freezing(p > 10000 | SA > 120 | ...
     p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 

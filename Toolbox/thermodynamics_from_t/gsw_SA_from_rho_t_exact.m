@@ -29,7 +29,7 @@ function SA = gsw_SA_from_rho_t_exact(rho,t,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -38,9 +38,9 @@ function SA = gsw_SA_from_rho_t_exact(rho,t,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 2.5 of this TEOS-10 Manual. 
 %
-%  McDougall, T.J. and S.J. Wotherspoon, 2012: A simple modification of 
-%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
-%   Submitted to Applied Mathematics and Computation.  
+%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
+%   Mathematics Letters, 29, 20-25.  
 %
 %  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 
 %   The composition of Standard Seawater and the definition of the 

@@ -41,7 +41,7 @@ function [h_SA, h_CT] = gsw_enthalpy_first_derivatives(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.03 (20th May, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -80,7 +80,7 @@ if (ms ~= mt | ns ~= nt )
 end %if
 
 if (mp == 1) & (np == 1)              % p is a scalar - fill to size of SA.
-    p = p*ones(size(SA));
+    p = p*ones(ms,ns);
 elseif (ns == np) & (mp == 1)                            % p is row vector,
     p = p(ones(1,ms), :);                          % copy down each column.
 elseif (ms == mp) & (np == 1)                         % p is column vector,

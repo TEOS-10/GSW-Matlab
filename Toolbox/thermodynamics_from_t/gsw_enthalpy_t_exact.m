@@ -24,7 +24,7 @@ function enthalpy_t_exact = gsw_enthalpy_t_exact(SA,t,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -80,11 +80,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1;
-
-enthalpy_t_exact = gsw_gibbs(n0,n0,n0,SA,t,p) ...
-                          - (t+273.15).*gsw_gibbs(n0,n1,n0,SA,t,p);
+enthalpy_t_exact = gsw_gibbs(0,0,0,SA,t,p) ...
+                          - (t+273.15).*gsw_gibbs(0,1,0,SA,t,p);
 
 if transposed
     enthalpy_t_exact = enthalpy_t_exact.';

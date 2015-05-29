@@ -12,8 +12,7 @@ function entropy_part_zerop = gsw_entropy_part_zerop(SA,pt0)
 % The inputs to "gsw_entropy_part_zerop(SA,pt0)" are Absolute Salinity 
 % and potential temperature with reference sea pressure of zero dbar.
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 %==========================================================================
 

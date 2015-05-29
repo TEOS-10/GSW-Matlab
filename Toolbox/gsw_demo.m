@@ -51,38 +51,38 @@ fprintf(1,'is possible to compute the complete range of water column properties.
 fprintf(1,' \n');
 pause(6)
 fprintf(1,'The first property to be demonstrated is density (rho) as a function \n');
-fprintf(1,'of SA and CT.  This is computed by using the function "gsw_rho_CT". \n');
+fprintf(1,'of SA and CT.  This is computed by using the function "gsw_rho". \n');
 fprintf(1,'The use of a single algorithm for seawater density (the 48-term computationally \n');
 fprintf(1,'efficient expression) ensures consistency between ocean modelling, observational \n');
 fprintf(1,'oceanography, and  theoretical studies.  Note that this is not been the case to \n');
 fprintf(1,'date under EOS-80. \n');
-fprintf(1,'rho_CT = gsw_rho_CT(SA,CT,p) \n');
-gsw_demo_data.rho_CT = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p);
-fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'rho_CT = [',gsw_demo_data.rho_CT([1,22,29:4:45],1)',']');
+fprintf(1,'rho = gsw_rho(SA,CT,p) \n');
+gsw_demo_data.rho = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p);
+fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'rho = [',gsw_demo_data.rho([1,22,29:4:45],1)',']');
 fprintf(1,' \n');
 pause(6)
-fprintf(1,'Using this same programme, gsw_rho_CT, it is possible to compute potential \n');
+fprintf(1,'Using this same programme, gsw_rho, it is possible to compute potential \n');
 fprintf(1,'density by replacing the in-situ pressure, p with the reference pressure, \n');
 fprintf(1,'p_ref. \n');
 fprintf(1,' \n');
 pause(2)
 fprintf(1,'An example. We have set p_ref to be 2000 dbar, thus we have the potential \n');
 fprintf(1,'density referenced to 2000 dbars. \n');
-fprintf(1,'pot_rho_CT_2 = gsw_rho_CT(SA,CT,p_ref) \n');
-gsw_demo_data.pot_rho_CT_2 = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p_ref);
-fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'pot_rho_CT = [',gsw_demo_data.pot_rho_CT_2([1,22,29:4:45],1)',']');
+fprintf(1,'pot_rho_2 = gsw_rho(SA,CT,p_ref) \n');
+gsw_demo_data.pot_rho_2 = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p_ref);
+fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'pot_rho_2 = [',gsw_demo_data.pot_rho_2([1,22,29:4:45],1)',']');
 fprintf(1,' \n');
 pause(6)
 fprintf(1,'The potential density anomaly can be obtained by using the function \n');
-fprintf(1,'"gsw_rho_CT" - 1000 kg/m^3. \n');
+fprintf(1,'"gsw_rho" - 1000 kg/m^3. \n');
 fprintf(1,'Two examples of this are sigma_Theta and sigma_2 which can be calculated \n');
 fprintf(1,'as follows \n');
-fprintf(1,'sigma_0 = gsw_rho_CT(SA,CT,0) - 1000 \n');
+fprintf(1,'sigma_0 = gsw_rho(SA,CT,0) - 1000 \n');
 gsw_demo_data.sigma_0 = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,0) -1000;
 fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'sigma_0 = [',gsw_demo_data.sigma_0([1,22,29:4:45],1)',']');
 fprintf(1,' \n');
 pause(6)
-fprintf(1,'sigma_2 = gsw_rho_CT(SA,CT,2000) - 1000 \n');
+fprintf(1,'sigma_2 = gsw_rho(SA,CT,2000) - 1000 \n');
 gsw_demo_data.sigma_2 = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,2000) - 1000;
 fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'sigma_2 = [',gsw_demo_data.sigma_2([1,22,29:4:45],1)',']');
 fprintf(1,' \n');
@@ -90,9 +90,9 @@ pause(6)
 fprintf(1,'However, there are alternatives to the last two calls, we have provided \n');
 fprintf(1,'some short-cuts for the standard oceaongraphic variables as functions of \n');
 fprintf(1,'SA and CT, the alternative short-cuts to the above two calls are: \n');
-fprintf(1,'sigma_0 = gsw_sigma0_CT(SA,CT) \n');
+fprintf(1,'sigma_0 = gsw_sigma0(SA,CT) \n');
 fprintf(1,' and  \n');
-fprintf(1,'sigma_2 = gsw_sigma2_CT(SA,CT) \n');
+fprintf(1,'sigma_2 = gsw_sigma2(SA,CT) \n');
 fprintf(1,' \n');
 pause(6)
 fprintf(1,'Calculating the Conservative Temperature at which seawater freezes is \n');
@@ -115,7 +115,7 @@ fprintf(1,'freezing line at p of 0 dbar.  The potential density anomaly contours
 fprintf(1,'referenced to user supplied depth are also included.  In this example we have \n');
 fprintf(1,'set the reference pressure to be 2000 dbar. \n');
 fprintf(1,'note that this plotting function relies on the functions \n');
-fprintf(1,'"gsw_rho_CT" and "gsw_CT_freezing" \n');
+fprintf(1,'"gsw_rho" and "gsw_CT_freezing" \n');
 fprintf(1,' \n');
 fprintf(1,'p_ref = 2000 \n');
 fprintf(1,'gsw_SA_CT_plot(SA,CT,p_ref,''\\itS\\rm_A - \\Theta plot'') \n');

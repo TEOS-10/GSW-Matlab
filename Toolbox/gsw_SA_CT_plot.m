@@ -47,7 +47,7 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 % MODIFIED:
 %  Paul Barker & Trevor McDougall
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.04 (10th December, 2013)
 %
 % REFERENCES:
 %  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 

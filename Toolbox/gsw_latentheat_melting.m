@@ -25,7 +25,7 @@ function latentheat_melting = gsw_latentheat_melting(SA,p)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall & Rainer Feistel      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

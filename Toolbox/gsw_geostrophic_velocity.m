@@ -59,7 +59,7 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 % AUTHOR: 
 %  Paul Barker, Trevor McDougall and Phil Morgan       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Cunningham, S. A., 2000: Circulation and volume flux of the North 
@@ -77,11 +77,6 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 %
 %  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method for
 %   forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic 
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32, 

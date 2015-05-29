@@ -1,6 +1,6 @@
 function gsw_ver
 
-% gsw_ver                          GSW Oceanographic toolbox version number
+% gsw_ver                          GSW Oceanographic Toolbox version number
 %==========================================================================
 %
 % USAGE:  
@@ -8,12 +8,12 @@ function gsw_ver
 %
 % DESCRIPTION:
 %  This function displays the version number of the GSW Oceanographic
-%  toolbox.
+%  Toolbox.
 %
 % AUTHOR:  
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (8th March, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

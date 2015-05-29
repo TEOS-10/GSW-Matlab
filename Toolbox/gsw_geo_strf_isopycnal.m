@@ -21,7 +21,7 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 %  variable being Neutral_Density (gamma_n).  This function calculates 
 %  specific volume anomaly using the computationally efficient 48-term
 %  expression for specific volume anomaly in terms of SA, CT and p 
-%  (McDougall et al., 2011). 
+%  (IOC et al., 2010). 
 %
 %  The first three input arguments are a series of vertical profiles.  The 
 %  fourth argument, p_ref, is the reference pressure to which the stream
@@ -74,7 +74,7 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -88,11 +88,6 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 %
 %  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method 
 %   for forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32,

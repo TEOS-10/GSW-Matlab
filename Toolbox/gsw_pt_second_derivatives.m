@@ -40,8 +40,7 @@ function [pt_SA_SA, pt_SA_CT, pt_CT_CT] = gsw_pt_second_derivatives(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -49,11 +48,6 @@ function [pt_SA_SA, pt_SA_CT, pt_CT_CT] = gsw_pt_second_derivatives(SA,CT)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org. 
 %    See Eqns. (A.12.9) and (A.12.10) of this TEOS-10 Manual.     
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  This software is available from http://www.TEOS-10.org
 %

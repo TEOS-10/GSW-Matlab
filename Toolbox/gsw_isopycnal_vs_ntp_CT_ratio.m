@@ -19,11 +19,11 @@ function [G_CT, p_mid] = gsw_isopycnal_vs_ntp_CT_ratio(SA,CT,p,p_ref)
 %  vertical. The reference sea pressure of the potential density surface
 %  must have a constant value.  This function uses the computationally
 %  efficient 48-term expression for density in terms of SA, CT and p
-%  (McDougall et al., 2013).  
+%  (IOC et al., 2010).  
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2013).  The GSW library function 
+%  described in IOC et al. (2010).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -51,7 +51,7 @@ function [G_CT, p_mid] = gsw_isopycnal_vs_ntp_CT_ratio(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall, Paul Barker & David Jackett       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -62,11 +62,6 @@ function [G_CT, p_mid] = gsw_isopycnal_vs_ntp_CT_ratio(SA,CT,p,p_ref)
 %
 %  McDougall, T. J., 1987: Neutral surfaces. Journal of Physical 
 %   Oceanography, 17, 1950-1964.  See Eqn. (29) of this paper.  
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %   The software is available from http://www.TEOS-10.org
 %

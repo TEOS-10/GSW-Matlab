@@ -36,7 +36,7 @@ function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (13th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

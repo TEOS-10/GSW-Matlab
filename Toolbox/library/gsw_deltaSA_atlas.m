@@ -1,6 +1,6 @@
 function [deltaSA_atlas, in_ocean] = gsw_deltaSA_atlas(p,long,lat)
 
-% gsw_deltaSA_atlas                   Absolute Salinity anomaly atlas value
+% gsw_deltaSA_atlas                   Absolute Salinity Anomaly atlas value
 %                                                (excluding the Baltic Sea)
 %==========================================================================
 %
@@ -8,11 +8,11 @@ function [deltaSA_atlas, in_ocean] = gsw_deltaSA_atlas(p,long,lat)
 %  [deltaSA_atlas, in_ocean] = gsw_deltaSA_atlas(p,long,lat)
 %
 % DESCRIPTION:
-%  Calculates the Absolute Salinity anomaly atlas value, SA - SR, in 
+%  Calculates the Absolute Salinity Anomaly atlas value, SA - SR, in 
 %  the open ocean by spatially interpolating the global reference data set  
 %  of deltaSA_atlas to the location of the seawater sample.  
 % 
-%  The Absolute Salinity anomaly atlas value in the Baltic Sea is 
+%  The Absolute Salinity Anomaly atlas value in the Baltic Sea is 
 %  evaluated separately, since it is a function of Practical Salinity, not  
 %  of space.  The present function returns a deltaSA_atlas of zero for 
 %  data in the Baltic Sea.  The correct way of calculating Absolute 
@@ -28,7 +28,7 @@ function [deltaSA_atlas, in_ocean] = gsw_deltaSA_atlas(p,long,lat)
 %  p, long & lat need to be vectors and have the same dimensions.
 %
 % OUTPUT:
-%  deltaSA_atlas   =  Absolute Salinity anomaly atlas value        [ g/kg ]
+%  deltaSA_atlas   =  Absolute Salinity Anomaly atlas value        [ g/kg ]
 %  in_ocean        =  0, if long and lat are a long way from the ocean 
 %                  =  1, if long and lat are in the ocean
 %  Note. This flag is only set when the observation is well and truly on
@@ -41,7 +41,7 @@ function [deltaSA_atlas, in_ocean] = gsw_deltaSA_atlas(p,long,lat)
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.02 (7th January, 2013)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -238,7 +238,7 @@ function deltaSA_atlas = gsw_dsa_add_mean(dsa)
 %  Replaces NaN's with nanmean of the 4 adjacent neighbours
 %
 % INPUT:
-%  dsa  =  Absolute Salinity anomaly of the 4 adjacent neighbours  [ g/kg ]
+%  dsa  =  Absolute Salinity Anomaly of the 4 adjacent neighbours  [ g/kg ]
 %
 % OUTPUT:
 %  deltaSA_atlas  =  nanmean of the 4 adjacent neighbours          [ g/kg ]
@@ -249,7 +249,7 @@ function deltaSA_atlas = gsw_dsa_add_mean(dsa)
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.02 (7th January, 2013)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -306,7 +306,7 @@ function deltaSA_atlas = gsw_dsa_add_barrier(dsa,long,lat,longs_ref,lats_ref,dlo
 %  over the appropriate side of the barrier
 %
 % INPUT:
-%  dsa         =  Absolute Salinity anomaly                                [ g/kg ]
+%  dsa         =  Absolute Salinity Anomaly                                [ g/kg ]
 %  long        =  Longitudes of data in decimal degrees east               [ 0 ... +360 ]
 %  lat         =  Latitudes of data in decimal degrees north               [ -90 ... +90 ]
 %  longs_ref   =  Longitudes of regular grid in decimal degrees east       [ 0 ... +360 ]
@@ -315,7 +315,7 @@ function deltaSA_atlas = gsw_dsa_add_barrier(dsa,long,lat,longs_ref,lats_ref,dlo
 %  dlats_ref   =  Latitude difference of regular grid in decimal degrees   [ deg latitude ]
 %
 % OUTPUT:
-%  deltaSA_atlas  =  Reference Absolute Salinity anomaly                   [ g/kg ]
+%  deltaSA_atlas  =  Reference Absolute Salinity Anomaly                   [ g/kg ]
 %
 % AUTHOR: 
 %  David Jackett
@@ -323,7 +323,7 @@ function deltaSA_atlas = gsw_dsa_add_barrier(dsa,long,lat,longs_ref,lats_ref,dlo
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.02 (7th January, 2013)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

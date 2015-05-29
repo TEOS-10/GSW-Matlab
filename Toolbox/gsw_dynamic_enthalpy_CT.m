@@ -16,12 +16,12 @@ function dynamic_enthalpy_CT = gsw_dynamic_enthalpy_CT(SA,CT,p)
 % DESCRIPTION:
 %  Calculates dynamic enthalpy of seawater using the computationally-
 %  efficient 48-term expression for density in terms of SA, CT and p
-%  (McDougall et al., 2013).  Dynamic enthalpy is defined as enthalpy minus
+%  (IOC et al., 2010).  Dynamic enthalpy is defined as enthalpy minus
 %  potential enthalpy (Young, 2010). 
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2013).  The GSW library function 
+%  described in IOC et al. (2010).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -40,7 +40,7 @@ function dynamic_enthalpy_CT = gsw_dynamic_enthalpy_CT(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -49,10 +49,10 @@ function dynamic_enthalpy_CT = gsw_dynamic_enthalpy_CT(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.2 of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%  McDougall, T. J., 2003: Potential enthalpy: A conservative oceanic 
+%   variable for evaluating heat content and heat fluxes. Journal of 
+%   Physical Oceanography, 33, 945-963.  
+%    See Eqns. (18) and (22)
 %
 %  Young, W.R., 2010: Dynamic enthalpy, Conservative Temperature, and the
 %   seawater Boussinesq approximation. Journal of Physical Oceanography, 

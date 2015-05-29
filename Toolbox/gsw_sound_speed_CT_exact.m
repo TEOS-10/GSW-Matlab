@@ -4,7 +4,7 @@ function sound_speed_CT_exact = gsw_sound_speed_CT_exact(SA,CT,p)
 %==========================================================================
 %
 % USAGE:  
-%  sound_speed_CT = gsw_sound_speed_CT(SA,CT,p)
+%  sound_speed_CT_exact = gsw_sound_speed_CT_exact(SA,CT,p)
 %
 % DESCRIPTION:
 %  Calculates the speed of sound in seawater from Absolute Salinity and 
@@ -25,7 +25,7 @@ function sound_speed_CT_exact = gsw_sound_speed_CT_exact(SA,CT,p)
 % AUTHOR: 
 %  David Jackett, Paul Barker and Trevor McDougall     [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

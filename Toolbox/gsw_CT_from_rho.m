@@ -11,11 +11,11 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 %  Calculates the Conservative Temperature of a seawater sample, for given
 %  values of its density, Absolute Salinity and sea pressure (in dbar), 
 %  using the computationally-efficient 48-term expression for density in 
-%  terms of SA, CT and p (McDougall et al., 2011)
+%  terms of SA, CT and p (IOC et al., 2010)
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in IOC et al. (2010).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -43,18 +43,13 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %

@@ -32,7 +32,7 @@ function SP = gsw_SP_salinometer(Rt,t)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Fofonoff, P. and R.C. Millard Jr. 1983: Algorithms for computation of 

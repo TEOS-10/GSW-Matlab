@@ -20,7 +20,7 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %  reference values used for the specific volume anomaly are 
 %  SSO = 35.16504 g/kg and CT = 0 deg C.  This function calculates 
 %  specific volume anomaly using the computationally efficient 48-term 
-%  expression for specific volume of McDougall et al. (2011). 
+%  expression for specific volume of IOC et al. (2010). 
 %
 %  This function evaluates the pressure integral of specific volume using 
 %  SA and CT “interpolated” with respect to pressure using a scheme based 
@@ -32,7 +32,7 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  For dynamical oceanography we may 
+%  described in IOC et al. (2010).  For dynamical oceanography we may 
 %  take the 48-term rational function expression for density as essentially 
 %  reflecting the full accuracy of TEOS-10.  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
@@ -60,7 +60,7 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker, Jeff Dunn and Trevor McDougall         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -68,11 +68,6 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.7.3) and section 3.27 of this TEOS-10 Manual. 
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  Reiniger, R. F. and C. K. Ross, 1968: A method of interpolation with
 %   application to oceanographic data. Deep-Sea Res. 15, 185-193.
@@ -481,7 +476,9 @@ if ndeps == 0
     return;
 end
 
-if nargin<3 | isempty(maxdis); maxdis = 1; end
+if nargin<3 | isempty(maxdis);
+    maxdis = 1;
+end
 
 if ndeps < 4 | maxdis == -1
     sidx = (1:nlvl)';
@@ -588,9 +585,15 @@ if nobs < 4
     yi = [];
     return;
 end
-if size(x,1) == 1;  x =x'; end
-if size(y,1) == 1;  y =y'; end
-if size(xi,1) == 1;  xi =xi'; end
+if size(x,1) == 1;  
+    x =x';
+end
+if size(y,1) == 1;  
+    y = y';
+end
+if size(xi,1) == 1;
+    xi =xi';
+end
 tidx = (1:length(xi))';
 yi = repmat(NaN,size(tidx));
 if x(nobs)>x(1)

@@ -43,7 +43,7 @@ function C = gsw_C_from_SP(SP,t,p)
 % AUTHOR:
 %  Trevor McDougall, Paul Barker and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee and D.J. Woods, 1986: The extension of the

@@ -33,8 +33,7 @@ function pt0 = gsw_pt0_from_t(SA,t,p)
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -42,11 +41,6 @@ function pt0 = gsw_pt0_from_t(SA,t,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.1 of this TEOS-10 Manual. 
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
 %   Newton’s method to achieve convergence of order "1 + sqrt(2)".

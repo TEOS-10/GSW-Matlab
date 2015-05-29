@@ -12,9 +12,9 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 %
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely 
-%  gsw_SA_from_rho_CT(rho,CT,p), which uses the computationally 
+%  gsw_SA_from_rho(rho,CT,p), which uses the computationally 
 %  efficient 48-term expression for density in terms of SA, CT and p 
-%  (McDougall et al., 2013).   
+%  (IOC et al., 2013).   
 %
 % INPUT:
 %  rho =  density of a seawater sample (e.g. 1026 kg/m^3).       [ kg/m^3 ]
@@ -35,7 +35,7 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

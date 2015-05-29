@@ -48,7 +48,7 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 % MODIFIED:
 %  Trevor McDougall and Paul Barker 
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

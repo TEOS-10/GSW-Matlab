@@ -14,11 +14,11 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 %  point for p = 0 dbar assuming the seawater is completely saturated with
 %  dissolved air and user defined potential density contours.  This 
 %  function uses the computationally efficient 48-term expression for 
-%  density in terms of SA, CT and p (McDougall et al., 2011).  
+%  density in terms of SA, CT and p (McDougall et al., 2013).  
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -47,7 +47,7 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 % MODIFIED:
 %  Paul Barker & Trevor McDougall
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 

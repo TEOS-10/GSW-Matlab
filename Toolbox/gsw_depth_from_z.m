@@ -19,7 +19,7 @@ function depth = gsw_depth_from_z(z)
 % AUTHOR:  
 %  Winston                                              [ god@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %   
 %  This software is available from http://www.TEOS-10.org
 %

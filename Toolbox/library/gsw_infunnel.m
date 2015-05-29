@@ -26,7 +26,7 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 %  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 

@@ -13,7 +13,7 @@ function [SA_iref_cast, CT_iref_cast, p_iref_cast] = gsw_interp_ref_cast(spycnl,
 % the interpolation will take place in sigma 2 space, any other input
 % will result in the programme working in gamma_n space.
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCE:
 %  Jackett, D. R. and T. J. McDougall, 1997: A neutral density variable
@@ -64,7 +64,7 @@ x = spycnl_ref_cast;
 siz = size(xi);
 if ~isscalar(xi)
    [xxi, k] = sort(xi);
-   [dum, j] = sort([x;xxi]);
+   [dummy, j] = sort([x;xxi]);
    r(j) = 1:length(j);
    r = r(length(x)+1:end) - (1:length(xxi));
    r(k) = r;

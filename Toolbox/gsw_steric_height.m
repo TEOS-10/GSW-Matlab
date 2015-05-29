@@ -43,10 +43,10 @@ function steric_height = gsw_steric_height(SA,CT,p,p_ref)
 %  The reference values used for the specific volume anomaly are 
 %  SSO = 35.16504 g/kg and CT = 0 deg C.  This function calculates 
 %  specific volume anomaly using the computationally efficient 48-term 
-%  expression for specific volume of McDougall et al. (2013). Note that the 
+%  expression for specific volume of IOC et al. (2010). Note that the 
 %  48-term equation has been fitted in a restricted range of parameter 
 %  space, and is most accurate inside the "oceanographic funnel" described
-%  in McDougall et al. (2013) and IOC et al. (2010).  For dynamical 
+%  in IOC et al. (2010) and IOC et al. (2010).  For dynamical 
 %  oceanography we may take the 48-term rational function expression for 
 %  density as essentially reflecting the full accuracy of TEOS-10.  The GSW 
 %  internal library function "gsw_infunnel(SA,CT,p)" is avaialble to be 
@@ -75,7 +75,7 @@ function steric_height = gsw_steric_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -86,11 +86,6 @@ function steric_height = gsw_steric_height(SA,CT,p,p_ref)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.7.3) and section 3.27 of this TEOS-10 Manual. 
-%
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %

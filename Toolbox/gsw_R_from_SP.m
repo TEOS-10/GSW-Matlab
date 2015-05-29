@@ -43,7 +43,7 @@ function R = gsw_R_from_SP(SP,t,p)
 % AUTHOR:
 %  Trevor McDougall, Paul Barker and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Culkin and Smith, 1980:  Determination of the Concentration of Potassium  

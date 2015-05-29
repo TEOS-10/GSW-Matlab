@@ -13,8 +13,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %  difference between the horizontal velocity at the pressure concerned,
 %  p, and the horizontal velocity on the pressure surface, p_ref.  This 
 %  function calculates specific volume anomaly using the computationally 
-%  efficient 48-term expression for specific volume of McDougall et al. 
-%  (2013).  
+%  efficient 48-term expression for specific volume of IOC et al. (2010).  
 %  
 %  Note that p_ref, is the reference pressure to which the streamfunction
 %  is referenced.  When p_ref is zero, "gsw_geo_strf_Cunningham" returns 
@@ -24,7 +23,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %  
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2013).  The GSW library function 
+%  described in IOC et al. (2010).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -48,7 +47,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Cunningham, S.A., 2000: Circulation and volume flux of the North 
@@ -61,11 +60,6 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.29 of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
-%
 %  The software is available from http://www.TEOS-10.org
 %
 %==========================================================================
@@ -75,7 +69,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 4)
-   error('gsw_geo_strf_Cunningham:  Requires four inputs')
+   error('gsw_geo_strf_Cunningham: Requires four inputs')
 end %if
 
 unique_p_ref = unique(p_ref);

@@ -12,13 +12,13 @@ function enthalpy_diff = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep)
 %  two different pressures, p_deep (the deeper pressure) and p_shallow
 %  (the shallower pressure), at the same values of SA and CT.  This 
 %  function uses the computationally-efficient 48-term expression for
-%  density in terms of SA, CT and p (McDougall et al., 2013).  The output
+%  density in terms of SA, CT and p (IOC et al., 2010).  The output
 %  (enthalpy_diff_CT) is the specific enthalpy evaluated at (SA,CT,p_deep)
 %  minus the specific enthalpy at (SA,CT,p_shallow). 
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2013).  The GSW library function 
+%  described in IOC et al. (2010).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -40,7 +40,7 @@ function enthalpy_diff = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker.                     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (15th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -49,10 +49,10 @@ function enthalpy_diff = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.32.2) and (A.30.6) of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
-%   computationally efficient 48-term expression for the density of 
-%   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%  McDougall, T. J., 2003: Potential enthalpy: A conservative oceanic 
+%   variable for evaluating heat content and heat fluxes. Journal of 
+%   Physical Oceanography, 33, 945-963.  
+%    See Eqns. (18) and (22)
 %
 %  The software is available from http://www.TEOS-10.org
 %

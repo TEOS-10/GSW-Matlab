@@ -1,5 +1,5 @@
 % GSW Oceanographic Toolbox 
-% Version 3.02 (R2011a) 15-May-2011
+% Version 3.03 (R2011a) 23-May-2013
 %
 % documentation set
 %  gsw_front_page              - front page to the GSW Oceanographic Toolbox
@@ -12,6 +12,7 @@
 %  gsw_SP_from_R               - Practical Salinity from conductivity ratio, R (inc. for SP < 2)
 %  gsw_R_from_SP               - conductivity ratio, R, from Practical Salinity (inc. for SP < 2)
 %  gsw_SP_salinometer          - Practical Salinity from a laboratory salinometer (inc. for SP < 2)
+%  gsw_SP_from_SK              - Practical Salinity from Knudsen Salinity
 %
 % Absolute Salinity (SA), Preformed Salinity (Sstar) and Conservative Temperature (CT) 
 %  gsw_SA_from_SP              - Absolute Salinity from Practical Salinity
@@ -24,93 +25,100 @@
 %                                and selected potential density contours
 %
 % other conversions between temperatures, salinities, pressure and height
-%  gsw_deltaSA_from_SP         - Absolute Salinity Anomaly from Practical Salinity
-%  gsw_SA_Sstar_from_SP        - Absolute Salinity & Preformed Salinity from Practical Salinity
-%  gsw_SR_from_SP              - Reference Salinity from Practical Salinity
-%  gsw_SP_from_SR              - Practical Salinity from Reference Salinity
-%  gsw_SP_from_SA              - Practical Salinity from Absolute Salinity
-%  gsw_Sstar_from_SA           - Preformed Salinity from Absolute Salinity
-%  gsw_SA_from_Sstar           - Absolute Salinity from Preformed Salinity
-%  gsw_SP_from_Sstar           - Practical Salinity from Preformed Salinity
-%  gsw_pt_from_CT              - potential temperature from Conservative Temperature
-%  gsw_t_from_CT               - in-situ temperature from Conservative Temperature
-%  gsw_CT_from_pt              - Conservative Temperature from potential temperature
-%  gsw_pot_enthalpy_from_pt    - potential enthalpy from potential temperature
-%  gsw_pt0_from_t              - potential temperature with a reference pressure of zero dbar
-%  gsw_pt_from_t               - potential temperature
-%  gsw_t90_from_t48            - ITS-90 temperature from IPTS-48 temperature
-%  gsw_t90_from_t68            - ITS-90 temperature from IPTS-68 temperature
-%  gsw_z_from_p                - height from pressure
-%  gsw_p_from_z                - pressure from height
-%  gsw_depth_from_z            - depth from height
-%  gsw_z_from_depth            - height from depth
-%  gsw_Abs_Pressure_from_p     - Absolute Pressure,P, from pressure, p
-%  gsw_p_from_Abs_Pressure     - pressure, p, from Absolute Pressure, P
-%  gsw_entropy_from_CT         - entropy from Conservative Temperature
-%  gsw_CT_from_entropy         - Conservative Temperature from entropy 
-%  gsw_entropy_from_pt         - entropy from potential temperature
-%  gsw_pt_from_entropy         - potential temperature from entropy
-%  gsw_molality_from_SA        - molality of seawater
-%  gsw_ionic_strength_from_SA  - ionic strength of seawater
+%  gsw_deltaSA_from_SP               - Absolute Salinity Anomaly from Practical Salinity
+%  gsw_SA_Sstar_from_SP              - Absolute Salinity & Preformed Salinity from Practical Salinity
+%  gsw_SR_from_SP                    - Reference Salinity from Practical Salinity
+%  gsw_SP_from_SR                    - Practical Salinity from Reference Salinity
+%  gsw_SP_from_SA                    - Practical Salinity from Absolute Salinity
+%  gsw_Sstar_from_SA                 - Preformed Salinity from Absolute Salinity
+%  gsw_SA_from_Sstar                 - Absolute Salinity from Preformed Salinity
+%  gsw_SP_from_Sstar                 - Practical Salinity from Preformed Salinity
+%  gsw_pt_from_CT                    - potential temperature from Conservative Temperature
+%  gsw_t_from_CT                     - in-situ temperature from Conservative Temperature
+%  gsw_CT_from_pt                    - Conservative Temperature from potential temperature
+%  gsw_pot_enthalpy_from_pt          - potential enthalpy from potential temperature
+%  gsw_pt_from_t                     - potential temperature
+%  gsw_pt0_from_t                    - potential temperature with a reference pressure of zero dbar
+%  gsw_t_from_pt0                    - in-situ temperature from potential temperature with p_ref = 0 dbar
+%  gsw_t90_from_t48                  - ITS-90 temperature from IPTS-48 temperature
+%  gsw_t90_from_t68                  - ITS-90 temperature from IPTS-68 temperature
+%  gsw_z_from_p                      - height from pressure
+%  gsw_p_from_z                      - pressure from height
+%  gsw_z_from_depth                  - height from depth
+%  gsw_depth_from_z                  - depth from height
+%  gsw_Abs_Pressure_from_p           - Absolute Pressure,P, from pressure, p
+%  gsw_p_from_Abs_Pressure           - pressure, p, from Absolute Pressure, P
+%  gsw_entropy_from_CT               - entropy from Conservative Temperature
+%  gsw_CT_from_entropy               - Conservative Temperature from entropy 
+%  gsw_entropy_from_pt               - entropy from potential temperature
+%  gsw_pt_from_entropy               - potential temperature from entropy
+%  gsw_entropy_from_t                - entropy from in-situ temperature
+%  gsw_t_from_entropy                - in-situ temperature from entropy
+%  gsw_adiabatic_lapse_rate_from_CT  - adiabatic lapse rate from Conservative Temperature
+%  gsw_adiabatic_lapse_rate_from_t   - adiabatic lapse rate from in-situ temperature
+%  gsw_molality_from_SA              - molality of seawater
+%  gsw_ionic_strength_from_SA        - ionic strength of seawater
 %
 % density and enthalpy, based on the 48-term expression for density 
-% (The functions in this group ending in "_CT" may also be called without "_CT".)
-%  gsw_rho_CT                  - in-situ density from CT, and potential density
-%  gsw_alpha_CT                - thermal expansion coefficient with respect to CT
-%  gsw_beta_CT                 - saline contraction coefficient at constant CT
-%  gsw_rho_alpha_beta_CT       - in-situ density, thermal expansion & saline contraction coefficients
-%  gsw_specvol_CT              - specific volume
-%  gsw_specvol_anom_CT         - specific volume anomaly
-%  gsw_sigma0_CT               - sigma0 from CT with reference pressure of 0 dbar
-%  gsw_sigma1_CT               - sigma1 from CT with reference pressure of 1000 dbar
-%  gsw_sigma2_CT               - sigma2 from CT with reference pressure of 2000 dbar
-%  gsw_sigma3_CT               - sigma3 from CT with reference pressure of 3000 dbar
-%  gsw_sigma4_CT               - sigma4 from CT with reference pressure of 4000 dbar
-%  gsw_sound_speed_CT          - sound speed (approximate, with r.m.s. error of 0.067 m/s)
-%  gsw_internal_energy_CT      - internal energy
-%  gsw_enthalpy_CT             - enthalpy
-%  gsw_enthalpy_diff_CT        - difference of enthalpy between two pressures
-%  gsw_dynamic_enthalpy_CT     - dynamic enthalpy
-%  gsw_SA_from_rho_CT          - Absolute Salinity from density & CT
-%  gsw_CT_from_rho             - Conservative Temperature from density
-%  gsw_CT_maxdensity           - Conservative Temperature of maximum density of seawater
+%  gsw_rho                         - in-situ density and potential density
+%  gsw_alpha                       - thermal expansion coefficient with respect to CT
+%  gsw_beta                        - saline contraction coefficient at constant CT
+%  gsw_rho_alpha_beta              - in-situ density, thermal expansion & saline contraction coefficients
+%  gsw_alpha_on_beta               - alpha divied by beta
+%  gsw_rho_first_derivaties        - first derivaties of rho
+%  gsw_specvol                     - specific volume
+%  gsw_specvol_anom                - specific volume anomaly
+%  gsw_sigma0                      - sigma0 with reference pressure of 0 dbar
+%  gsw_sigma1                      - sigma1 with reference pressure of 1000 dbar
+%  gsw_sigma2                      - sigma2 with reference pressure of 2000 dbar
+%  gsw_sigma3                      - sigma3 with reference pressure of 3000 dbar
+%  gsw_sigma4                      - sigma4 with reference pressure of 4000 dbar
+%  gsw_sound_speed                 - sound speed (approximate, with r.m.s. error of 0.067 m/s)
+%  gsw_kappa                       - isentropic compressibility
+%  gsw_cabbeling                   - cabbeling coefficient
+%  gsw_thermobaric                 - thermobaric coefficient
+%  gsw_SA_from_rho                 - Absolute Salinity from density
+%  gsw_CT_from_rho                 - Conservative Temperature from density
+%  gsw_CT_maxdensity               - Conservative Temperature of maximum density of seawater
+%  gsw_internal_energy             - internal energy
+%  gsw_enthalpy                    - enthalpy
+%  gsw_enthalpy_diff               - difference of enthalpy between two pressures
+%  gsw_dynamic_enthalpy            - dynamic enthalpy
+%  gsw_enthalpy_first_derivaties   - first derivaties of enthalpy
+%  gsw_enthalpy_second_derivaties  - second derivaties of enthalpy
 %
 % water column properties, based on the 48-term expression for density  
-%  gsw_Nsquared                - buoyancy (Brunt-Vaisala) frequency squared (N^2)
-%  gsw_Turner_Rsubrho          - Turner angle & Rsubrho
-%  gsw_IPV_vs_fNsquared_ratio  - ratio of the vertical gradient of potential density
-%                                (with reference pressure, p_ref), to the vertical gradient
-%                                 of locally-referenced potential density
+%  gsw_Nsquared                    - buoyancy (Brunt-Vaisala) frequency squared (N^2)
+%  gsw_Turner_Rsubrho              - Turner angle & Rsubrho
+%  gsw_IPV_vs_fNsquared_ratio      - ratio of the vertical gradient of potential density
+%                                    (with reference pressure, p_ref), to the vertical 
+%                                    gradient of locally-referenced potential density
 %
-% neutral and non-linear properties, based on the 48-term expression for density
-%  gsw_cabbeling                  - cabbeling coefficient
-%  gsw_thermobaric                - thermobaric coefficient
-%  gsw_isopycnal_slope_ratio      - ratio of the slopes of isopycnals on the SA-CT diagram 
-%                                   for p & p_ref
-%  gsw_isopycnal_vs_ntp_CT_ratio  - ratio of the gradient of Conservative Temperature
-%                                   in a potential density surface to that in the neutral 
-%                                   tangent plane
-%  gsw_ntp_pt_vs_CT_ratio         - ratio of gradients of potential temperature &
-%                                   Conservative Temperature in a neutral tangent plane
-%                                   (i.e. in a locally-referenced potential density surface)
+% neutral properties, based on the 48-term expression for density
+%  gsw_isopycnal_slope_ratio       - ratio of the slopes of isopycnals on the SA-CT diagram 
+%                                    for p & p_ref
+%  gsw_isopycnal_vs_ntp_CT_ratio   - ratio of the gradient of Conservative Temperature
+%                                    in a potential density surface to that in the neutral 
+%                                    tangent plane
+%  gsw_ntp_pt_vs_CT_ratio          - ratio of gradients of potential temperature &
+%                                    Conservative Temperature in a neutral tangent plane
+%                                    (i.e. in a locally-referenced potential density surface)
 %
 % geostrophic streamfunctions, based on the 48-term expression for density
-%  gsw_geo_strf_dyn_height        - dynamic height anomaly
-%  gsw_geo_strf_dyn_height_pc     - dynamic height anomaly for piecewise constant profiles
-%  gsw_geo_strf_isopycnal         - approximate isopycnal geostrophic streamfunction
-%  gsw_geof_str_isopycnal_pc      - approximate isopycnal geostrophic streamfunction for
-%                                   piecewise constant profiles
-%  gsw_geo_strf_Montgomery        - Montgomery geostrophic streamfunction
-%  gsw_geo_strf_Cunningham        - Cunningham geostrophic streamfunction
+%  gsw_geo_strf_dyn_height          - dynamic height anomaly
+%  gsw_geo_strf_dyn_height_pc       - dynamic height anomaly for piecewise constant profiles
+%  gsw_geo_strf_isopycnal           - approximate isopycnal geostrophic streamfunction
+%  gsw_geof_str_isopycnal_pc        - approximate isopycnal geostrophic streamfunction for
+%                                     piecewise constant profiles
+%  gsw_geo_strf_Montgomery          - Montgomery geostrophic streamfunction
+%  gsw_geo_strf_Cunningham          - Cunningham geostrophic streamfunction
 %
 % geostrophic velocity 
-%  gsw_geostrophic_velocity       - geostrophic velocity
+%  gsw_geostrophic_velocity         - geostrophic velocity
 %
-% derivatives of enthalpy, entropy, CT and pt 
+% derivatives of entropy, CT and pt 
 %  gsw_CT_first_derivatives         - first derivatives of Conservative Temperature
 %  gsw_CT_second_derivatives        - second derivatives of Conservative Temperature
-%  gsw_enthalpy_first_derivatives   - first derivatives of enthalpy
-%  gsw_enthalpy_second_derivatives  - second derivatives of enthalpy
 %  gsw_entropy_first_derivatives    - first derivatives of entropy
 %  gsw_entropy_second_derivatives   - second derivatives of entropy
 %  gsw_pt_first_derivatives         - first derivatives of potential temperature
@@ -149,26 +157,37 @@
 %  gsw_atomic_weight       - mole-weighted atomic weight of sea salt; 31.4038218... g/mol
 %  
 % density and enthalpy in terms of CT, based on the exact Gibbs function
-%  gsw_rho_CT_exact               - in-situ density from CT, and potential density from CT
-%  gsw_alpha_CT_exact             - thermal expansion coefficient with respect to CT
-%  gsw_beta_CT_exact              - saline contraction coefficientat constant CT
-%  gsw_rho_alpha_beta_CT_exact    - in-situ density, thermal expansion & saline contraction
-%                                   coefficient from CT
-%  gsw_specvol_CT_exact           - specific volume from CT
-%  gsw_specvol_anom_CT_exact      - specific volume anomaly from CT
-%  gsw_sigma0_CT_exact            - sigma0 from CT with reference pressure of 0 dbar
-%  gsw_sigma1_CT_exact            - sigma1 from CT with reference pressure of 1000 dbar
-%  gsw_sigma2_CT_exact            - sigma2 from CT with reference pressure of 2000 dbar
-%  gsw_sigma3_CT_exact            - sigma3 from CT with reference pressure of 3000 dbar
-%  gsw_sigma4_CT_exact            - sigma4 from CT with reference pressure of 4000 dbar
-%  gsw_sound_speed_CT_exact       - sound speed
-%  gsw_internal_energy_CT_exact   - internal energy
-%  gsw_enthalpy_CT_exact          - enthalpy from CT
-%  gsw_enthalpy_diff_CT_exact     - difference of enthalpy from CT between two pressures
-%  gsw_dynamic_enthalpy_CT_exact  - dynamic enthalpy from CT
-%  gsw_SA_from_rho_CT_exact       - Absolute Salinity from Density & CT
-%  gsw_CT_from_rho_exact          - Conservative Temperature from density
-%  gsw_CT_maxdensity_exact        - Conservative Temperature of maximum density of seawater
+%  gsw_rho_CT_exact                         - in-situ density and potential density
+%  gsw_alpha_CT_exact                       - thermal expansion coefficient with respect to CT
+%  gsw_beta_CT_exact                        - saline contraction coefficientat constant CT
+%  gsw_rho_alpha_beta_CT_exact              - in-situ density, thermal expansion & saline contraction coefficient
+%  gsw_alpha_on_beta_CT_exact               - alpha divied by beta
+%  gsw_rho_first_derivaties_CT_exact        - first derivaties of rho 
+%  gsw_specvol_CT_exact                     - specific volume
+%  gsw_specvol_anom_CT_exact                - specific volume anomaly
+%  gsw_sigma0_CT_exact                      - sigma0 with reference pressure of 0 dbar
+%  gsw_sigma1_CT_exact                      - sigma1 with reference pressure of 1000 dbar
+%  gsw_sigma2_CT_exact                      - sigma2 with reference pressure of 2000 dbar
+%  gsw_sigma3_CT_exact                      - sigma3 with reference pressure of 3000 dbar
+%  gsw_sigma4_CT_exact                      - sigma4 with reference pressure of 4000 dbar
+%  gsw_sound_speed_CT_exact                 - sound speed
+%  gsw_kappa_CT_exact                       - isentropic compressibility
+%  gsw_cabbeling_CT_exact                   - cabbeling coefficient
+%  gsw_thermobaric_CT_exact                 - thermobaric coefficient
+%  gsw_SA_from_rho_CT_exact                 - Absolute Salinity from density
+%  gsw_CT_from_rho_exact                    - Conservative Temperature from density
+%  gsw_CT_maxdensity_exact                  - Conservative Temperature of maximum density of seawater
+%  gsw_internal_energy_CT_exact             - internal energy
+%  gsw_enthalpy_CT_exact                    - enthalpy
+%  gsw_enthalpy_diff_CT_exact               - difference of enthalpy between two pressures
+%  gsw_dynamic_enthalpy_CT_exact            - dynamic enthalpy
+%  gsw_enthalpy_first_derivaties_CT_exact   - first derivaties of enthalpy
+%  gsw_enthalpy_second_derivaties_CT_exact  - second derivaties of enthalpy
+%
+% Labroratory functions, for use with a densimeter measuremants
+%  gsw_SA_from_rho_t_exact              - Absolute Salinity from density
+%  gsw_deltaSA_from_rho_t_exact         - Absolute Salinity Anomaly from density
+%  gsw_rho_t_exact                      - in-situ density
 %
 % basic thermodynamic properties in terms of in-situ t, based on the exact Gibbs function 
 %  gsw_rho_t_exact                      - in-situ density
@@ -197,14 +216,12 @@
 %  gsw_SA_from_rho_t_exact              - Absolute Salinity from density
 %  gsw_t_from_rho_exact                 - in-situ temperature from density
 %  gsw_t_maxdensity_exact               - in-situ temperature of maximum density of seawater
-%  gsw_entropy_t_exact                  - entropy
 %  gsw_cp_t_exact                       - isobaric heat capacity
 %  gsw_isochoric_heat_cap_t_exact       - isochoric heat capacity
 %  gsw_chem_potential_relative_t_exact  - relative chemical potential
 %  gsw_chem_potential_water_t_exact     - chemical potential of water in seawater
 %  gsw_chem_potential_salt_t_exact      - chemical potential of salt in seawater
 %  gsw_Helmholtz_energy_t_exact         - Helmholtz energy
-%  gsw_adiabatic_lapse_rate_t_exact     - adiabatic lapse rate
 %  gsw_osmotic_coefficient_t_exact      - osmotic coefficient of seawater
 %  gsw_osmotic_pressure_t_exact         - osmotic pressure of seawater
 %

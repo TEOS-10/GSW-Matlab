@@ -23,7 +23,7 @@ function Hill_ratio = gsw_Hill_ratio_at_SP2(t)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.02 (16th November, 2012)
+% VERSION NUMBER: 3.03 (29th April, 2013)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee & D.J. Woods, 1986: The extension of the 
@@ -107,11 +107,11 @@ dSP_dRtx =  a1 + (2*a2 + (3*a3 + (4*a4 + 5*a5.*Rtx0).*Rtx0).*Rtx0).*Rtx0 + ...
 %--------------------------------------------------------------------------
 SP_est = a0 + (a1 + (a2 + (a3 + (a4 + a5.*Rtx0).*Rtx0).*Rtx0).*Rtx0).*Rtx0 ...
         + ft68.*(b0 + (b1 + (b2+ (b3 + (b4 + b5.*Rtx0).*Rtx0).*Rtx0).*Rtx0).*Rtx0);
-  Rtx = Rtx0 - (SP_est - SP2)./dSP_dRtx;
-    Rtxm = 0.5*(Rtx + Rtx0);
+Rtx = Rtx0 - (SP_est - SP2)./dSP_dRtx;
+Rtxm = 0.5*(Rtx + Rtx0);
 dSP_dRtx =  a1 + (2*a2 + (3*a3 + (4*a4 + 5*a5.*Rtxm).*Rtxm).*Rtxm).*Rtxm...
         + ft68.*(b1 + (2*b2 + (3*b3 + (4*b4 + 5*b5.*Rtxm).*Rtxm).*Rtxm).*Rtxm);
-  Rtx = Rtx0 - (SP_est - SP2)./dSP_dRtx;
+Rtx = Rtx0 - (SP_est - SP2)./dSP_dRtx;
 
 % This is the end of one full iteration of the modified Newton-Raphson 
 % iterative equation solver.  The error in Rtx at this point is equivalent 

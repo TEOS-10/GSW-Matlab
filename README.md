@@ -1,4 +1,4 @@
-# GSW-Matlab
+# GSW-Matlab - Code only
 Gibbs-SeaWater (GSW) Oceanographic Toolbox in Matlab - Code only !!!
 
 This is a work in progress repository, thie files contained in this repository are only the code file (.m files)  contained in GSW(Matlab). It is intended to be a method of assisting those who are translating the code into their prefered language.

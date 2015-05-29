@@ -18,8 +18,8 @@ function [pt_SA_SA, pt_SA_CT, pt_CT_CT] = gsw_pt_second_derivatives(SA,CT)
 %       Temperature at constant Absolute Salinity. 
 %
 % INPUT:
-%  SA  =   Absolute Salinity                                       [ g/kg ]
-%  CT  =   Conservative Temperature                               [ deg C ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 %  SA & CT need to have the same dimensions.
 %
@@ -31,16 +31,17 @@ function [pt_SA_SA, pt_SA_CT, pt_CT_CT] = gsw_pt_second_derivatives(SA,CT)
 %               pt_SA_SA has units of:                     [ K/((g/kg)^2) ]
 %  pt_SA_CT  =  The derivative of potential temperature with respect 
 %               to Absolute Salinity and Conservative Temperature.   
-%               pt_SA_CT has units of:                        [ (g/kg)^-1 ]
+%               pt_SA_CT has units of:                         [ 1/(g/kg) ]
 %  pt_CT_CT  =  The second derivative of potential temperature (the 
-%               regular one with pr = 0 dbar) with respect to 
+%               regular one with p_ref = 0 dbar) with respect to 
 %               Conservative Temperature at constant SA.  
-%               pt_CT_CT has units of:                             [ K^-1 ]
+%               pt_CT_CT has units of:                              [ 1/K ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker.        [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker.                  [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -49,11 +50,10 @@ function [pt_SA_SA, pt_SA_CT, pt_CT_CT] = gsw_pt_second_derivatives(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org. 
 %    See Eqns. (A.12.9) and (A.12.10) of this TEOS-10 Manual.     
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -74,21 +74,13 @@ end %if
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
 
-if (mt == 1) & (nt == 1)              % CT scalar - fill to size of SA
-    CT = CT*ones(size(SA));
-elseif (ns == nt) & (mt == 1)         % CT is row vector,
-    CT = CT(ones(1,ms), :);              % copy down each column.
-elseif (ms == mt) & (nt == 1)         % CT is column vector,
-    CT = CT(:,ones(1,ns));               % copy across each row.
-elseif (ms == mt) & (ns == nt)
-    % ok
-else
-    error('gsw_pt_second_derivatives: The dimensions of CT do not agree')
-end %if
+if (mt ~= ms | nt ~= ns)
+    error('gsw_pt_second_derivatives:  SA and CT must have same dimensions')
+end
 
 if ms == 1
-    SA = SA';
-    CT = CT';
+    SA = SA.';
+    CT = CT.';
     transposed = 1;
 else
     transposed = 0;
@@ -127,8 +119,8 @@ pt_SA_CT = (pt_SA_u - pt_SA_l)./(CT_u - CT_l);
 pt_CT_CT = (pt_CT_u - pt_CT_l)./(CT_u - CT_l);
 
 if transposed   
-    pt_SA_CT = pt_SA_CT';
-    pt_CT_CT = pt_CT_CT';
+    pt_SA_CT = pt_SA_CT.';
+    pt_CT_CT = pt_CT_CT.';
 end
 
 end

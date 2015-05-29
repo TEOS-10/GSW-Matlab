@@ -1,7 +1,7 @@
 function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 
-% gsw_CT_second_derivatives              second derivatives of Conservative 
-%                                                               Temperature 
+% gsw_CT_second_derivatives                           second derivatives of  
+%                                                  Conservative Temperature 
 %==========================================================================
 %
 % USAGE:
@@ -10,10 +10,10 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 % DESCRIPTION:
 %  Calculates the following three, second-order derivatives of Conservative 
 %  Temperature
-%   (1) CT_SA_SA, the second derivative with respect to Absolute Salinity at 
-%       constant potential temperature (with pr = 0 dbar),
+%   (1) CT_SA_SA, the second derivative with respect to Absolute Salinity  
+%       at constant potential temperature (with p_ref = 0 dbar),
 %   (2) CT_SA_pt, the derivative with respect to potential temperature
-%      (the regular potential temperature which is referenced to 0 dbar)
+%       (the regular potential temperature which is referenced to 0 dbar)
 %       and Absolute Salinity, and
 %   (3) CT_pt_pt, the second derivative with respect to potential 
 %       temperature (the regular potential temperature which is referenced 
@@ -21,7 +21,8 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
-%  pt  =  potential temperature (ITS-90)                          [ deg C ]
+%  pt  =  potential temperature (ITS-90)                          [ deg C ]   
+%         (whose reference pressure is 0 dbar)
 %
 %  SA & pt need to have the same dimensions.
 %
@@ -30,20 +31,21 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 %               respect to Absolute Salinity at constant potential 
 %               temperature (the regular potential temperature which 
 %               has reference sea pressure of 0 dbar).  
-%               The CT_SA_SA output has units of:          [ K/((g/kg)^2) ]
+%               CT_SA_SA has units of:                     [ K/((g/kg)^2) ]
 %  CT_SA_pt  =  The derivative of Conservative Temperature with 
 %               respect to potential temperature (the regular one with 
-%               pr = 0 dbar) and Absolute Salinity.   
-%               CT_SA_pt has units of:                        [ (g/kg)^-1 ]
+%               p_ref = 0 dbar) and Absolute Salinity.   
+%               CT_SA_pt has units of:                        [ 1/(g/kg) ]
 %  CT_pt_pt  =  The second derivative of Conservative Temperature with 
 %               respect to potential temperature (the regular one with 
-%               pr = 0 dbar) at constant SA.   
-%               CT_pt_pt has units of:                             [ K^-1 ]
+%               p_ref = 0 dbar) at constant SA.   
+%               CT_pt_pt has units of:                              [ 1/K ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker   [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -52,11 +54,10 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See appendix A.12 of this TEOS-10 Manual.    
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -78,12 +79,12 @@ end %if
 [mt,nt] = size(pt);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_CT_second_derivatives: SA and pt must have same dimensions')
+    error('gsw_CT_second_derivatives:  SA and pt must have same dimensions')
 end
 
 if ms == 1
-    SA = SA';
-    pt = pt';
+    SA = SA.';
+    pt = pt.';
     transposed = 1;
 else
     transposed = 0;
@@ -125,9 +126,9 @@ CT_SA_pt = (CT_SA_u - CT_SA_l)./(pt_u - pt_l);
 CT_pt_pt = (CT_pt_u - CT_pt_l)./(pt_u - pt_l);
 
 if transposed
-    CT_SA_SA = CT_SA_SA';
-    CT_SA_pt = CT_SA_pt';
-    CT_pt_pt = CT_pt_pt';
+    CT_SA_SA = CT_SA_SA.';
+    CT_SA_pt = CT_SA_pt.';
+    CT_pt_pt = CT_pt_pt.';
 end
 
 end

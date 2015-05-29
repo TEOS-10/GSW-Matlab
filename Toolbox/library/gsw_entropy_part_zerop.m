@@ -9,8 +9,12 @@ function entropy_part_zerop = gsw_entropy_part_zerop(SA,pt0)
 % (including saving the computation of a natural logarithm). These terms 
 % are a necessary part of entropy, but are not needed when calculating 
 % potential temperature from in-situ temperature.  
-%   The inputs to "gsw_entropy_part_zerop(SA,pt0)" are Absolute Salinity 
+% The inputs to "gsw_entropy_part_zerop(SA,pt0)" are Absolute Salinity 
 % and potential temperature with reference sea pressure of zero dbar.
+%
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
+%
 %==========================================================================
 
 % These few lines ensure that SA is non-negative.

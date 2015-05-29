@@ -6,27 +6,27 @@ function pt = gsw_pt_from_entropy(SA,entropy)
 % =========================================================================
 %
 % USAGE:
-%   pt = gsw_pt_from_entropy(SA,entropy)
+%  pt = gsw_pt_from_entropy(SA,entropy)
 %
 % DESCRIPTION:
-%  Calculates potential temperature with reference pressure pr = 0 dbar and
-%  with entropy as an input variable. 
+%  Calculates potential temperature with reference pressure p_ref = 0 dbar 
+%  and with entropy as an input variable. 
 %
 % INPUT:
-%  SA       =   Absolute Salinity                                  [ g/kg ]
-%  entropy  =   specific entropy                                  [ deg C ]
+%  SA       =  Absolute Salinity                                   [ g/kg ]
+%  entropy  =  specific entropy                                   [ deg C ]
 %
 %  SA & entropy need to have the same dimensions.
 %
 % OUTPUT:
 %  pt   =  potential temperature                                  [ deg C ]
-%          with reference sea pressure (pr) = 0 dbar.
+%          with reference sea pressure (p_ref) = 0 dbar.
 %  Note. The reference sea pressure of the output, pt, is zero dbar.
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker.     [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (13th October, 2010)
+% VERSION NUMBER: 3.0 (3rd April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -44,7 +44,7 @@ function pt = gsw_pt_from_entropy(SA,entropy)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 2)
-    error('gsw_pt_from_entropy: Requires 2 inputs - Absolute Salinity and entropy')
+    error('gsw_pt_from_entropy: Requires 2 inputs, Absolute Salinity and entropy')
 end %if
 
 [ms,ns] = size(SA);
@@ -55,8 +55,8 @@ if (ms ~= me | ns ~= ne )
 end %if
 
 if ms == 1
-    SA = SA';
-    entropy = entropy';
+    SA = SA.';
+    entropy = entropy.';
     transposed = 1;
 else
     transposed = 0;
@@ -93,7 +93,7 @@ for Number_of_iterations = 1:2
 end
     
 if transposed
-    pt = pt';
+    pt = pt.';
 end
 
 % maximum error of 2.2x10^-6 degrees C for one iteration.

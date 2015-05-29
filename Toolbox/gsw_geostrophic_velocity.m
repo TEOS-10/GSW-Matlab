@@ -1,4 +1,4 @@
-function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(geo_str,long,lat,p)
+function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(geo_strf,long,lat,p)
 
 % USAGE:  
 %  [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(geo_strf,long,lat,p)
@@ -11,25 +11,25 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 %  or from a series of such surfaces. 
 %
 % INPUT:
-%  geo_strf = geostrophic streamfunction. This geostrophic streamfunction
+%  geo_strf = geostrophic streamfunction.  This geostrophic streamfunction
 %             can be any of, for example,
-%             (1) geo_strf_dyn_height (in an isobaric surface)
-%             (2) geo_strf_Montgomery (in a specific volume anomaly surface)
-%             (3) geo_strf_Cunninhgam (in an approximately neutral surface
+%             (1) geo_strf_dyn_height_CT (in an isobaric surface)
+%             (2) geo_strf_Montgomery_CT (in a specific volume anomaly surface)
+%             (3) geo_strf_Cunninhgam_CT (in an approximately neutral surface
 %                 e.g. a potential denisty surface).
-%             (4) geo_strf_McD_Klocker (in an approximately neutral surface
+%             (4) geo_strf_isopycnal_CT (in an approximately neutral surface
 %                 e.g. a potential denisty surface, a Neutral Density
 %                 surface or an omega surface (Klocker et al., 2009)).
 %
-%  long    =  Longitude in decimal degrees                   [ 0 ... +360 ]
+%  long    =  longitude in decimal degrees                   [ 0 ... +360 ]
 %                                                      or [ -180 ... +180 ]
-%  lat     =  Latitude in decimal degrees north             [ -90 ... +90 ]
+%  lat     =  latitude in decimal degrees north             [ -90 ... +90 ]
 %  
 %  There needs to be more than one station.  The input geo_strf has
 %  dimensions (M("bottles") x N(stations)); that is, geo_strf has 
 %  dimensions (M(surfaces)  x N(stations)). 
 %
-%  Note. The ith "bottle" of each station (ie. the ith row of geo_strf) 
+%  Note. The ith "bottle" of each station (i.e. the ith row of geo_strf) 
 %    must be on the same ith surface, whether that surface be, 
 %     (1) an isobaric surface, 
 %     (2) a specific volume anomaly surface, 
@@ -38,30 +38,28 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 %  lat & long need to have dimensions 1xN or MxN, where geo_strf is MxN.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where geo_strf is MxN.
 %
-% OPTIONAL INPUT:
+% OPTIONAL:
 %  p     =  sea pressure ( default is 0 )                          [ dbar ]
-%           (i.e. absolute pressure - 10.1325 dbar)
+%           ( i.e. absolute pressure - 10.1325 dbar )
 %  Note. This optional input is used to obtain an accurate distance,
 %    "dist", taking into account that the radius from the centre of the 
 %    Earth depends on the depth below the sea surface.               
-%
 %
 % OUTPUT:
 %  geostrophic_velocity = geostrophic velocity RELATIVE to the sea surface.
 %                         It has dimensions (Mx(N-1)) and the relative 
 %                         geostrophic velocity is located at mid_long, 
 %                         mid_lat (and at the mid-point pressure).  
-%
 %  mid_long             = mid point longitude
 %                         (the range corresponds to that entered)
-%
 %  mid_lat              = mid point latitude,               [ -90 ... +90 ]
-%                         (in decimal degrees North)
+%                         (in decimal degrees north)
 %
 %
-% AUTHOR: Paul Barker, Trevor McDougall and Phil Morgan 
-%                                                     [ help_gsw@csiro.au ]
-% VERSION NUMBER: 2.0 (14th September, 2010)
+% AUTHOR: 
+%  Paul Barker, Trevor McDougall and Phil Morgan      [ help_gsw@csiro.au ]
+%
+% VERSION NUMBER: 3.0 (24th March, 2011)
 %
 % REFERENCES:
 %  Cunningham, S. A., 2000: Circulation and volume flux of the North 
@@ -80,11 +78,10 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 %  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method for
 %   forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic 
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32, 
@@ -107,7 +104,7 @@ if ~(nargin == 3 | nargin == 4)
    error('gsw_geostrophic_velocity:  Requires three or four inputs')
 end %if
 
-[mg,ng] = size(geo_str);
+[mg,ng] = size(geo_strf);
 [mlo,nlo] = size(long);
 [mla,nla] = size(lat);
 
@@ -116,7 +113,7 @@ if (nlo == 1) & (mlo == 1)
 elseif (ng == nlo) & (mlo == 1)                       % long is row vector,
     long = long(ones(1,mg), :);                    % copy down each column.
 elseif (ng == mlo) & (nlo == 1)          % long is a transposed row vector,
-    long = long';                                         % transposed then
+    long = long.';                                         % transposed then
     long = long(ones(1,mg), :);                    % copy down each column.
 elseif (mg == mlo) & (ng == nlo)
     % ok
@@ -134,7 +131,7 @@ if (nla == 1) & (mla == 1)
 elseif (ng == nla) & (mla == 1)                        % lat is row vector,
     lat = lat(ones(1,mg), :);                      % copy down each column.
 elseif (ng == mla) & (nla == 1)          % long is a transposed row vector,
-    lat = lat';                                           % transposed then
+    lat = lat.';                                           % transposed then
     lat = lat(ones(1,mg), :);                      % copy down each column.
 elseif (mg == mla) & (ng == nla)
     % ok
@@ -145,13 +142,13 @@ end %if
 if exist('p','var')
     [mp,np] = size(p);
     if (mp == 1) & (np == 1)           % p scalar - fill to size of geo_str
-        p = p*ones(size(geo_str));
+        p = p*ones(size(geo_strf));
     elseif (ng == np) & (mp == 1)                        % p is row vector,
         p = p(ones(1,mg), :);                      % copy down each column.
     elseif (mg == mp) & (np == 1)                     % p is column vector,
         p = p(:,ones(1,ng));                        % copy across each row.
     elseif (ng == mp) & (np == 1)           % p is a transposed row vector,
-        p = p';                                           % transposed then
+        p = p.';                                           % transposed then
         p = p(ones(1,mg), :);                      % copy down each column.
     elseif (mg == mp) & (ng == np)
         % ok
@@ -159,7 +156,7 @@ if exist('p','var')
         error('gsw_geostrophic_velocity: Inputs array dimensions arguments do not agree')
     end %if
 else
-    p = zeros(size(geo_str));
+    p = zeros(size(geo_strf));
 end
 
 %--------------------------------------------------------------------------
@@ -170,16 +167,18 @@ dist = gsw_distance(long,lat,p);          % Note that dist is in m (not km)
 
 mid_lat = 0.5*(lat(:,1:ng-1) + lat(:,2:ng));
 
-f = gsw_f(mid_lat); % This gets the Coriolis parameter
+f = gsw_f(mid_lat);                      % This gets the Coriolis parameter
 
-geostrophic_velocity = (geo_str(:,2:ng) - geo_str(:,1:ng-1))./(dist.*f);
+geostrophic_velocity = (geo_strf(:,2:ng) - geo_strf(:,1:ng-1))./(dist.*f);
 
 mid_long = 0.5*(long(:,1:ng-1) + long(:,2:ng));
 diff_long = (long(1,1:ng-1) - long(1,2:ng));
 
 long2 = long;
 [Iwest2] = find(long2 > 180);
-long2(Iwest2) = long2(Iwest2) - 360;
+if ~isempty(Iwest2)
+    long2(Iwest2) = long2(Iwest2) - 360;
+end
 mid_long2 = 0.5*(long2(:,1:ng-1) + long2(:,2:ng));
 diff_long2 = (long2(1,1:ng-1) - long2(1,2:ng));
 

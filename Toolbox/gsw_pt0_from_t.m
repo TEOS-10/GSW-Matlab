@@ -5,35 +5,36 @@ function pt0 = gsw_pt0_from_t(SA,t,p)
 % =========================================================================
 %
 % USAGE:
-%   pt0 = gsw_pt0_from_t(SA,t,p)
+%  pt0 = gsw_pt0_from_t(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates potential temperature with reference pressure, pr = 0 dbar.
+%  Calculates potential temperature with reference pressure, p_ref = 0 dbar.
 %  The present routine is computationally faster than the more general
-%  function "gsw_pt_from_t(SA,t,p,pr)" which can be used for any 
-%  reference pressure value.
+%  function "gsw_pt_from_t(SA,t,p,p_ref)" which can be used for any reference
+%  pressure value.
 %  This subroutine calls "gsw_entropy_part(SA,t,p)",
 %  "gsw_entropy_part_zerop(SA,pt0)" and "gsw_gibbs_pt0_pt0(SA,pt0)".
 %
 % INPUT:
-%  SA  =   Absolute Salinity                                       [ g/kg ]
-%  t   =   in-situ temperature (ITS-90)                           [ deg C ]
-%  p   =   sea pressure                                            [ dbar ]
-%          (ie. absolute pressure - 10.1325 dbar)
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  t   =  in-situ temperature (ITS-90)                            [ deg C ]
+%  p   =  sea pressure                                             [ dbar ]
+%         ( i.e. absolute pressure - 10.1325 dbar )
 %
 %  SA & t need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  pt0   =  potential temperature                                 [ deg C ]
-%           with reference sea pressure (pr) = 0 dbar.
+%  pt0  =  potential temperature                                  [ deg C ]
+%          with reference sea pressure (p_ref) = 0 dbar.
 %  Note. The reference sea pressure of the output, pt0, is zero dbar.
 %
 % AUTHOR:  
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
-%          [ help_gsw@csiro.au ]
+%                                                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -42,11 +43,10 @@ function pt0 = gsw_pt0_from_t(SA,t,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.1 of this TEOS-10 Manual. 
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -61,8 +61,8 @@ if ~(nargin == 3)
 end %if
 
 [ms,ns] = size(SA);
-[mt,nt]   = size(t);
-[mp,np]   = size(p);
+[mt,nt] = size(t);
+[mp,np] = size(p);
 
 if (ms ~= mt | ns ~= nt )
     error('gsw_pt0_from_t: Input arguments do not have the same dimensions')
@@ -74,6 +74,9 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
     p = p(ones(1,ms), :);              % copy down each column.
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
@@ -81,9 +84,9 @@ else
 end %if
 
 if ms == 1
-    SA = SA';
-    t = t';
-    p = p';
+    SA = SA.';
+    t = t.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;
@@ -104,13 +107,13 @@ SSO = 35.16504;                    % from section 2.4 of IOC et al. (2010).
 
 s1 = SA*(35./SSO);
 
-pt0 = t + p.*( 8.65483913395442d-6  - ...
-         s1.*  1.41636299744881d-6  - ...
-          p.*  7.38286467135737d-9  + ...
-          t.*(-8.38241357039698d-6  + ...
-         s1.*  2.83933368585534d-8  + ...
-          t.*  1.77803965218656d-8  + ...
-          p.*  1.71155619208233d-10));
+pt0 = t + p.*( 8.65483913395442e-6  - ...
+         s1.*  1.41636299744881e-6  - ...
+          p.*  7.38286467135737e-9  + ...
+          t.*(-8.38241357039698e-6  + ...
+         s1.*  2.83933368585534e-8  + ...
+          t.*  1.77803965218656e-8  + ...
+          p.*  1.71155619208233e-10));
 
 dentropy_dt = cp0./((273.15 + pt0).*(1-0.05.*(1 - SA./SSO)));
 
@@ -126,13 +129,13 @@ for Number_of_iterations = 1:2
 end
 
 if transposed
-    pt0 = pt0';
+    pt0 = pt0.';
 end
 
 % maximum error of 6.3x10^-9 degrees C for one iteration.
 % maximum error is 1.8x10^-14 degrees C for two iterations 
 % (two iterations is the default, "for Number_of_iterations = 1:2"). 
 % These errors are over the full "oceanographic funnel" of 
-% McDougall et al. (2010), which reaches down to p = 8000 dbar. 
+% McDougall et al. (2011), which reaches down to p = 8000 dbar. 
 
 end

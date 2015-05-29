@@ -13,21 +13,21 @@ function grav = gsw_grav(lat,p)
 % INPUT:
 %  lat  =  latitude in decimal degress north                [ -90 ... +90 ] 
 % 
-% Optional
-%  p    =  sea pressure                                            [ dbar ]
-%          (ie. absolute pressure - 10.1325 dbar) 
+% Optional:
+%  p  =  sea pressure                                              [ dbar ]
+%        ( i.e. absolute pressure - 10.1325 dbar ) 
 %  (If pressure is not given then it is assumed that pressure = 0 dbar.)
 %
 %  p (if provided) may have dimensions 1x1 or Mx1 or 1xN or MxN,
 %  where lat is MxN.
 %
 % OUTPUT:
-%  grav  =  gravitational acceleration                            [ m/s^2 ]
+%  grav  =  gravitational acceleration                           [ m s^-2 ]
 %
 % AUTHOR:  
-%  Trevor McDougall & Paul Barker       [ help_gsw@csiro.au ]
+%  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0  (23rd July, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -48,7 +48,7 @@ function grav = gsw_grav(lat,p)
 %--------------------------------------------------------------------------
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
-if ~(nargin==1 | nargin == 2)
+if ~(nargin == 1 | nargin == 2)
    error('gsw_grav:  Requires either one or two inputs, latitude and pressure')
 end %if
 
@@ -60,35 +60,39 @@ end %if
 [ml,nl] = size(lat);
 [mp,np] = size(p);
 
-if ml==1 & nl==1                        % lat is a scalar.  Fill to size of p
-    lat = lat*ones(mp,np);
-elseif nl==np & ml==1                   % lat is row vector, 
+if (ml == 1) & (nl == 1)                        % lat is a scalar.  Fill to size of p
+    lat = lat*ones(size(p));
+elseif (nl == np) & (ml == 1)                   % lat is row vector, 
     lat = lat(ones(1,mp),:);                %   copy down each column.
-elseif ml==mp & nl==1                   % lat is column vector,
+elseif (ml == mp) & (nl == 1)                   % lat is column vector,
     lat = lat(:,ones(1,np));                %   copy across each row.
-elseif ml==mp & nl==np               
+elseif (nl == mp) & (nl == 1)          % p is a transposed row vector,
+    lat = lat.';                              % transposed then
+    lat = lat(ones(1,mp), :);                % copy down each column.
+elseif (ml == mp) & (nl == np)               
     % ok
-% else
-%     error('gsw_grav: p has wrong dimensions')
 end %if
 
 [ml,nl] = size(lat);
 
-if mp==1 & np==1                        % p is a scalar.  Fill to size of lat
+if (mp == 1) & (np == 1)               % p is a scalar.  Fill to size of lat
     p = p(1)*ones(ml,nl);
-elseif np==nl & mp==1                   % p is row vector, 
+elseif (np == nl) & (mp == 1)                   % p is row vector,
     p = p(ones(1,ml),:);                %   copy down each column.
-elseif mp==ml & np==1                   % p is column vector,
+elseif (mp == ml) & (np == 1)                   % p is column vector,
     p = p(:,ones(1,nl));                %   copy across each row.
-elseif mp==ml & np==nl               
+elseif (np == ml) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ml), :);                % copy down each column.
+elseif (mp == ml) & (np == nl)
     % ok
 else
     error('gsw_grav: p has wrong dimensions')
 end %if
 
 if ml == 1
-    lat = lat';
-    p = p';
+    lat = lat.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;
@@ -109,7 +113,7 @@ z = gsw_z_from_p(p,lat);
 grav = gs.*(1 - gamma*z);             % z is the height corresponding to p. 
                                         % Note. In the ocean z is negative.
 if transposed
-    grav = grav';
+    grav = grav.';
 end
 
 end

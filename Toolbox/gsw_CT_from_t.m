@@ -14,18 +14,19 @@ function CT = gsw_CT_from_t(SA,t,p)
 %  SA  =  Absolute Salinity                                        [ g/kg ]
 %  t   =  in-situ temperature (ITS-90)                            [ deg C ]
 %  p   =  sea pressure                                             [ dbar ]
-%         (ie. absolute pressure - 10.1325 dbar)
+%         ( i.e. absolute pressure - 10.1325 dbar )
 %
 %  SA & t need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  CT  =  Conservative Temperature                                [ deg C ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (27th March, 2011)
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,16 +61,28 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
     p = p(ones(1,ms), :);              % copy down each column.
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ms),:);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_CT_from_t: Inputs array dimensions arguments do not agree')
 end %if
 
+[Iout_of_range] = find(p < 100 & (t > 80 | t < -12));
+if (~isempty(Iout_of_range))
+    t(Iout_of_range) = NaN;
+end
+[Iout_of_range] = find(p >= 100 & (t > 40 | t < -12));
+if (~isempty(Iout_of_range))
+    t(Iout_of_range) = NaN;
+end
+
 if ms == 1
-    SA = SA';
-    t = t';
-    p = p';
+    SA = SA.';
+    t = t.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;
@@ -83,7 +96,7 @@ pt0 = gsw_pt0_from_t(SA,t,p);
 CT = gsw_CT_from_pt(SA,pt0);
 
 if transposed
-    CT = CT';
+    CT = CT.';
 end
 
 end

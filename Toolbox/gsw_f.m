@@ -13,28 +13,29 @@ function f = gsw_f(lat)
 %       omega = 7.292115e-5   (Groten, 2004)                  [ radians/s ]
 %
 % INPUT:
-%  lat  =  latitude in decimal degrees north                [ -90 ... +90 ]
+%  lat  =  latitude in decimal degrees North                [ -90 ... +90 ]
 %
 % OUTPUT:
 %  f    =  Coriolis parameter                                 [ radians/s ]
 %
 % AUTHOR:  
-%  20th April 1993. Phil Morgan        [ help_gsw@csiro.au ]
+%  20th April 1993. Phil Morgan                       [ help_gsw@csiro.au ]
 %
 % MODIFIED:
 %  28th July, 2010 by Paul Barker  
 %
-% VERSION NUMBER: 2.0 (28th July, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (28th July, 2010).
 %
 % REFERENCE:
 %  Groten, E., 2004: Fundamental Parameters and Current (2004) Best 
-%    Estimates of the Parameters of Common Relevance to Astronomy, Geodesy,
-%    and Geodynamics. Journal of Geodesy, 77, pp. 724-797.
+%   Estimates of the Parameters of Common Relevance to Astronomy, Geodesy,
+%   and Geodynamics. Journal of Geodesy, 77, pp. 724-797.
 % 
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
-%    seawater - 2010: Calculation and use of thermodynamic properties.  
-%    Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
-%    UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%   seawater - 2010: Calculation and use of thermodynamic properties.  
+%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -53,7 +54,7 @@ end %if
 %--------------------------------------------------------------------------
 
 DEG2RAD = pi/180;
-OMEGA   = 7.292115e-5;                             %(s^-1)   (Groten, 2004)
+OMEGA   = 7.292115e-5;                              %(1/s)   (Groten, 2004)
 f       = 2*OMEGA*sin(lat*DEG2RAD);
 
 end

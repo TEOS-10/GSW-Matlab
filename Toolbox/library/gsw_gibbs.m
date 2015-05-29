@@ -48,7 +48,8 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 % MODIFIED:
 %  Trevor McDougall and Paul Barker 
 %
-% VERSION NUMBER: 2.0 (24th September, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  Feistel, R., 2003: A new extended Gibbs thermodynamic potential of 

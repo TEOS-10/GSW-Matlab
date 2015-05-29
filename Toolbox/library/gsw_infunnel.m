@@ -1,16 +1,16 @@
 function in_funnel = gsw_infunnel(SA,CT,p)
 
-% gsw_infunnel        "oceanographic funnel" check for the 25-term equation
+% gsw_infunnel        "oceanographic funnel" check for the 48-term equation
 %==========================================================================
 % 
 % USAGE:  
 % in_funnel = gsw_infunnel(SA,CT,p)
 %
 % INPUT:
-%  SA  =  Absolute Salinity                                        [ g/kg ]
-%  CT  =  Conservative Temperature                                [ deg C ]
+%  SA  =  Absolute Salinity                                     [ g kg^-1 ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %  p   =  sea pressure                                             [ dbar ]
-%          (ie. absolute pressure - 10.1325 dbar)
+%         ( i.e. absolute pressure - 10.1325 dbar )
 %
 %  SA & CT need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & CT are MxN.
@@ -19,14 +19,20 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %  in_funnel  =  0, if SA, CT and p are outside the "funnel" 
 %             =  1, if SA, CT and p are inside the "funnel"
 %  Note. The term "funnel" describes the range of SA, CT and p over which 
-%    the error in the fit of the computationally-efficient 25-term 
+%    the error in the fit of the computationally-efficient 48-term 
 %    expression for density in terms of SA, CT and p was calculated
-%    (McDougall et al., 2010).
+%    (McDougall et al., 2011).
 %
 % AUTHOR: 
-% Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (23rd July, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%
+%  McDougall T. J., P. M. Barker, D. R. Jackett, C. Roberts-Thomson, R.
+%   Feistel and R. W. Hallberg, 2011:  A computationally efficient 48-term 
+%   expression for the density of seawater in terms of Conservative 
+%   Temperature, and related properties of seawater.  To be submitted 
+%   to Ocean Science Discussions. 
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -41,7 +47,7 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 [mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_gsw_infunnel: SA and CT must have same dimensions')
+    error('gsw_infunnel: SA and CT must have same dimensions')
 end
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
@@ -56,7 +62,7 @@ elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_gsw_infunnel: Inputs array dimensions arguments do not agree')
+    error('gsw_infunnel: Inputs array dimensions arguments do not agree')
 end %if
 
 %--------------------------------------------------------------------------
@@ -69,12 +75,12 @@ in_funnel = ones(size(SA));
 
 [Ifunnel] = find( p > 8000 |...
     SA < 0 |...
-    SA > 42.2 |...
-    CT < (-0.3595467 - 0.0553734*SA) |...
-    (p < 5500 & SA < 0.006028*(p - 500)) |...
-    (p < 5500 & CT > (33.0 - 0.003818181818182*p)) | ...
-    (p > 5500 & SA < 30.14) |...
-    (p > 5500 & CT > 12.0) );
+    SA > 42 |...
+    (p < 500 & CT < gsw_CT_freezing(SA,p)) |...
+    (p > 500 & p < 6500 & SA < p*5e-3 - 2.5) |...
+    (p > 500 & p < 6500 & CT > (31.66666666666667 - p*3.333333333333334e-3)) | ...
+    (p > 6500 & SA < 30) |...
+    (p > 6500 & CT > 10.0) );
 
 in_funnel(Ifunnel) = 0;
 

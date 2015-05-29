@@ -4,20 +4,26 @@ function [SA_i, CT_i] = gsw_interp_SA_CT(SA,CT,p,p_i)
 % This function interpolates the cast with respect to the interpolating 
 % variable p. This function finds the values of SA, CT at p_i on this cast.
 %
+% VERSION NUMBER: 3.0 (8th April, 2011) 
+%
 % This fuction was adapted from Matlab's interp1q.
 %==========================================================================
 
 p = p(:);
 
 [min_p,Imin_p] = min(p);
-[Ishallow] = find(p <= min_p);        % Set equal to the shallowest bottle.
-SA_i(Ishallow) = SA(Imin_p);
-CT_i(Ishallow) = CT(Imin_p);
+[Ishallow] = find(p_i <= min_p);        % Set equal to the shallowest bottle.
+if ~isempty(Ishallow)
+    SA_i(Ishallow) = SA(Imin_p);
+    CT_i(Ishallow) = CT(Imin_p);
+end
 
 [max_p,Imax_p] = max(p);
 [Ideep] = find(p_i >= max_p);            % Set equal to the deepest bottle.
-SA_i(Ideep) = SA(Imax_p);
-CT_i(Ideep) = CT(Imax_p);
+if ~isempty(Ideep)
+    SA_i(Ideep) = SA(Imax_p);
+    CT_i(Ideep) = CT(Imax_p);
+end
 
 [I] = find(p_i >= min_p & p_i <= max_p);
 
@@ -42,8 +48,13 @@ if ~isscalar(xi)
    u = (xi(ind)-xrind)./(x(rind+1)-xrind);
    SArind = SA(rind,:);
    CTrind = CT(rind,:);
-   SA_ri(ind,:) = SArind + bsxfun(@times,SA(rind+1,:)-SArind,u);
-   CT_ri(ind,:) = CTrind + bsxfun(@times,CT(rind+1,:)-CTrind,u);   
+   if exist('bsxfun','builtin') == 5
+       SA_ri(ind,:) = SArind + bsxfun(@times,SA(rind+1,:)-SArind,u);
+       CT_ri(ind,:) = CTrind + bsxfun(@times,CT(rind+1,:)-CTrind,u);
+   else
+       SA_ri(ind,:) = SArind + (SA(rind+1,:)-SArind).*u;
+       CT_ri(ind,:) = CTrind + (CT(rind+1,:)-CTrind).*u;
+   end
 else
    % Special scalar xi case
    r = find(x <= xi,1,'last');
@@ -55,8 +66,13 @@ else
       u = (xi-x(r))./(x(r+1)-x(r));
       SAr = SA(r,:);
       CTr = CT(r,:);
-      SA_ri = SAr + bsxfun(@times,SA(r+1,:)-SAr,u);
-      CT_ri = CTr + bsxfun(@times,CT(r+1,:)-CTr,u);      
+      if exist('bsxfun','builtin') == 5
+          SA_ri = SAr + bsxfun(@times,SA(r+1,:)-SAr,u);
+          CT_ri = CTr + bsxfun(@times,CT(r+1,:)-CTr,u);
+      else
+          SA_ri = SAr + (SA(r+1,:)-SAr).*u;
+          CT_ri = CTr + (CT(r+1,:)-CTr).*u;
+      end
    end
 end
 

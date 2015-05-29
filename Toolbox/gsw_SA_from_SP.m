@@ -7,15 +7,15 @@ function [SA, in_ocean] = gsw_SA_from_SP(SP,p,long,lat)
 %  [SA, in_ocean] = gsw_SA_from_SP(SP,p,long,lat)
 %
 % DESCRIPTION:
-%  Calculates Absolute Salinity from Practical Salinity.
-%  Since SP is non-negative by definition, this function changes any 
-%  negative input values of SP to be zero.  
+%  Calculates Absolute Salinity from Practical Salinity.  Since SP is 
+%  non-negative by definition, this function changes any negative input 
+%  values of SP to be zero.  
 %
 % INPUT:
 %  SP   =  Practical Salinity  (PSS-78)                        [ unitless ]
 %  p    =  sea pressure                                            [ dbar ]
-%         ( ie. absolute pressure - 10.1325 dbar )
-%  long  = longitude in decimal degrees                      [ 0 ... +360 ]
+%         ( i.e. absolute pressure - 10.1325 dbar )
+%  long =  longitude in decimal degrees                      [ 0 ... +360 ]
 %                                                     or  [ -180 ... +180 ]
 %  lat  =  latitude in decimal degrees north                [ -90 ... +90 ] 
 %
@@ -23,7 +23,7 @@ function [SA, in_ocean] = gsw_SA_from_SP(SP,p,long,lat)
 %  where SP is MxN.
 %
 % OUTPUT:
-%  SA        =   Absolute Salinity                                 [ g/kg ]
+%  SA        =  Absolute Salinity                                  [ g/kg ]
 %  in_ocean  =  0, if long and lat are a long way from the ocean 
 %            =  1, if long and lat are in the ocean
 %  Note. This flag is only set when the observation is well and truly on
@@ -31,9 +31,9 @@ function [SA, in_ocean] = gsw_SA_from_SP(SP,p,long,lat)
 %    hundred kilometres inland from the coast. 
 % 
 % AUTHOR: 
-%  David Jackett, Trevor McDougall & Paul Barker [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall & Paul Barker       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 2.0 (23rd July, 2010)
+% VERSION NUMBER: 3.0 (31st May, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -70,7 +70,7 @@ elseif (ns == np) & (mp == 1)          % p is row vector,
 elseif (ms == mp) & (np == 1)          % p is column vector,
     p = p(:,ones(1,ns));                 % copy across each row.
 elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
-    p = p';                              % transposed then
+    p = p.';                              % transposed then
     p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
@@ -87,7 +87,7 @@ elseif (ns == nla) & (mla == 1)        % lat is a row vector,
 elseif (ms == mla) & (nla == 1)        % lat is a column vector,
     lat = lat(:,ones(1,ns));            % copy across each row.
 elseif (ns == mla) & (nla == 1)        % lat is a transposed row vector,
-    lat = lat';                         % transposed then
+    lat = lat.';                         % transposed then
     lat = lat(ones(1,ms), :);           % copy down each column.
 elseif (ms == mla) & (ns == nla)
     % ok
@@ -100,6 +100,7 @@ end %if
 if ~isempty(Iwest)
     long(Iwest) = long(Iwest) + 360; 
 end
+
 if (mlo == 1) & (nlo == 1)            % long is a scalar - fill to size of SP
     long = long*ones(size(SP));
 elseif (ns == nlo) & (mlo == 1)       % long is a row vector,
@@ -107,8 +108,11 @@ elseif (ns == nlo) & (mlo == 1)       % long is a row vector,
 elseif (ms == mlo) & (nlo == 1)       % long is a column vector,
     long = long(:,ones(1,ns));         % copy across each row. 
 elseif (ns == mlo) & (nlo == 1)       % long is a transposed row vector,
-    long = long';                      % transposed then
+    long = long.';                      % transposed then
     long = long(ones(1,ms), :);        % copy down each column.
+elseif (ms == nlo) & (mlo == 1)       % long is a transposed column vector,
+    long = long.';                      % transposed then
+    long = long(:,ones(1,ns));        % copy down each column.
 elseif (ms == mlo) & (ns == nlo)
     % ok
 else
@@ -116,13 +120,37 @@ else
 end %if
 
 if ms == 1
-    SP = SP';
-    p = p';
-    lat = lat';
-    long = long';
+    SP = SP.';
+    p = p.';
+    lat = lat.';
+    long = long.';
     transposed = 1;
 else
     transposed = 0;
+end
+
+[Iout_of_range] = find(p < 100 & SP > 120);
+SP(Iout_of_range) = NaN;
+[Iout_of_range] = find(p >= 100 & SP > 42);
+SP(Iout_of_range) = NaN;
+
+[Inan] = find(abs(SP) == 99999 | abs(SP) == 999999);
+SP(Inan) = NaN;
+[Inan] = find(abs(p) == 99999 | abs(p) == 999999);
+p(Inan) = NaN;
+[Inan] = find(abs(long) == 9999 | abs(long) == 99999);
+long(Inan) = NaN;
+[Inan] = find(abs(lat) == 9999 | abs(lat) == 99999);
+lat(Inan) = NaN;
+
+if ~isempty(find(p < -1.5 | p > 12000))
+    error('gsw_SA_from_SP: pressure is out of range')
+end
+if ~isempty(find(long < 0 | long > 360))
+    error('gsw_SA_from_SP: longitude is out of range')
+end
+if ~isempty(find(abs(lat) > 90))
+    error('gsw_SA_from_SP: latitude is out of range')
 end
 
 %--------------------------------------------------------------------------
@@ -135,21 +163,27 @@ if ~isempty(I_neg_SP)
     SP(I_neg_SP) = 0;
 end
 
-inds = find(isfinite(SP)); 
+[Iocean] = find(~isnan(SP.*p.*lat.*long));
 
 SA = nan(size(SP));
-dSA = nan(size(SP));
+SAAR = nan(size(SP));
 in_ocean = nan(size(SP));
 
-[dSA(inds), in_ocean(inds)] = gsw_delta_SA(p(inds),long(inds),lat(inds));
+% The following function (gsw_SAAR) finds SAAR in the non-Baltic parts of 
+% the world ocean.  (Actually, this gsw_SAAR look-up table returns values 
+% of zero in the Baltic Sea since SAAR in the Baltic is a function of SP, 
+% not space. 
+[SAAR(Iocean), in_ocean(Iocean)] = gsw_SAAR(p(Iocean),long(Iocean),lat(Iocean));
 
-SA(inds) = (35.16504/35)*SP(inds) + dSA(inds);
+SA(Iocean) = (35.16504/35)*SP(Iocean).*(1 + SAAR(Iocean));
 
-SA_baltic(inds) = gsw_SA_from_SP_Baltic(SP(inds),long(inds),lat(inds));
+% Here the Practical Salinity in the Baltic is used to calculate the
+% Absolute Salinity there. 
+SA_baltic(Iocean) = gsw_SA_from_SP_Baltic(SP(Iocean),long(Iocean),lat(Iocean));
 
-indsbaltic = find(~isnan(SA_baltic(inds)));
+[Ibaltic] = find(~isnan(SA_baltic(Iocean)));
 
-SA(inds(indsbaltic)) = SA_baltic(inds(indsbaltic));
+SA(Iocean(Ibaltic)) = SA_baltic(Iocean(Ibaltic));
 
 if transposed
     SA = SA';

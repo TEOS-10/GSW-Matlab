@@ -4,26 +4,26 @@ function SP_baltic = gsw_SP_from_SA_Baltic(SA,long,lat)
 %==========================================================================
 %
 % USAGE:  
-%   SP_baltic = gsw_SP_from_SA_Baltic(SA,long,lat)
+%  SP_baltic = gsw_SP_from_SA_Baltic(SA,long,lat)
 %
 % DESCRIPTION:
 %  Calculates Practical Salinity for the Baltic Sea, from a value computed
-%   analytically from Absolute Salinity.
-%  Note. This program will only produce Practical Salinty values for the
-%  Baltic Sea.
+%  analytically from Absolute Salinity.
+%  Note. This programme will only produce Practical Salinty values for the
+%    Baltic Sea.
 %
 % INPUT:
-%   SA    =  Absolute Salinity in the Baltic Sea                   [ g/kg ]
-%   long  =  Longitude in decimal degress east               [ 0 ... +360 ]    
-%   lat   =  Latitude in decimal degress north              [ -90 ... +90 ]  
+%  SA    =  Absolute Salinity in the Baltic Sea                 [ g kg^-1 ]
+%  long  =  Longitude in decimal degress east                [ 0 ... +360 ]    
+%  lat   =  Latitude in decimal degress north               [ -90 ... +90 ]  
 %
 % OUTPUT:
-%   SP_baltic    =  Practical Salinity                         [ unitless ]
+%  SP_baltic  =  Practical Salinity                            [ unitless ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall & Paul Barker [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall & Paul Barker      [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (23rd July, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
 %
 % REFERENCES:
 %  Feistel, R., S. Weinreben, H. Wolf, S. Seitz, P. Spitzer, B. Adel, 
@@ -60,18 +60,18 @@ yb1 = 50;
 yb2 = 59; 
 yb3 = 69;
 
-inds = find(xb2<long & long<xb1a & yb1<lat & lat<yb3);
+inds_baltic = find(xb2<long & long<xb1a & yb1<lat & lat<yb3);
 
 SP_baltic = nan(size(SA));
 
-if ~isempty(inds)
-    xx_left = interp1([yb1,yb2,yb3],[xb1,xb2,xb3],lat(inds));
-    xx_right = interp1([yb1,yb3],[xb1a,xb3a],lat(inds));
-    inds1 = find(xx_left<=long(inds) & long(inds)<=xx_right);
-    if ~isempty(inds1)
-        SP_baltic(inds(inds1)) = (35/(35.16504 - 0.087))*(SA(inds(inds1)) - 0.087);
+if ~isempty(inds_baltic)
+    xx_left = interp1([yb1,yb2,yb3],[xb1,xb2,xb3],lat(inds_baltic));
+    xx_right = interp1([yb1,yb3],[xb1a,xb3a],lat(inds_baltic));
+    inds_baltic1 = find(xx_left<=long(inds_baltic) & long(inds_baltic)<=xx_right);
+    if ~isempty(inds_baltic1)
+        SP_baltic(inds_baltic(inds_baltic1)) = (35/(35.16504 - 0.087))*(SA(inds_baltic(inds_baltic1)) - 0.087);
     end
-    SP_baltic = reshape(SP_baltic,size(long));
+%    SP_baltic = reshape(SP_baltic,size(long));
 end
 
 end

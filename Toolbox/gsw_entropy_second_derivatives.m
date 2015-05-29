@@ -17,28 +17,28 @@ function [eta_SA_SA, eta_SA_CT, eta_CT_CT] = gsw_entropy_second_derivatives(SA,C
 %       Temperature at constant Absolute Salinity. 
 %
 % INPUT:
-%  SA   =   Absolute Salinity                                      [ g/kg ]
-%  CT   =   Conservative Temperature                              [ deg C ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 %  SA & CT need to have the same dimensions.
 %
 % OUTPUT:
 %  eta_SA_SA =  The second derivative of specific entropy with respect 
-%               to Absolute Salinity (in units of g/kg) at constant 
-%               Conservative Temperature.  eta_SA_SA has units of:  
-%                                                       [ J/(kg K(g/kg)^2)]
+%               to Absolute Salinity (in units of g kg^-1) at constant 
+%               Conservative Temperature.    
+%               eta_SA_SA has units of:                 [ J/(kg K(g/kg)^2)]
 %  eta_SA_CT =  The second derivative of specific entropy with respect 
 %               to Conservative Temperature at constant Absolute 
 %               Salinity. eta_SA_CT has units of:     [ J/(kg (g/kg) K^2) ]
-%
 %  eta_CT_CT =  The second derivative of specific entropy with respect 
 %               to Conservative Temperature at constant Absolute
 %               Salinity.  eta_CT_CT has units of:           [ J/(kg K^3) ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 % 
-% VERSION NUMBER: 2.0 (23rd August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -71,8 +71,8 @@ if (mt ~= ms | nt ~= ns)
 end
 
 if ms == 1
-    SA = SA';
-    CT = CT';
+    SA = SA.';
+    CT = CT.';
     transposed = 1;
 else
     transposed = 0;
@@ -102,9 +102,9 @@ eta_SA_CT = - CT_SA.*eta_CT_CT;
 eta_SA_SA = - gsw_gibbs(n2,n0,n0,SA,pt,pr0)./abs_pt - CT_SA.*eta_SA_CT;
 
 if transposed
-    eta_CT_CT = eta_CT_CT';
-    eta_SA_CT = eta_SA_CT';
-    eta_SA_SA = eta_SA_SA';
+    eta_CT_CT = eta_CT_CT.';
+    eta_SA_CT = eta_SA_CT.';
+    eta_SA_SA = eta_SA_SA.';
 end
 
 end

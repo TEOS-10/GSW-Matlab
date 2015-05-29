@@ -1,57 +1,57 @@
-function [geo_strf_dyn_height_pc, p_mid, in_funnel] = gsw_geo_strf_dyn_height_pc(SA,CT,delta_p)
+function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delta_p)
 
 % gsw_geo_strf_dyn_height_pc                     dynamic height anomaly for
-%                                               piecewise constant profiles
+%                            piecewise constant profiles (48-term equation)
 %==========================================================================
 %
 % USAGE:  
-%  [geo_strf_dyn_height_pc, p_mid, in_funnel] = gsw_geo_strf_dyn_height_pc(SA,CT,delta_p)
+%  [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delta_p)
 %
 % DESCRIPTION:
 %  Calculates dynamic height anomaly as the integral of specific volume 
 %  anomaly from the the sea surface pressure (0 Pa) to the pressure p.
-%  This function, gsw_geo_strf_dyn_height_pc, is to used when the Absolute
-%  Salinity and Conservative Temperature are piecewise constant in the
-%  vertical over sucessive pressure intervals of delta_p (such as in
-%  a forward "z-coordinate" ocean model).  "geo_strf_dyn_height_pc" is the 
-%  dynamic height anomaly with respect to the sea surface.  That is, 
+%  This function, gsw_geo_strf_dyn_height_pc, is to used when the 
+%  Absolute Salinity and Conservative Temperature are piecewise constant in 
+%  the vertical over sucessive pressure intervals of delta_p (such as in
+%  a forward "z-coordinate" ocean model).  "geo_strf_dyn_height_pc" is
+%  the dynamic height anomaly with respect to the sea surface.  That is, 
 %  "geo_strf_dyn_height_pc" is the geostrophic streamfunction for the 
 %  difference between the horizontal velocity at the pressure concerned, p,
 %  and the horizontal velocity at the sea surface.  Dynamic height anomaly 
 %  is the geostrophic streamfunction in an isobaric surface.  The reference
 %  values used for the specific volume anomaly are SA = SSO = 35.16504 g/kg
-%  and CT = 0 deg C.  The output values of geo_strf_dyn_height_pc are given 
-%  at the mid-point pressures, p_mid, of each layer in which SA and CT are 
-%  vertically piecewice constant(pc).  This function calculates specific 
-%  volume anomaly using the computationally efficient 25-term expression 
-%  for specific volume of McDougall et al. (2010). 
+%  and CT = 0 deg C.  The output values of geo_strf_dyn_height_pc are 
+%  given at the mid-point pressures, p_mid, of each layer in which SA and 
+%  CT are vertically piecewice constant(pc).  This function calculates 
+%  specific volume anomaly using the computationally-efficient 48-term 
+%  expression for specific volume of McDougall et al. (2011). 
+%
+%  Note that the 48-term equation has been fitted in a restricted range of 
+%  parameter space, and is most accurate inside the "oceanographic funnel" 
+%  described in McDougall et al. (2011).  The GSW library function 
+%  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
+%  some of one's data lies outside this "funnel".  
 %
 % INPUT:
 %  SA       =  Absolute Salinity                                   [ g/kg ]
-%  CT       =  Conservative Temperature                           [ deg C ]
+%  CT       =  Conservative Temperature (ITS-90)                  [ deg C ]
 %  delta_p  =  difference in sea pressure between the deep and     [ dbar ]
 %              shallow extents of each layer in which SA and CT
-%              are vertically constant delta_p must be positive.
+%              are vertically constant. delta_p must be positive.
 %              
-%  Note. Sea pressure is absolute pressure minus 10.1325 dbar.
+%  Note. sea pressure is absolute pressure minus 10.1325 dbar.
 %
 %  SA & CT need to have the same dimensions.
 %  delta_p may have dimensions Mx1 or 1xN or MxN, where SA & CT are MxN.
 %
 % OUTPUT:
-%  geo_strf_dyn_height_pc  =  dynamic height anomaly            [ m^2/s^2 ]
-%  p_mid                   =  mid-point pressure in each layer     [ dbar ]
-%
-%  in_funnel               =  0, if SA, CT and p are outside the "funnel" 
-%                          =  1, if SA, CT and p are inside the "funnel"
-%  Note. The term "funnel" describes the range of SA, CT and p over which 
-%    the error in the fit of the computationally-efficient 25-term 
-%    expression for density was calculated (McDougall et al., 2010).
+%  geo_strf_dyn_height_pc =  dynamic height anomaly             [ m^2/s^2 ]
+%  p_mid                  =  mid-point pressure in each layer      [ dbar ]
 %
 % AUTHOR: 
-%  Trevor McDougall & Claire Roberts-Thomson.       [ help_gsw@csiro.au ]
+%  Trevor McDougall and Claire Roberts-Thomson        [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (28th August, 2010)
+% VERSION NUMBER: 3.0 (28th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,11 +60,10 @@ function [geo_strf_dyn_height_pc, p_mid, in_funnel] = gsw_geo_strf_dyn_height_pc
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.32.2) and (A.30.6) of this TEOS-10 Manual. 
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces. Ocean Modelling, 32,
@@ -82,8 +81,8 @@ function [geo_strf_dyn_height_pc, p_mid, in_funnel] = gsw_geo_strf_dyn_height_pc
 if ~(nargin == 3)
    error('gsw_geo_strf_dyn_height_pc:  Requires three inputs')
 end %if
-if ~(nargout == 2 | nargout == 3)
-   error('gsw_geo_strf_dyn_height_pc:  Requires two or three outputs')
+if ~(nargout == 2)
+   error('gsw_geo_strf_dyn_height_pc:  Requires two outputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -127,43 +126,38 @@ end
 p_deep = cumsum(delta_p); 
 p_shallow = p_deep - delta_p;
 
-in_funnel_shallow = gsw_infunnel(SA,CT,p_shallow);
-in_funnel_deep = gsw_infunnel(SA,CT,p_deep);
-in_funnel = in_funnel_shallow.*in_funnel_deep;
-
-delta_h = gsw_enthalpy_diff_CT25(SA,CT,p_shallow,p_deep);
+delta_h = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep);
 
 dyn_height_deep = -1*cumsum(delta_h);
 %            This is Phi minus Phi_0 of Eqn. (3.32.2) of IOC et al. (2010).
 
 p_mid = 0.5*(p_shallow  + p_deep);
-delta_h_half = gsw_enthalpy_diff_CT25(SA,CT,p_mid,p_deep);
+delta_h_half = gsw_enthalpy_diff(SA,CT,p_mid,p_deep);
 
-geo_strf_dyn_height_pc = gsw_enthalpy_SSO_0_CT25(p_mid) + ...
+geo_strf_dyn_height_pc = gsw_enthalpy_SSO_0_p(p_mid) + ...
                            dyn_height_deep + delta_h_half;
 
 %--------------------------------------------------------------------------
 % This function calculates dynamic height anomaly piecewise constant using 
-% the computationally-efficient 25-term expression for density in terms of
+% the computationally-efficient 48-term expression for density in terms of
 % SA, CT and p. If one wanted to compute dynamic height anomaly with the 
 % full TEOS-10 Gibbs function expression for density, the following lines 
 % of code will enable this.
 %
-% delta_h = gsw_enthalpy_diff_CT(SA,CT,p_shallow,p_deep);
-% dyn_height_deep = -1*cumsum(delta_h);
-% p_mid = 0.5*(p_shallow  + p_deep);
-% delta_h_half = gsw_enthalpy_diff_CT(SA,CT,p_mid,p_deep);
-% SA_SO = 35.16504*ones(size(SA));
-% CT_0 = zeros(size(CT));
-% geo_strf_dyn_height_pc = gsw_enthalpy_CT(SA_SO,CT_0,p_mid) + ...
-%                            dyn_height_deep + delta_h_half;
+%   delta_h = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_deep);
+%   dyn_height_deep = -1*cumsum(delta_h);
+%   p_mid = 0.5*(p_shallow  + p_deep);
+%   delta_h_half = gsw_enthalpy_diff_CT_exact(SA,CT,p_mid,p_deep);
+%   SA_SSO = 35.16504*ones(size(SA));
+%   CT_0 = zeros(size(CT));
+%   geo_strf_dyn_height_pc = gsw_enthalpy_CT_exact(SA_SSO,CT_0,p_mid) + ...
+%                               dyn_height_deep + delta_h_half;
 %
 %---------------This is the end of the alternative code--------------------
 
 if transposed
-    geo_strf_dyn_height_pc = geo_strf_dyn_height_pc';
-    p_mid = p_mid';
-    in_funnel = in_funnel';
+    geo_strf_dyn_height_pc = geo_strf_dyn_height_pc.';
+    p_mid = p_mid.';
 end
 
 end

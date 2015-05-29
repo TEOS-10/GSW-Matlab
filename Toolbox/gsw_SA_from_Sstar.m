@@ -12,7 +12,7 @@ function [SA, in_ocean] = gsw_SA_from_Sstar(Sstar,p,long,lat)
 % INPUT:
 %  Sstar  =  Preformed Salinity                                    [ g/kg ]
 %  p      =  sea pressure                                          [ dbar ]
-%            ( ie. absolute pressure - 10.1325 dbar )
+%            ( i.e. absolute pressure - 10.1325 dbar )
 %  long   =  longitude in decimal degrees                    [ 0 ... +360 ]
 %                                                     or  [ -180 ... +180 ]
 %  lat    =  latitude in decimal degrees north              [ -90 ... +90 ]
@@ -21,7 +21,7 @@ function [SA, in_ocean] = gsw_SA_from_Sstar(Sstar,p,long,lat)
 %  where Sstar is MxN.
 %
 % OUTPUT:
-%  SA        =   Absolute Salinity                                 [ g/kg ]
+%  SA        =  Absolute Salinity                                  [ g/kg ]
 %  in_ocean  =  0, if long and lat are a long way from the ocean 
 %            =  1, if long and lat are in the ocean
 %  Note. This flag is only set when the observation is well and truly on
@@ -29,9 +29,9 @@ function [SA, in_ocean] = gsw_SA_from_Sstar(Sstar,p,long,lat)
 %    hundred kilometres inland from the coast. 
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (23rd July, 2010)
+% VERSION NUMBER: 3.0 (27th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,48 +60,57 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
     p = p(ones(1,ms), :);              % copy down each column.
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_SA_from_Sstar: Inputs array dimensions arguments do not agree')
 end %if
 
-[mL,nL] = size(lat);
+[mla,nla] = size(lat);
 
-if (mL == 1) & (nL == 1)             % lat is a scalar - fill to size of Sstar
+if (mla == 1) & (nla == 1)             % lat is a scalar - fill to size of Sstar
     lat = lat*ones(size(Sstar));
-elseif (ns == nL) & (mL == 1)        % lat is a row vector,
+elseif (ns == nla) & (mla == 1)        % lat is a row vector,
     lat = lat(ones(1,ms), :);          % copy down each column.
-elseif (ms == mL) & (nL == 1)        % lat is a column vector,
+elseif (ms == mla) & (nla == 1)        % lat is a column vector,
     lat = lat(:,ones(1,ns));           % copy across each row.
-elseif (ms == mL) & (ns == nL)
+elseif (ns == mla) & (nla == 1)        % lat is a transposed row vector,
+    lat = lat.';                         % transposed then
+    lat = lat(ones(1,ms), :);           % copy down each column.
+elseif (ms == mla) & (ns == nla)
     % ok
 else
     error('gsw_SA_from_Sstar: Inputs array dimensions arguments do not agree')
 end %if
 
-[mL,nL] = size(long);
+[mlo,nlo] = size(long);
 [Iwest] =find(long < 0);
 if ~isempty(Iwest)
     long(Iwest) = long(Iwest) + 360; 
 end
-if (mL == 1) & (nL == 1)            % long is a scalar - fill to size of Sstar
+if (mlo == 1) & (nlo == 1)            % long is a scalar - fill to size of Sstar
     long = long*ones(size(Sstar));
-elseif (ns == nL) & (mL == 1)       % long is a row vector,
+elseif (ns == nlo) & (mlo == 1)       % long is a row vector,
     long = long(ones(1,ms), :);       % copy down each column.
-elseif (ms == mL) & (nL == 1)       % long is a column vector,
+elseif (ms == mlo) & (nlo == 1)       % long is a column vector,
     long = long(:,ones(1,ns));        % copy across each row.
-elseif (ms == mL) & (ns == nL)
+elseif (ns == mlo) & (nlo == 1)       % long is a transposed row vector,
+    long = long.';                      % transposed then
+    long = long(ones(1,ms), :);        % copy down each column.
+elseif (ms == mlo) & (ns == nlo)
     % ok
 else
     error('gsw_SA_from_Sstar: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
-    Sstar = Sstar';
-    p = p';
-    lat = lat';
-    long = long';
+    Sstar = Sstar.';
+    p = p.';
+    lat = lat.';
+    long = long.';
     transposed = 1;
 else
     transposed = 0;
@@ -111,17 +120,17 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-r1 = 0.35;
+r_1 = 0.35;
 
-inds = find(isfinite(Sstar)); 
+[Iocean] = find(~isnan(Sstar.*p.*lat.*long));
 
 SA = nan(size(Sstar));
-dSA = nan(size(Sstar));
+SAAR = nan(size(Sstar));
 in_ocean = nan(size(Sstar));
 
-[dSA(inds), in_ocean(inds)] = gsw_delta_SA(p(inds),long(inds),lat(inds));
+[SAAR(Iocean), in_ocean(Iocean)] = gsw_SAAR(p(Iocean),long(Iocean),lat(Iocean));
 
-SA(inds) = Sstar(inds) + (1+r1)*dSA(inds);
+SA(Iocean) = Sstar(Iocean).*(1 + SAAR(Iocean))./(1 - r_1*SAAR(Iocean));
 
 % In the Baltic Sea, SA = Sstar, and note that gsw_delta_SA returns zero
 % for dSA in the Baltic.

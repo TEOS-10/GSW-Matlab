@@ -12,15 +12,16 @@ function t90 = gsw_t90_from_t68(t68)
 %  data collected between 1/1/1968 and 31/12/1989.
 %
 % INPUT:
-%  t68   =   in-situ temperature  (IPTS-68)                       [ deg C ]
+%  t68  =  in-situ temperature  (IPTS-68)                         [ deg C ]
 %
 % OUTPUT:
-%  t90   =   in-situ temperature  (ITS-90)                        [ deg C ]
+%  t90  =  in-situ temperature  (ITS-90)                          [ deg C ]
 %
 % AUTHOR: 
-%   Paul Barker & Trevor McDougall              [ help_gsw@csiro.au ]
+%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (23rd July, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  International Temperature Scales of 1948, 1968 and 1990, an ICES
@@ -41,13 +42,13 @@ function t90 = gsw_t90_from_t68(t68)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 1)
-   error('sw_t90_from_t68.m:  Requires only one input argument')
+   error('gsw_t90_from_t68:  Requires only one input argument')
 end %if
 
 %--------------------------------------------------------------------------
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-t90 = t68.*0.999760057586179;      % t90 = t68./1.00024;
+t90 = t68.*0.999760057586179;                         % t90 = t68./1.00024;
 
 end

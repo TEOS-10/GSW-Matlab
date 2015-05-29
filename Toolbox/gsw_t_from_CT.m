@@ -7,24 +7,26 @@ function t = gsw_t_from_CT(SA,CT,p)
 %  t = gsw_t_from_CT(SA,CT,p)
 %
 % DESCRIPTION:
-%  Calculates in-situ temperature from Conservative Temperature of seawater  
+%  Calculates in-situ temperature from the Conservative Temperature of 
+%  seawater.  
 %
 % INPUT:
-%  SA   =  Absolute Salinity                                       [ g/kg ]
-%  CT   =  Conservative Temperature                               [ deg C ]
-%  p    =  sea pressure                                            [ dbar ]
-%         (ie. absolute pressure - 10.1325 dbar) 
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
+%  p   =  sea pressure                                             [ dbar ]
+%         ( i.e. absolute pressure - 10.1325 dbar ) 
 %
 %  SA & CT need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA and CT are MxN.
 %
 % OUTPUT:
-%  t    =  in-situ temperature (ITS-90)                           [ deg C ]
+%  t  =  in-situ temperature (ITS-90)                             [ deg C ]
 %
 % AUTHOR: 
-%   Trevor McDougall & Paul Barker [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -59,6 +61,9 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
     p = p(ones(1,ms),:);              % copy down each column.
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
@@ -66,9 +71,9 @@ else
 end %if
 
 if ms == 1
-    SA = SA';
-    CT = CT';
-    p = p';
+    SA = SA.';
+    CT = CT.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;
@@ -83,7 +88,7 @@ pt0 = gsw_pt_from_CT(SA,CT);
 t = gsw_pt_from_t(SA,pt0,pr0,p);
 
 if transposed
-    t = t';
+    t = t.';
 end
 
 end

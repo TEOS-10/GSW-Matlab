@@ -1,43 +1,46 @@
 function specvol_anom_CT = gsw_specvol_anom_CT(SA,CT,p)
 
-% gsw_specvol_anom_CT                               specific volume anomaly
+% gsw_specvol_anom_CT            specific volume anomaly (48-term equation)
 %==========================================================================
 % 
 % USAGE:  
-%  specvol_anom_CT = gsw_specvol_anom_CT(SA,CT,p)
+%  specvol_anom_CT = gsw_specvol_anom_CT(SA,CT,p), or equivalently
+%     specvol_anom = gsw_specvol_anom(SA,CT,p)
+% 
+%  Note that gsw_specvol_anom(SA,CT,p) is identical to 
+%  gsw_specvol_anom_CT(SA,CT,p).  The extra "_CT" emphasises that the input
+%  temperature is Conservative Temperature, but the extra "_CT" part of the
+%  function name is not needed. 
 %
 % DESCRIPTION:
 %  Calculates specific volume anomaly from Absolute Salinity, Conservative 
-%  Temperature and pressure.  The reference value of Absolute Salinity is 
-%  SSO and the reference value of Conservative Temperature is equal to 
-%  0 degress C. 
+%  Temperature and pressure. It uses the computationally-efficient 48-term 
+%  expression for density as a function of SA, CT and p (McDougall et al.,
+%  2011). The reference value of Absolute Salinity is SSO and the reference
+%  value of Conservative Temperature is equal to 0 degress C. 
 %
-%  Note that this function uses the full Gibbs function.  There is an 
-%  alternative to calling this function, namely 
-%  gsw_specvol_anom_CT25(SA,CT,p), which uses the computationally efficient
-%  25-term expression for density in terms of SA, CT and p 
-%  (McDougall et al., (2010)).  For SA, CT and p values which fall inside 
-%  the oceanographic "funnel" (McDougall et al., 2010), this 
-%  computationally efficient (i. e. faster) 25-term version fits the 
-%  underlying laboratory density data almost as well as does the density 
-%  derived from the full TEOS-10 Gibbs function. 
+%  Note that the 48-term equation has been fitted in a restricted range of 
+%  parameter space, and is most accurate inside the "oceanographic funnel" 
+%  described in McDougall et al. (2011).  The GSW library function 
+%  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
+%  some of one's data lies outside this "funnel".  
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
-%  CT  =  Conservative Temperature                                [ deg C ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %  p   =  sea pressure                                             [ dbar ]
-%         (ie. absolute pressure - 10.1325 dbar)
+%         ( i.e. absolute pressure - 10.1325 dbar )
 %
 %  SA & CT need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & CT are MxN.
 %
 % OUTPUT:
-%  specvol_anom_CT  =  specific volume anomaly                  [ kg m^-3 ]
+%  specvol_anom_CT  =  specific volume anomaly                   [ m^3/kg ]
 %
 % AUTHOR: 
-%   Trevor McDougall and Paul Barker             [ help_gsw@csiro.au ]
+%  Paul Barker and Trevor McDougall                   [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (24th March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,11 +49,10 @@ function specvol_anom_CT = gsw_specvol_anom_CT(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.7.3) of this TEOS-10 Manual. 
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -61,7 +63,7 @@ function specvol_anom_CT = gsw_specvol_anom_CT(SA,CT,p)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 3)
-   error('gsw_specvol_anom_CT:  Requires three inputs')
+   error('gsw_specvol_anom_CT: Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -79,7 +81,7 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
 elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
-    p = p';                              % transposed then
+    p = p.';                              % transposed then
     p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
@@ -88,9 +90,9 @@ else
 end %if
 
 if ms == 1
-    SA = SA';
-    CT = CT';
-    p = p';
+    SA = SA.';
+    CT = CT.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;
@@ -100,13 +102,10 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-pt = gsw_pt_from_CT(SA,CT);
-pr0 = zeros(size(SA));
-t = gsw_pt_from_t(SA,pt,pr0,p);
-specvol_anom_CT = gsw_specvol_anom(SA,t,p);
+specvol_anom_CT = gsw_specvol_anom(SA,CT,p);
 
 if transposed
-    specvol_anom_CT = specvol_anom_CT';
+    specvol_anom_CT = specvol_anom_CT.';
 end
 
 end

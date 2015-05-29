@@ -11,7 +11,7 @@ function distance = gsw_distance(long,lat,p)
 %  Calculates the distance in metres between successive points in the 
 %  vectors long and lat, computed using the Haversine formula on a 
 %  spherical earth of radius 6,371 km, being the radius of a sphere having
-%  the same volume as Earth. For a sperical Earth of radius 6,371,000 m,
+%  the same volume as Earth.  For a sperical Earth of radius 6,371,000 m,
 %  one nautical mile is 1,853.2488 m, thus one degree of latitude is
 %  111,194.93 m.
 %  Note. Distances are probably good to better than 1% of the "true" 
@@ -24,7 +24,7 @@ function distance = gsw_distance(long,lat,p)
 %
 % OPTIONAL:
 %  p     =  sea pressure ( default is 0 )                          [ dbar ]
-%           ( ie. absolute pressure - 10.1325 dbar )
+%           ( i.e. absolute pressure - 10.1325 dbar )
 %
 %  lat and long need to have the same dimensions, Mx1 or 1xN or MxN.
 %  p, if provided, may have dimensions 1x1 or Mx1 or 1xN or MxN,
@@ -32,18 +32,18 @@ function distance = gsw_distance(long,lat,p)
 %
 % OUTPUT:
 %  distance  =  Distance between points on a spherical                [ m ]
-%                Earth at pressure (p)  
+%               Earth at pressure (p)  
 %  Note. The output is in m not km.
 % 
 % AUTHOR:  
-%  6th November, 2000 by Rich Pawlowicz             [ help_gsw@csiro.au ]
+%  6th November, 2000 by Rich Pawlowicz               [ help_gsw@csiro.au ]
 %  Note. This function was extracted from Rich Pawlowicz's m_map package,
 %    which is available from http://www.eos.ubc.ca/~rich/map.html
 %
 % MODIFIED:
-%  28th July, 2010 by Paul Barker and Trevor McDougall. 
+%  4th April, 2011 by Paul Barker and Trevor McDougall. 
 %
-% VERSION NUMBER: 2.0 (23rd July, 2010)
+% VERSION NUMBER: 3.0 (4th April, 2011)
 %
 % REFERENCE:
 %  http://www.eos.ubc.ca/~rich/map.html
@@ -74,33 +74,37 @@ elseif mla == 1 & mlo == 1 & nla == 1 & nlo == 1
     error('*** No, you need more than one point to find a distance!  ***')  
 end
 
-if mla==1 & nla==1                        % lat is a scalar.  Fill to size of p
+transposed = 0;
+
+if (mla == 1) & (nla == 1)            % lat is a scalar.  Fill to size of p
     lat = lat*ones(mp,np);
     long = long*ones(mp,np);
-elseif nla==np & mla==1                   % lat is row vector, 
+elseif (nla == np) & (mla == 1)                   % lat is row vector, 
     lat = lat(ones(1,mp),:);                %   copy down each column.
     long = long(ones(1,mp),:);
-elseif mla==mp & nla==1                   % lat is column vector,
-    lat = p(:,ones(1,np));                %   copy across each row.
-    long = long(:,ones(1,np)); 
-elseif mla==mp & nla==np               
+elseif (mla == mp) & (nla == 1)                   % lat is column vector.
+    lat = lat.';
+    long = long.';
+    transposed = 1;
+    lat = lat(ones(1,np),:);                
+    long = long(ones(1,np),:);              
+elseif (mla == mp) & (nla == np)               
     % ok
-% else
-%     error('gsw_dist: p has wrong dimensions')
 end %if
-[mla,nla] = size(lat);
-[mlo,nlo] = size(long);
 
-if mp==1 & np==1                        % p is a scalar.  Fill to size of lat
-    p = p(1)*ones(mla,nla);
-elseif np==nla & mp==1                   % p is row vector, 
+[mla,nla] = size(lat);
+
+if (mp == 1) & (np == 1)              % p is a scalar.  Fill to size of lat
+    p = p*ones(mla,nla);
+elseif (np == nla) & (mp == 1)                   % p is row vector, 
     p = p(ones(1,mla),:);                %   copy down each column.
-elseif mp==mla & np==1                   % p is column vector,
-    p = p(:,ones(1,nla));                %   copy across each row.
-elseif mp==mla & np==nla               
+elseif (mp == mla) & (np == 1)                   % p is column vector.
+    p = p.';
+    p = p(ones(1,nla),:);                                
+elseif (mp == mla) & (np == nla)               
     % ok
 else
-    error('gsw_dist: p has wrong dimensions')
+    error('gsw_distance: p has wrong dimensions')
 end %if
 
 %--------------------------------------------------------------------------
@@ -122,5 +126,9 @@ z = gsw_z_from_p(p_mid,lat_mid);        % Note. z is height and is negative
                                                             % in the ocean.
                                                             
 distance = (earth_radius + z).*angles;   % Note. The output is in m not km.
+
+if transposed
+    distance = distance.';
+end
 
 end

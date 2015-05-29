@@ -4,19 +4,19 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 % =========================================================================
 %
 % USAGE:
-%   [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
+%  [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 %
 % DESCRIPTION:
-% Calculates the following two partial derivatives of potential temperature 
-% (the regular potential temperature whose reference sea pressure is 0 dbar) 
-%   (1) pt_SA, the derivative with respect to Absolute Salinity at 
+%  Calculates the following two partial derivatives of potential temperature 
+%  (the regular potential temperature whose reference sea pressure is 0 dbar) 
+%  (1) pt_SA, the derivative with respect to Absolute Salinity at 
 %       constant Conservative Temperature, and
-%   (2) pt_CT, the derivative with respect to Conservative Temperature at 
+%  (2) pt_CT, the derivative with respect to Conservative Temperature at 
 %       constant Absolute Salinity. 
 %
 % INPUT:
-%  SA  =   Absolute Salinity                                       [ g/kg ]
-%  CT  =   Conservative Temperature                               [ deg C ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 %  SA & CT need to have the same dimensions.
 %
@@ -29,7 +29,10 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 %           pt_CT is dimensionless.                            [ unitless ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
+%
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -38,11 +41,10 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See Eqns. (A.12.6), (A.12.3), (P.6) and (P.8) of this TEOS-10 Manual.   
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -68,8 +70,8 @@ if (mt ~= ms | nt ~= ns)
 end
 
 if ms == 1
-    SA = SA';
-    CT = CT';
+    SA = SA.';
+    CT = CT.';
     transposed = 1;
 else
     transposed = 0;
@@ -97,8 +99,8 @@ pt_SA = - CT_SA./CT_pt;
 pt_CT = ones(size(CT_pt))./CT_pt;
 
 if transposed
-    pt_SA = pt_SA';
-    pt_CT = pt_CT';
+    pt_SA = pt_SA.';
+    pt_CT = pt_CT.';
 end
 
 end

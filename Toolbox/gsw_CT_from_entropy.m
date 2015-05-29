@@ -11,18 +11,18 @@ function CT = gsw_CT_from_entropy(SA,entropy)
 %  Calculates Conservative Temperature with entropy as an input variable.  
 %
 % INPUT:
-%  SA       =   Absolute Salinity                                  [ g/kg ]
-%  entropy  =   specific entropy                                  [ deg C ]
+%  SA       =  Absolute Salinity                                   [ g/kg ]
+%  entropy  =  specific entropy                                   [ deg C ]
 %
 %  SA & entropy need to have the same dimensions.
 %
 % OUTPUT:
-%  CT   =  Conservative Temperature                               [ deg C ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 % AUTHOR:  
-%  Trevor McDougall and Paul Barker.       [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker.                  [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (13th October, 2010)
+% VERSION NUMBER: 3.0 (3rd March, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -51,8 +51,8 @@ if (ms ~= me | ns ~= ne )
 end %if
 
 if ms == 1
-    SA = SA';
-    entropy = entropy';
+    SA = SA.';
+    entropy = entropy.';
     transposed = 1;
 else
     transposed = 0;
@@ -72,7 +72,7 @@ pt = gsw_pt_from_entropy(SA,entropy);
 CT = gsw_CT_from_pt(SA,pt);
 
 if transposed
-    CT = CT';
+    CT = CT.';
 end
 
 end

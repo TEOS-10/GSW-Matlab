@@ -15,24 +15,25 @@ function [eta_SA, eta_CT] = gsw_entropy_first_derivatives(SA,CT)
 %       constant Absolute Salinity. 
 %
 % INPUT:
-%  SA  =   Absolute Salinity                                       [ g/kg ]
-%  CT  =   Conservative Temperature                               [ deg C ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 %  SA & CT need to have the same dimensions.
 %
 % OUTPUT:
 %  eta_SA =  The derivative of specific entropy with respect to 
-%            Absolute Salinity (in units of g/kg) at constant Conservative 
-%            Temperature.  The eta_SA output has units of:  
-%                                         [ J/(kg K(g/kg))]  or [ J/(g K) ]
+%            Absolute Salinity (in units of g kg^-1) at constant  
+%            Conservative Temperature.  
+%            eta_SA has units of:         [ J/(kg K(g/kg))]  or [ J/(g K) ]
 %  eta_CT =  The derivative of specific entropy with respect to 
 %            Conservative Temperature at constant Absolute Salinity.
-%            The eta_CT output has units of:                 [ J/(kg K^2) ]
+%            eta_CT has units of:                            [ J/(kg K^2) ]
 %
 % AUTHOR: 
-%  Trevor McDougall.  [ help_gsw@csiro.au ]
+%  Trevor McDougall.                                  [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 2.0 (21th August, 2010).
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -64,8 +65,8 @@ if (mt ~= ms | nt ~= ns)
     error('gsw_entropy_first_derivatives: SA and CT must have same dimensions')
 end
 if ms == 1
-    SA = SA';
-    CT = CT';
+    SA = SA.';
+    CT = CT.';
     transposed = 1;
 else
     transposed = 0;
@@ -86,8 +87,8 @@ eta_SA = -(gsw_gibbs(n1,n0,n0,SA,pt,pr0))./(273.15 + pt);
 eta_CT = (cp0*ones(size(pt)))./(273.15 + pt);
 
 if transposed
-    eta_SA = eta_SA';
-    eta_CT = eta_CT';
+    eta_SA = eta_SA.';
+    eta_CT = eta_CT.';
 end
 
 end

@@ -11,18 +11,18 @@ function SA_baltic = gsw_SA_from_SP_Baltic(SP,long,lat)
 %  Since SP is non-negative by definition, this function changes any 
 %  negative input values of SP to be zero.  
 %  Note. This programme will only produce Absolute Salinity values for the
-%  Baltic Sea.
+%    Baltic Sea.
 %
 % INPUT:
-%   SP    =  Practical Salinity  (PSS-78)                      [ unitless ]
-%   long  =  Longitude in decimal degrees east               [ 0 ... +360 ]    
-%   lat   =  Latitude in decimal degrees north              [ -90 ... +90 ]  
+%  SP    =  Practical Salinity  (PSS-78)                       [ unitless ]
+%  long  =  Longitude in decimal degrees east                [ 0 ... +360 ]    
+%  lat   =  Latitude in decimal degrees north               [ -90 ... +90 ]  
 %
 % OUTPUT:
-%   SA_baltic    =  Absolute Salinity in the Baltic Sea            [ g/kg ]
+%  SA_baltic  =  Absolute Salinity in the Baltic Sea            [ g kg^-1 ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall & Paul Barker [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall & Paul Barker      [ help_gsw@csiro.au ]
 %
 % VERSION NUMBER: 2.0 (23rd July, 2010)
 %
@@ -70,13 +70,15 @@ yb3 = 69;
 inds_baltic = find(xb2<long & long<xb1a & yb1<lat & lat<yb3);
 
 SA_baltic = nan(size(SP));
-
+ 
 if ~isempty(inds_baltic)
     xx_left = interp1([yb1,yb2,yb3],[xb1,xb2,xb3],lat(inds_baltic));
     xx_right = interp1([yb1,yb3],[xb1a,xb3a],lat(inds_baltic));
     inds_baltic1 = find(xx_left<=long(inds_baltic) & long(inds_baltic)<=xx_right);
-    SA_baltic(inds_baltic(inds_baltic1)) = ((35.16504 - 0.087)/35)*SP(inds_baltic(inds_baltic1)) + 0.087; 
-    SA_baltic = reshape(SA_baltic,size(long));
+    if ~isempty(inds_baltic1)
+        SA_baltic(inds_baltic(inds_baltic1)) = ((35.16504 - 0.087)/35)*SP(inds_baltic(inds_baltic1)) + 0.087;
+    end
+    %SA_baltic = reshape(SA_baltic,size(long));
 end
 
 end

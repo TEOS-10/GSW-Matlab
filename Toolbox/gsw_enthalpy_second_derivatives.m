@@ -18,9 +18,9 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives(SA,CT,p)
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
-%  CT  =  Conservative Temperature                                [ deg C ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %  p   =  sea pressure                                             [ dbar ]
-%         (i.e. absolute pressure - 10.1325 dbar) 
+%         ( i.e. absolute pressure - 10.1325 dbar )
 %
 %  SA & CT need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & CT are MxN.
@@ -34,9 +34,10 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives(SA,CT,p)
 %              CT at constant SA and p.                      [ J/(kg K^2) ]
 %
 % AUTHOR:   
-%  Trevor McDougall and Paul Barker.  [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker.                  [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -44,11 +45,10 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %   
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term
-%   expression for the density of seawater in terms of Conservative
-%   Temperature, and related properties of seawater.  To be submitted
-%   to Ocean Science Discussions.
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -80,6 +80,9 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
     p = p(ones(1,ms), :);              % copy down each column.
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
@@ -87,9 +90,9 @@ else
 end %if
 
 if ms == 1
-    SA = SA';
-    CT = CT';
-    p = p';
+    SA = SA.';
+    CT = CT.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;
@@ -116,24 +119,42 @@ gST_pt0 = gsw_gibbs(n1,n1,n0,SA,pt0,pr0);
 gST_t = gsw_gibbs(n1,n1,n0,SA,t,p);
 gS_pt0 = gsw_gibbs(n1,n0,n0,SA,pt0,pr0);
 
+% h_CT_CT is naturally well-behaved as SA approaches zero. 
 h_CT_CT = cp0.*cp0.* ...
     (temp_ratio.*rec_gTT_pt0 - rec_gTT_t)./(abs_pt0.*abs_pt0);
 
 part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t)./(abs_pt0);
 factor = gS_pt0./cp0;
 
+% h_SA_SA has a singularity at SA = 0, and blows up as SA approaches zero.  
+h_SA_SA = gsw_gibbs(n2,n0,n0,SA,t,p) ...
+    - temp_ratio.*gsw_gibbs(n2,n0,n0,SA,pt0,pr0)  ...
+    + temp_ratio.*gST_pt0.*gST_pt0.*rec_gTT_pt0  ...
+    - gST_t.*gST_t.*rec_gTT_t  ...
+    - 2.0.*gS_pt0.*part + (factor.*factor).*h_CT_CT;
+
+% h_SA_CT should not blow up as SA approaches zero.  The following lines
+% of code ensure that the h_SA_CT output of this function does not blow
+% up in this limit.  That is, when SA < 1e-100 g/kg, we force the h_SA_CT 
+% output to be the same as if SA = 1e-100 g/kg.  
+[Ismall_SA] = find(SA < 1e-100);
+if ~isempty(Ismall_SA)
+    SA(Ismall_SA) = 1e-100;
+    rec_gTT_pt0 = ones(size(SA))./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
+    rec_gTT_t = ones(size(SA))./gsw_gibbs(n0,n2,n0,SA,t,p);
+    gST_pt0 = gsw_gibbs(n1,n1,n0,SA,pt0,pr0);
+    gST_t = gsw_gibbs(n1,n1,n0,SA,t,p);
+    gS_pt0 = gsw_gibbs(n1,n0,n0,SA,pt0,pr0);
+    part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t)./(abs_pt0);
+    factor = gS_pt0./cp0;
+end
+
 h_SA_CT  = cp0.*part - factor.*h_CT_CT;
 
-h_SA_SA = gsw_gibbs(n2,n0,n0,SA,t,p) - ...
-    temp_ratio.*gsw_gibbs(n2,n0,n0,SA,pt0,pr0) + ...
-    temp_ratio.*gST_pt0.*gST_pt0.*rec_gTT_pt0 - ...
-    gST_t.*gST_t.*rec_gTT_t - ...
-    2.0.*gS_pt0.*part + (factor.*factor).*h_CT_CT;
-
 if transposed
-    h_SA_SA = h_SA_SA';
-    h_SA_CT = h_SA_CT';
-    h_CT_CT = h_CT_CT';
+    h_SA_SA = h_SA_SA.';
+    h_SA_CT = h_SA_CT.';
+    h_CT_CT = h_CT_CT.';
 end
 
 end

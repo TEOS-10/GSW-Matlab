@@ -20,9 +20,9 @@ function entropy = gsw_entropy_from_pt(SA,pt)
 %  entropy  =  specific entropy                                [ J/(kg*K) ]
 %
 % AUTHOR: 
-%  Trevor McDougall and Paul Barker            [ help_gsw@csiro.au ]
+%  Trevor McDougall and Paul Barker                   [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 2.0 (13 October, 2010)
+% VERSION NUMBER: 3.0 (3rd April, 2011)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -51,8 +51,8 @@ if (mt ~= ms | nt ~= ns)
 end
 
 if ms == 1
-    SA = SA';
-    pt = pt';
+    SA = SA.';
+    pt = pt.';
     transposed = 1;
 else
     transposed = 0;
@@ -75,7 +75,7 @@ pr0 = zeros(size(SA));
 entropy = -gsw_gibbs(n0,n1,n0,SA,pt,pr0);
 
 if transposed
-    entropy = entropy';
+    entropy = entropy.';
 end
 
 end

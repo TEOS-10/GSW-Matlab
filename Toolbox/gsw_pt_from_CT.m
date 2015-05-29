@@ -14,20 +14,21 @@ function pt = gsw_pt_from_CT(SA,CT)
 %  for both pt and dCT_dpt. 
 %
 % INPUT:
-%  SA   =   Absolute Salinity                                      [ g/kg ]
-%  CT   =   Conservative Temperature                              [ deg C ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
 %
 %  SA & CT need to have the same dimensions.
 %
 % OUTPUT:
-%  pt   =   potential temperature referenced to a sea pressure 
-%           of zero dbar (ITS-90)                                 [ deg C ]
+%  pt  =  potential temperature referenced to a sea pressure 
+%         of zero dbar (ITS-90)                                   [ deg C ]
 %
 % AUTHOR: 
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
-%          [ help_gsw@csiro.au ]
+%                                                     [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -36,11 +37,10 @@ function pt = gsw_pt_from_CT(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See sections 3.1 and 3.3 of this TEOS-10 Manual.
 %
-%  McDougall T. J., D. R. Jackett, P. M. Barker, C. Roberts-Thomson, R.
-%   Feistel and R. W. Hallberg, 2010:  A computationally efficient 25-term 
-%   expression for the density of seawater in terms of Conservative 
-%   Temperature, and related properties of seawater.  To be submitted 
-%   to Ocean Science Discussions. 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to Ocean Science Discussions. 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -62,8 +62,8 @@ if (mt ~= ms | nt ~= ns)
 end
 
 if ms == 1
-    SA = SA';
-    CT = CT';
+    SA = SA.';
+    CT = CT.';
     transposed = 1;
 else
     transposed = 0;
@@ -115,13 +115,13 @@ ptm = 0.5d0.*(pt + pt_old);
 % of the Gibbs function with respect to temperature at zero sea pressure.  
 
 dCT_dpt = -(ptm + 273.15).*gsw_gibbs_pt0_pt0(SA,ptm)./cp0;
-pt = pt_old - (CT_diff)./dCT_dpt; % end of 1st full modified N-R iteration
+pt = pt_old - (CT_diff)./dCT_dpt;  % end of 1st full modified N-R iteration
 CT_diff = gsw_CT_from_pt(SA,pt) - CT;
 pt_old = pt;
 pt = pt_old - (CT_diff)./dCT_dpt; % 1.5 iterations of the modified N-R method
 
 if transposed
-    pt = pt';
+    pt = pt.';
 end
 
 % abs max error of result is 1.42e-14 deg C

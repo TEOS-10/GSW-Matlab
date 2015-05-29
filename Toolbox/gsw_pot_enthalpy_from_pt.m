@@ -11,8 +11,8 @@ function pot_enthalpy = gsw_pot_enthalpy_from_pt(SA,pt)
 %  temperature (whose reference sea pressure is zero dbar).
 %
 % INPUT:
-%  SA   =  Absolute Salinity                                       [ g/kg ]
-%  pt   =  potential temperature (ITS-90)                         [ deg C ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  pt  =  potential temperature (ITS-90)                          [ deg C ]
 %
 %  SA & pt need to have the same dimensions.
 %
@@ -20,9 +20,10 @@ function pot_enthalpy = gsw_pot_enthalpy_from_pt(SA,pt)
 %  pot_enthalpy  =  potential enthalpy                             [ J/kg ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker [ help_gsw@csiro.au ]
+%  David Jackett, Trevor McDougall and Paul Barker    [ help_gsw@csiro.au ]
 %
-% VERSION NUMBER: 2.0 (26th August, 2010)
+% VERSION NUMBER: 3.0 (29th March, 2011) 
+%  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -51,8 +52,8 @@ if (mt ~= ms | nt ~= ns)
 end
 
 if ms == 1
-    SA = SA';
-    pt = pt';
+    SA = SA.';
+    pt = pt.';
     transposed = 1;
 else
     transposed = 0;
@@ -109,7 +110,7 @@ pot_enthalpy =  61.01362420681071 + y.*(168776.46138048015 + ...
 %-----------------This is the end of the alternative code------------------
 
 if transposed
-    pot_enthalpy = pot_enthalpy';
+    pot_enthalpy = pot_enthalpy.';
 end
 
 end

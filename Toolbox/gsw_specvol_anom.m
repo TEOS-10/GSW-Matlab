@@ -1,29 +1,32 @@
-function enthalpy = gsw_enthalpy(SA,t,p)
+function specvol_anom = gsw_specvol_anom(SA,t,p)
 
-% gsw_enthalpy                                specific enthalpy of seawater
+% gsw_specvol_anom                                  specific volume anomaly
 %==========================================================================
 %
-% USAGE:
-%  enthalpy = gsw_enthalpy(SA,t,p)
+% USAGE:  
+%  specvol_anom = gsw_specvol_anom(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates the specific enthalpy of seawater. 
-%
+%  Calculates specific volume anomaly from Absolute Salinity, in-situ 
+%  temperature and pressure, using the full TEOS-10 Gibbs function.  The 
+%  reference value of Absolute Salinity is SSO and the reference value 
+%  of Conservative Temperature is equal to 0 degrees C. 
+% 
 % INPUT:
-%  SA =  Absolute Salinity                                         [ g/kg ]
-%  t  =  in-situ temperature (ITS-90)                             [ deg C ]
-%  p  =  sea pressure                                              [ dbar ]
-%        (ie. absolute pressure - 10.1325 dbar) 
+%  SA   =   Absolute Salinity                                      [ g/kg ]
+%  t    =   in-situ temperature (ITS-90)                          [ deg C ]
+%  p    =   sea pressure                                           [ dbar ]
+%           ( ie. absolute pressure - 10.1325 dbar )
 %
-%  SA & t need to have the same dimensions.
+%  SA & t need to have the same dimensions, 
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
-%
+% 
 % OUTPUT:
-%  enthalpy  = specific enthalpy                                   [ J/kg ]
+%  specvol_anom  =   specific volume anomaly                     [ kg/m^3 ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker. [ help_gsw@csiro.au ]
-%      
+%   Trevor McDougall & Paul Barker[ help_gsw@csiro.au ]   
+%
 % VERSION NUMBER: 2.0 (26th August, 2010)
 %
 % REFERENCES:
@@ -31,6 +34,7 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%    See Eqn. (3.7.3) of this TEOS-10 Manual. 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -40,16 +44,16 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin==3)
-   error('gsw_enthalpy:  Requires three inputs')
+if ~(nargin == 3)
+   error('gsw_specvol_anom:  Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
 [mt,nt] = size(t);
 [mp,np] = size(p);
 
-if (mt ~= ms | nt ~= ns)
-    error('gsw_enthalpy: SA and t must have same dimensions')
+if (mt ~= ms | nt ~= ns )
+    error('gsw_specvol_anom: SA and t must have same dimensions')
 end
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
@@ -61,7 +65,7 @@ elseif (ms == mp) & (np == 1)         % p is column vector,
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_enthalpy: Inputs array dimensions arguments do not agree')
+    error('gsw_specvol_anom: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
@@ -77,13 +81,19 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
+n0 = 0;
 n1 = 1;
 
-enthalpy = gsw_gibbs(n0,n0,n0,SA,t,p) - (t+273.15).*gsw_gibbs(n0,n1,n0,SA,t,p);
+SSO = 35.16504*ones(size(SA));
+CT0 = zeros(size(SA));
+pr0 = zeros(size(SA));
+pt_zero = gsw_pt_from_CT(SSO,CT0);
+t_zero = gsw_pt_from_t(SSO,pt_zero,pr0,p);
+
+specvol_anom = gsw_gibbs(n0,n0,n1,SA,t,p) - gsw_gibbs(n0,n0,n1,SSO,t_zero,p);
 
 if transposed
-    enthalpy = enthalpy';
+    specvol_anom = specvol_anom';
 end
 
 end

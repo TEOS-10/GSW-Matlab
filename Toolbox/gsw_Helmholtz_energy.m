@@ -1,13 +1,13 @@
-function enthalpy = gsw_enthalpy(SA,t,p)
+function Helmholtz_energy = gsw_Helmholtz_energy(SA,t,p)
 
-% gsw_enthalpy                                specific enthalpy of seawater
+% gsw_Helmholtz_energy                         Helmholtz energy of seawater
 %==========================================================================
 %
 % USAGE:
-%  enthalpy = gsw_enthalpy(SA,t,p)
+%  Helmholtz_energy = gsw_Helmholtz_energy(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates the specific enthalpy of seawater. 
+%  Calculates the Helmholtz energy of seawater 
 %
 % INPUT:
 %  SA =  Absolute Salinity                                         [ g/kg ]
@@ -19,10 +19,10 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  enthalpy  = specific enthalpy                                   [ J/kg ]
+%  Helmholtz_energy = Helmholtz energy                             [ J/kg ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker. [ help_gsw@csiro.au ]
+%  Trevor McDougall    [ help_gsw@csiro.au ]
 %      
 % VERSION NUMBER: 2.0 (26th August, 2010)
 %
@@ -31,6 +31,7 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%    See section 2.13 of this TEOS-10 Manual.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -41,7 +42,7 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 %--------------------------------------------------------------------------
 
 if ~(nargin==3)
-   error('gsw_enthalpy:  Requires three inputs')
+   error('gsw_Helmholtz_energy:  Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -49,7 +50,7 @@ end %if
 [mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_enthalpy: SA and t must have same dimensions')
+    error('gsw_Helmholtz_energy: SA and t must have same dimensions')
 end
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
@@ -61,7 +62,7 @@ elseif (ms == mp) & (np == 1)         % p is column vector,
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_enthalpy: Inputs array dimensions arguments do not agree')
+    error('gsw_Helmholtz_energy: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
@@ -77,13 +78,15 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
+db2Pa = 1e4;
+n0 = 0;
 n1 = 1;
 
-enthalpy = gsw_gibbs(n0,n0,n0,SA,t,p) - (t+273.15).*gsw_gibbs(n0,n1,n0,SA,t,p);
+Helmholtz_energy = gsw_gibbs(n0,n0,n0,SA,t,p) - ...
+                     (db2Pa*p + 101325).*gsw_gibbs(n0,n0,n1,SA,t,p);
 
 if transposed
-    enthalpy = enthalpy';
+    Helmholtz_energy = Helmholtz_energy';
 end
 
 end

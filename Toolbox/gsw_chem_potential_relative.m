@@ -1,13 +1,13 @@
-function enthalpy = gsw_enthalpy(SA,t,p)
+function chem_potential_relative = gsw_chem_potential_relative(SA,t,p)
 
-% gsw_enthalpy                                specific enthalpy of seawater
+% gsw_chem_potential_relative                   relative chemical potential
 %==========================================================================
 %
 % USAGE:
-%  enthalpy = gsw_enthalpy(SA,t,p)
+%  chem_potential_relative  = gsw_chem_potential_relative(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates the specific enthalpy of seawater. 
+%  Calculates the relative chemical potential of seawater
 %
 % INPUT:
 %  SA =  Absolute Salinity                                         [ g/kg ]
@@ -19,11 +19,11 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  enthalpy  = specific enthalpy                                   [ J/kg ]
+%  chem_potential_relative  =  relative chemical potential         [ J/kg ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker. [ help_gsw@csiro.au ]
-%      
+%  Trevor McDougall and Paul Barker        [ help_gsw@csiro.au ]
+%
 % VERSION NUMBER: 2.0 (26th August, 2010)
 %
 % REFERENCES:
@@ -40,8 +40,8 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin==3)
-   error('gsw_enthalpy:  Requires three inputs')
+if ~(nargin == 3)
+   error('gsw_chem_potential_relative:  Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -49,19 +49,22 @@ end %if
 [mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_enthalpy: SA and t must have same dimensions')
+    error('gsw_chem_potential_relative: SA and t must have same dimensions')
 end
 
-if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
+if (mp == 1) & (np == 1)               % p is a scalar - fill to size of SA
     p = p*ones(size(SA));
-elseif (ns == np) & (mp == 1)         % p is row vector,
-    p = p(ones(1,ms), :);              % copy down each column.
-elseif (ms == mp) & (np == 1)         % p is column vector,
-    p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == np) & (mp == 1)          % p is row vector,
+    p = p(ones(1,ms), :);                % copy down each column.
+elseif (ms == mp) & (np == 1)          % p is column vector,
+    p = p(:,ones(1,ns));                 % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_enthalpy: Inputs array dimensions arguments do not agree')
+    error('gsw_chem_potential_relative: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
@@ -80,10 +83,10 @@ end
 n0 = 0; 
 n1 = 1;
 
-enthalpy = gsw_gibbs(n0,n0,n0,SA,t,p) - (t+273.15).*gsw_gibbs(n0,n1,n0,SA,t,p);
+chem_potential_relative = gsw_gibbs(n1,n0,n0,SA,t,p); 
 
 if transposed
-    enthalpy = enthalpy';
+    chem_potential_relative = chem_potential_relative';
 end
 
 end

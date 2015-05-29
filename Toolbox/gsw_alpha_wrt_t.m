@@ -1,27 +1,29 @@
-function kappa = gsw_kappa(SA,t,p)
+function alpha_wrt_t = gsw_alpha_wrt_t(SA,t,p)
 
-% gsw_kappa                                      isentropic compressibility
+% gsw_alpha_wrt_t                             thermal expansion coefficient 
+%                                       with respect to in-situ temperature
 %==========================================================================
 %
 % USAGE:  
-%  kappa = gsw_kappa(SA,t,p)
+%  alpha_wrt_t = gsw_alpha_wrt_t(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates the isentropic compressibility of seawater 
-%  
+%  Calculates the thermal expansion coefficient of seawater with respect to  
+%  in-situ temperature.
+%   
 % INPUT:
-%  SA   =  Absolute Salinity                                       [ g/kg ]
-%  t    =  in-situ temperature (ITS-90)                           [ deg C ]
-%  p    =  sea pressure                                            [ dbar ]
-%          ( ie. absolute pressure - 10.1325 dbar )
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  t   =  in-situ temperature (ITS-90)                            [ deg C ]
+%  p   =  sea pressure                                             [ dbar ]
+%         ( ie. absolute pressure - 10.1325 dbar )
 %
 %  SA & t need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  kappa   =  Isentropic compressibility                           [ 1/Pa ]
-%   Note. The output units are 1/Pa not 1/dbar.
-%
+%  alpha_wrt_t  =  thermal expansion coefficient                    [ 1/K ]
+%                  with respect to in-situ temperature
+%    
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker [ help_gsw@csiro.au ]
 %
@@ -31,9 +33,14 @@ function kappa = gsw_kappa(SA,t,p)
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
-%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
-%    See Eqns. (2.16.1) and the row for kappa in Table P.1 of appendix P  
-%   of this TEOS-10 Manual. 
+%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
+%    See Eqn. (2.18.1) of this TEOS-10 manual.
+%
+%  McDougall, T.J., D.R. Jackett and F.J. Millero, 2010: An algorithm 
+%   for estimating Absolute Salinity in the global ocean.  Submitted to 
+%   Ocean Science. A preliminary version is available at Ocean Sci. 
+%   Discuss., 6, 215-242.  
+%   http://www.ocean-sci-discuss.net/6/215/2009/osd-6-215-2009-print.pdf 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -44,7 +51,7 @@ function kappa = gsw_kappa(SA,t,p)
 %--------------------------------------------------------------------------
 
 if ~(nargin == 3)
-   error('gsw_kappa:  Requires three inputs')
+   error('gsw_alpha_wrt_t:  Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -52,7 +59,7 @@ end %if
 [mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_kappa: SA and t must have same dimensions')
+    error('gsw_alpha_wrt_t: SA and t must have same dimensions')
 end
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
@@ -61,10 +68,13 @@ elseif (ns == np) & (mp == 1)         % p is row vector,
     p = p(ones(1,ms), :);              % copy down each column.
 elseif (ms == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_kappa: Inputs array dimensions arguments do not agree')
+    error('gsw_alpha_wrt_t: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
@@ -80,18 +90,13 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
-n1 = 1; 
-n2 = 2;
+n0 = 0;
+n1 = 1;
 
-g_tt = gsw_gibbs(n0,n2,n0,SA,t,p); 
-g_tp = gsw_gibbs(n0,n1,n1,SA,t,p);
-
-kappa = (g_tp.*g_tp - g_tt.*gsw_gibbs(n0,n0,n2,SA,t,p))./ ...
-     (gsw_gibbs(n0,n0,n1,SA,t,p).*g_tt);
+alpha_wrt_t = gsw_gibbs(n0,n1,n1,SA,t,p)./gsw_gibbs(n0,n0,n1,SA,t,p);
 
 if transposed
-    kappa = kappa';
+    alpha_wrt_t = alpha_wrt_t';
 end
 
 end

@@ -1,36 +1,37 @@
-function enthalpy = gsw_enthalpy(SA,t,p)
+function internal_energy = gsw_internal_energy(SA,t,p)
 
-% gsw_enthalpy                                specific enthalpy of seawater
+% gsw_internal_energy                  specific internal energy of seawater
 %==========================================================================
 %
 % USAGE:
-%  enthalpy = gsw_enthalpy(SA,t,p)
+%  internal_energy = gsw_internal_energy(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates the specific enthalpy of seawater. 
+%  Calculates the specific internal energy of seawater 
 %
 % INPUT:
-%  SA =  Absolute Salinity                                         [ g/kg ]
-%  t  =  in-situ temperature (ITS-90)                             [ deg C ]
-%  p  =  sea pressure                                              [ dbar ]
+%  SA  =  Absolute Salinity                                        [ g/kg ]
+%  t   =  in-situ temperature (ITS-90)                            [ deg C ]
+%  p   =  sea pressure                                             [ dbar ]
 %        (ie. absolute pressure - 10.1325 dbar) 
 %
 %  SA & t need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  enthalpy  = specific enthalpy                                   [ J/kg ]
+%  internal_energy (u)  =  specific internal energy                [ J/kg ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker. [ help_gsw@csiro.au ]
-%      
-% VERSION NUMBER: 2.0 (26th August, 2010)
+%   Trevor McDougall [ help_gsw@csiro.au ]
+%
+% VERSION NUMBER: 2.0 (22nd August, 2010)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%    See Eqn. (2.11.1) of this TEOS-10 Manual.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -41,7 +42,7 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 %--------------------------------------------------------------------------
 
 if ~(nargin==3)
-   error('gsw_enthalpy:  Requires three inputs')
+   error('gsw_internal_energy:  Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -49,8 +50,9 @@ end %if
 [mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_enthalpy: SA and t must have same dimensions')
+    error('gsw_internal_energy: SA and t must have same dimensions')
 end
+
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -61,7 +63,7 @@ elseif (ms == mp) & (np == 1)         % p is column vector,
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_enthalpy: Inputs array dimensions arguments do not agree')
+    error('gsw_internal_energy: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
@@ -77,13 +79,16 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-n0 = 0; 
+db2Pa = 1e4;
+n0 = 0;
 n1 = 1;
 
-enthalpy = gsw_gibbs(n0,n0,n0,SA,t,p) - (t+273.15).*gsw_gibbs(n0,n1,n0,SA,t,p);
+internal_energy = gsw_gibbs(n0,n0,n0,SA,t,p) - ...
+    (273.15 + t).*gsw_gibbs(n0,n1,n0,SA,t,p) - ...
+    (db2Pa*p + 101325).*gsw_gibbs(n0,n0,n1,SA,t,p);
 
 if transposed
-    enthalpy = enthalpy';
+    internal_energy = internal_energy';
 end
 
 end

@@ -1,36 +1,37 @@
-function enthalpy = gsw_enthalpy(SA,t,p)
+function sound_speed = gsw_sound_speed(SA,t,p)
 
-% gsw_enthalpy                                specific enthalpy of seawater
+% gsw_sound_speed                                               sound speed
 %==========================================================================
 %
-% USAGE:
-%  enthalpy = gsw_enthalpy(SA,t,p)
+% USAGE:  
+%  sound_speed = gsw_sound_speed(SA,t,p)
 %
 % DESCRIPTION:
-%  Calculates the specific enthalpy of seawater. 
-%
+%  Calculates the speed of sound in seawater. 
+%  
 % INPUT:
-%  SA =  Absolute Salinity                                         [ g/kg ]
-%  t  =  in-situ temperature (ITS-90)                             [ deg C ]
-%  p  =  sea pressure                                              [ dbar ]
-%        (ie. absolute pressure - 10.1325 dbar) 
+%  SA   =  Absolute Salinity                                       [ g/kg ]
+%  t    =  in-situ temperature (ITS-90)                           [ deg C ]
+%  p    =  sea pressure                                            [ dbar ]
+%           ( ie. absolute pressure - 10.1325 dbar )
 %
 %  SA & t need to have the same dimensions.
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & t are MxN.
 %
 % OUTPUT:
-%  enthalpy  = specific enthalpy                                   [ J/kg ]
+%  sound_speed  =  speed of sound in seawater                       [ m/s ]
 %
 % AUTHOR: 
-%  David Jackett, Trevor McDougall and Paul Barker. [ help_gsw@csiro.au ]
-%      
-% VERSION NUMBER: 2.0 (26th August, 2010)
+%   David Jackett, Paul Barker and Trevor McDougall.  [ help_gsw@csiro.au ]   
+%
+% VERSION NUMBER: 2.0 (23rd July, 2010)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%    See Eqn. (2.17.1) of this TEOS-10 Manual. 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -40,8 +41,8 @@ function enthalpy = gsw_enthalpy(SA,t,p)
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
 
-if ~(nargin==3)
-   error('gsw_enthalpy:  Requires three inputs')
+if ~(nargin == 3)
+   error('gsw_sound_speed:  Requires three inputs')
 end %if
 
 [ms,ns] = size(SA);
@@ -49,7 +50,7 @@ end %if
 [mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
-    error('gsw_enthalpy: SA and t must have same dimensions')
+    error('gsw_sound_speed: SA and t must have same dimensions')
 end
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
@@ -61,7 +62,7 @@ elseif (ms == mp) & (np == 1)         % p is column vector,
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_enthalpy: Inputs array dimensions arguments do not agree')
+    error('gsw_sound_speed: Inputs array dimensions arguments do not agree')
 end %if
 
 if ms == 1
@@ -78,12 +79,17 @@ end
 %--------------------------------------------------------------------------
 
 n0 = 0; 
-n1 = 1;
+n1 = 1; 
+n2 = 2;
 
-enthalpy = gsw_gibbs(n0,n0,n0,SA,t,p) - (t+273.15).*gsw_gibbs(n0,n1,n0,SA,t,p);
+g_tt = gsw_gibbs(n0,n2,n0,SA,t,p); 
+g_tp = gsw_gibbs(n0,n1,n1,SA,t,p);
+
+sound_speed = gsw_gibbs(n0,n0,n1,SA,t,p) .* ...
+    sqrt(g_tt./(g_tp.*g_tp - g_tt.*gsw_gibbs(n0,n0,n2,SA,t,p)));
 
 if transposed
-    enthalpy = enthalpy';
+    sound_speed = sound_speed';
 end
 
 end

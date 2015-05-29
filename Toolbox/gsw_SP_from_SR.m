@@ -18,7 +18,7 @@ function SP = gsw_SP_from_SR(SR)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (27th March, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

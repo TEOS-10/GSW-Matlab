@@ -15,7 +15,7 @@ function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 %  seawater is frozen, the output, brineSA_t, is put equal to -99.  
 %
 % INPUT:
-%  t  =  in situ Temperature (ITS-90)                             [ deg C ]
+%  t  =  in-situ Temperature (ITS-90)                             [ deg C ]
 %  p  =  sea pressure                                              [ dbar ]
 %        ( i.e. absolute pressure - 10.1325 dbar ) 
 %
@@ -36,7 +36,7 @@ function brineSA_t = gsw_brineSA_t(t,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (28th March, 2011)
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -61,7 +61,7 @@ if ~exist('saturation_fraction','var')
     saturation_fraction = 1;
 end
 
- if (saturation_fraction < 0 | saturation_fraction > 1)
+if (saturation_fraction < 0 | saturation_fraction > 1)
    error('gsw_brineSA_t: saturation_fraction MUST be between zero and one.')
 end
    
@@ -163,10 +163,10 @@ p_r = p.*1e-4;
 % in CT and p_r. 
 %--------------------------------------------------------------------------
 SA = -(t + 9*p_r)./0.06; % A rough estimate to get the saturated CT.
-[Ineg] = find(SA < 0);
-if ~isempty(Ineg)
-    SA(Ineg) = 0;
-end
+
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
+
 CT = gsw_CT_from_t(SA,t,p);
 CTsat = CT ...
     - (1-saturation_fraction).*(1e-3).*(2.4-a.*SA).*(1+b.*(1-SA./35.16504));
@@ -191,16 +191,10 @@ SA_cut_off = 2.5;   % This is the band of SA within +- 2.5 g/kg of SA = 0,
 %                     values of both SA and dCT_dSA. 
 [Ico] = find(abs(SA) < SA_cut_off);
 
-[Icoa] = find(SA < 0 & SA >= -SA_cut_off);
-if ~isempty(Icoa)
-    SA(Icoa) = 0;
-end
+SA(SA < 0 & SA >= -SA_cut_off) = 0;
 
 % Find SA < -SA_cut_off, set them to NaN.
-[Inan] = find(SA < -SA_cut_off);
-if ~isempty(Inan)
-    SA(Inan) = NaN;
-end
+SA(SA < -SA_cut_off) = NaN;
 
 %---------------------------------------------------------------------------
 % Form the first estimate of dt_dSA, the derivative of t with respect 
@@ -257,30 +251,22 @@ end
 % which is the machine precision of the computer. 
 % Number_of_Iterations = 5 is what we recommend. 
 %
-% [InSA] = find(SA < 0);
-% if ~isempty(InSA)
-%     SA(InSA) = NaN;  
-% end
+% SA(SA < 0) = NaN;  
 % 
 % t_freezing = gsw_t_freezing(SA,p,saturation_fraction);
 %  
 % t_error = abs(t_freezing - t);
 %  
-% [Iout_of_range] = find(p > 10000 | SA > 120 | ...
-%      p + SA.*71.428571428571402 > 13571.42857142857);
-% if ~isempty(Iout_of_range)
-%      t_error(Iout_of_range) = NaN;
-% end
+% t_error(p > 10000 | SA > 120 | ...
+%      p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 % 
 %-----------------This is the end of the error calculation-----------------
 
 brineSA_t = SA;
 
-[Iout_of_range] = find(p > 10000 | SA > 120 | ...
-    p + SA.*71.428571428571402 > 13571.42857142857);
-if ~isempty(Iout_of_range)
-    brineSA_t(Iout_of_range) = NaN;
-end
+%Find SA that are out of range, set them to NaN. 
+brineSA_t(p > 10000 | SA > 120 | ...
+    p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 
 if ~isempty(Itw)
     brineSA_t(Itw) = -99;       % If the t input is too warm, then there is 

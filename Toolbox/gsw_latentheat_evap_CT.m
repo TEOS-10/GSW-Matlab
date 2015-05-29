@@ -25,7 +25,7 @@ function latentheat_evap_CT = gsw_latentheat_evap_CT(SA,CT)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall & Rainer Feistel      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -31,7 +31,7 @@ function SP = gsw_SP_from_C(C,t,p)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (1st April, 2010)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  Culkin and Smith, 1980:  Determination of the Concentration of Potassium  
@@ -157,10 +157,7 @@ Rp = 1 + (p.*(e1 + e2.*p + e3.*p.*p))./ ...
       (1 + d1.*t68 + d2.*t68.*t68 + (d3 + d4.*t68).*R);
 Rt = R./(Rp.*rt_lc);   
 
-[Ierror] = find(Rt < 0);
-if ~isempty(Ierror)
-    Rt(Ierror) = NaN;
-end
+Rt(Rt < 0) = NaN;
 
 Rtx = sqrt(Rt);
 
@@ -171,8 +168,8 @@ SP = a0 + (a1 + (a2 + (a3 + (a4 + a5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx + ...
 % Hill et al. (1986) algorithm.  This algorithm is adjusted so that it is
 % exactly equal to the PSS-78 algorithm at SP = 2.
 
-[I2] = find(SP < 2);
-if ~isempty(I2)
+if any(SP < 2)
+    [I2] = find(SP < 2);
     Hill_ratio = gsw_Hill_ratio_at_SP2(t(I2)); 
     x = 400*Rt(I2);
     sqrty = 10*Rtx(I2);
@@ -182,11 +179,8 @@ if ~isempty(I2)
     SP(I2) = Hill_ratio.*SP_Hill_raw;
 end
 
-% These few lines ensure that SP is non-negative. 
-[I_neg_SP] = find(SP < 0);
-if ~isempty(I_neg_SP)
-    SP(I_neg_SP) = 0;
-end
+% This line ensures that SP is non-negative.
+SP(SP < 0) = 0;
 
 if transposed
     SP = SP.';

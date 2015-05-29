@@ -14,7 +14,7 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %  Brunt-Vaisala Frequency squared, N^2).  Tu and Rsubrho are evaluated at 
 %  the mid pressure between the individual data points in the vertical.  
 %  This function uses computationally-efficient 48-term expression for 
-%  density in terms of SA, CT and p (McDougall et al., 2011).  Note that 
+%  density in terms of SA, CT and p (McDougall et al., 2013).  Note that 
 %  in the double-diffusive literature, papers concerned with the 
 %  "diffusive" form of double-diffusive convection often define the 
 %  stability ratio as the reciprocal of what is defined here as the 
@@ -22,7 +22,7 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -47,7 +47,7 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 % AUTHOR:  
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -56,10 +56,10 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.15.1) and (3.16.1) of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %   The software is available from http://www.TEOS-10.org
 %
@@ -119,17 +119,14 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 Ishallow = 1:(mp-1);
 Ideep = 2:mp;
-p_mid = (p(Ishallow,:) + p(Ideep,:))/2;
-SA_mid = (SA(Ishallow,:) + SA(Ideep,:))/2;
-CT_mid = (CT(Ishallow,:) + CT(Ideep,:))/2;
+p_mid = 0.5*(p(Ishallow,:) + p(Ideep,:));
+SA_mid = 0.5*(SA(Ishallow,:) + SA(Ideep,:));
+CT_mid = 0.5*(CT(Ishallow,:) + CT(Ideep,:));
 
 dSA = SA(Ishallow,:) - SA(Ideep,:);
 dCT = CT(Ishallow,:) - CT(Ideep,:);
@@ -154,10 +151,7 @@ Tu = atan2((alpha.*dCT + beta.*dSA),(alpha.*dCT - beta.*dSA));
 Tu = Tu.*(180/pi);
 
 Rsubrho = nan(size(dSA));
-[Inz] = find(dSA ~= 0);
-if ~isempty(Inz)
-    Rsubrho(Inz) = (alpha(Inz).*dCT(Inz))./(beta(Inz).*dSA(Inz));
-end
+Rsubrho(dSA ~= 0) = (alpha(dSA ~= 0).*dCT(dSA ~= 0))./(beta(dSA ~= 0).*dSA(dSA ~= 0));
 
 if transposed
     Tu      = Tu.';

@@ -13,7 +13,7 @@ function gsw_ver
 % AUTHOR:  
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (15th May, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -33,9 +33,9 @@ load(gsw_data_file,'version_number','version_date');
 disp('====================================================================')
 disp(' ')
 disp('  Gibbs SeaWater (GSW) Oceanographic Toolbox')
-disp(['  version ',version_number,' (',version_date,')'])
+disp(['  Version ',version_number])
 disp('  This toolbox uses the Absolute Salinity Anomaly Ratio ')
-disp(['  look-up table dataset ',gsw_data(1:(end-4))])
+disp(['  look-up table dataset ',gsw_data(1:(end-4)),' (',version_date,')'])
 disp(' ')
 disp('====================================================================')
 

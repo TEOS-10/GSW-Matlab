@@ -37,7 +37,7 @@ function [eta_SA_SA, eta_SA_CT, eta_CT_CT] = gsw_entropy_second_derivatives(SA,C
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 % 
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -95,7 +95,7 @@ CT_SA = (gsw_gibbs(n1,n0,n0,SA,pt,pr0) - ...
 
 CT_pt = -(abs_pt.*gsw_gibbs(n0,n2,n0,SA,pt,pr0))./cp0;
 
-eta_CT_CT = -(cp0*ones(size(SA)))./(CT_pt.*abs_pt.*abs_pt);
+eta_CT_CT = -cp0./(CT_pt.*abs_pt.*abs_pt);
 
 eta_SA_CT = - CT_SA.*eta_CT_CT;
 

@@ -24,7 +24,7 @@ function f = gsw_f(lat)
 % MODIFIED:
 %  28th July, 2010 by Paul Barker  
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (28th July, 2010).
 %
 % REFERENCE:

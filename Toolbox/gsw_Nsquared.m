@@ -11,18 +11,19 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %  Calculates the buoyancy frequency squared (N^2)(i.e. the Brunt-Vaisala 
 %  frequency squared) at the mid pressure from the equation,
 %
-%           2      2     d(rho_local)
-%         N   =  g   x  --------------
-%                           dP
+%
+%           2      2             beta.d(SA) - alpha.d(CT)
+%         N   =  g  .rho_local. -------------------------
+%                                          dP
+%
+%  The pressure increment, dP, in the above formula is in Pa, so that it is
+%  10^4 times the pressure increment dp in dbar. 
 %
 %  Note. This routine uses rho from "gsw_rho", which is the computationally
-%    efficient 48-term expression for density in terms of SA, CT and p.      
-%  Note also that the pressure increment, dP, in the above formula is in 
-%    Pa, so that it is 10^4 times the pressure increment dp in dbar. 
-%
-%  Note that the 48-term equation has been fitted in a restricted range of 
-%  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  efficient 48-term expression for density in terms of SA, CT and p.  The    
+%  48-term equation has been fitted in a restricted range of parameter 
+%  space, and is most accurate inside the "oceanographic funnel" described 
+%  in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -48,7 +49,7 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (22nd March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -60,10 +61,10 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.10 and Eqn. (3.10.2) of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %   The software is available from http://www.TEOS-10.org
 %
@@ -147,31 +148,31 @@ end %if
 db2Pa = 1e4;
 Ishallow = 1:(mp-1);
 Ideep = 2:mp;
-p_mid = (p(Ishallow,:) + p(Ideep,:))/2;
 
-d_rho_local_deep = gsw_rho(SA(Ideep,:),CT(Ideep,:),p_mid);
-d_rho_local_shallow = gsw_rho(SA(Ishallow,:),CT(Ishallow,:),p_mid);
-d_rho_local = d_rho_local_deep - d_rho_local_shallow;
+grav_local = 0.5*(grav(Ishallow,:) + grav(Ideep,:));
+
+dSA = (SA(Ideep,:) - SA(Ishallow,:));
+SA_mid = 0.5*(SA(Ishallow,:) + SA(Ideep,:));
+dCT = (CT(Ideep,:) - CT(Ishallow,:));
+CT_mid = 0.5*(CT(Ishallow,:) + CT(Ideep,:));
+dp = (p(Ideep,:) - p(Ishallow,:));
+p_mid = 0.5*(p(Ishallow,:) + p(Ideep,:));
+
+[rho_mid, alpha_mid, beta_mid] = gsw_rho_alpha_beta(SA_mid,CT_mid,p_mid);
 
 %--------------------------------------------------------------------------
-% This function calculates d_rho_local using the computationally-efficient 
-% 48-term expression for density in terms of SA, CT and p. If one wanted to
-% compute d_rho_local with the full TEOS-10 Gibbs function expression for 
-% density, the following lines of code will enable this.
+% This function calculates rho, alpha & beta using the computationally
+% efficient 48-term expression for density in terms of SA, CT and p.  If 
+% one wanted to use the full TEOS-10 Gibbs function expression for density,
+% the following lines of code will enable this.
 %
-%    pt = gsw_pt_from_CT(SA,CT);
-%    pr0 = zeros(size(SA)); 
-%    t = gsw_pt_from_t(SA,pt,pr0,p);
-%    d_rho_local = gsw_rho_t_exact(SA(Ideep,:),t(Ideep,:),p_mid) - ...
-%                    gsw_rho_t_exact(SA(Ishallow,:),t(Ishallow,:),p_mid);
+%    rho_mid = gsw_rho_CT_exact(SA_mid,CT_mid,p_mid);
+%    alpha_mid = gsw_alpha_CT_exact(SA_mid,CT_mid,p_mid);
+%    beta_mid = gsw_beta_CT_exact(SA_mid,CT_mid,p_mid);
 %
-%----This is the end of the alternative code to evaluate d_rho_local-------
+%--This is the end of the alternative code to evaluate rho, alpha & beta---
 
-grav_local = (grav(Ishallow,:) + grav(Ideep,:))/2;
-d_p = (p(Ideep,:) - p(Ishallow,:) );
-
-% the pressure difference is converted from dbar to Pa 
-N2 = (grav_local.*grav_local).*(d_rho_local)./(db2Pa.*d_p);
+N2 = (grav_local.*grav_local).*(rho_mid./(db2Pa*dp)).*(beta_mid.*dSA - alpha_mid.*dCT);
 
 if transposed
     N2 = N2.';

@@ -34,13 +34,17 @@ function [t,t_multiple] = gsw_t_from_rho_exact(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (21th April, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%
+%  McDougall, T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -101,42 +105,33 @@ alpha_limit = 1e-5;
 rec_half_rho_TT = -110.0;
 
 t = nan(size(SA));
-t_multiple = nan(size(SA));
+t_multiple = t;
 
-[I_SA_p] = find(SA<0 | SA>42 | p <-1.5 | p>12000);
-if ~isempty(I_SA_p)
-    SA(I_SA_p) = NaN;
-end
+SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;
 
 rho_40 = gsw_rho_t_exact(SA,40*ones(size(SA)),p);
-[I_rho_light] = find((rho - rho_40) < 0);
-if ~isempty(I_rho_light)
-    SA(I_rho_light) = NaN;
-end
+    
+SA((rho - rho_40) < 0) = NaN;
 
 t_max_rho = gsw_t_maxdensity_exact(SA,p);
 rho_max = gsw_rho_t_exact(SA,t_max_rho,p);
 rho_extreme = rho_max;
 t_freezing = gsw_t_freezing(SA,p); % this assumes that the seawater is always saturated with air
 rho_freezing = gsw_rho_t_exact(SA,t_freezing,p);
-[I_fr_gr_max] = find((t_freezing - t_max_rho) > 0);
-rho_extreme(I_fr_gr_max) = rho_freezing(I_fr_gr_max);
-[I_rho_dense] = find(rho > rho_extreme);
-if ~isempty(I_rho_dense)
-    SA(I_rho_dense) = NaN;
-end
 
-[I_bad] = find(isnan(SA.*p.*rho));
-if ~isempty (I_bad)
-    SA(I_bad) = NaN;
-end
+%set rhos greater than those at the freexing point to be equal to the freezing point.
+rho_extreme((t_freezing - t_max_rho) > 0) = rho_freezing((t_freezing - t_max_rho) > 0);
+% set rho that are greater than the extreme limits to NaN.
+SA(rho > rho_extreme) = NaN;
+
+SA(isnan(SA + p + rho)) = NaN;
 
 alpha_freezing = gsw_alpha_wrt_t_exact(SA,t_freezing,p);
-[I_salty] = find(alpha_freezing > alpha_limit);
 
-if ~isempty(I_salty)
+if any(alpha_freezing > alpha_limit)
+    [I_salty] = find(alpha_freezing > alpha_limit);
+
     t_diff = 40*ones(size(I_salty)) - t_freezing(I_salty);
-    
     top = rho_40(I_salty) - rho_freezing(I_salty) ...
            + rho_freezing(I_salty).*alpha_freezing(I_salty).*t_diff;
     a = top./(t_diff.*t_diff);
@@ -148,20 +143,22 @@ if ~isempty(I_salty)
     t(I_salty) = t_freezing(I_salty) + 0.5*(-b - sqrt_disc)./a;
 end
 
-[I_fresh] = find(alpha_freezing <= alpha_limit);
-if ~isempty(I_fresh)
+if any(alpha_freezing <= alpha_limit)
+    [I_fresh] = find(alpha_freezing <= alpha_limit);
+
     t_diff = 40*ones(size(I_fresh)) - t_max_rho(I_fresh);
     factor = (rho_max(I_fresh) - rho(I_fresh))./ ...
                (rho_max(I_fresh) - rho_40(I_fresh));
     delta_t = t_diff.*sqrt(factor);
     
-    [I_fresh_NR] = find(delta_t > 5);
-    if ~isempty(I_fresh_NR)
+    if any(delta_t > 5)
+        [I_fresh_NR] = find(delta_t > 5);
         t(I_fresh(I_fresh_NR)) = t_max_rho(I_fresh(I_fresh_NR)) + delta_t(I_fresh_NR);
     end
     
-    [I_quad] = find(delta_t <= 5);
-    if ~isempty(I_quad)
+    if any(delta_t <= 5)
+       [I_quad] = find(delta_t <= 5);
+        
         t_a = nan(size(SA));
         % set the initial value of the quadratic solution roots.
         t_a(I_fresh(I_quad)) = t_max_rho(I_fresh(I_quad)) + ...
@@ -171,11 +168,9 @@ if ~isempty(I_fresh)
             rho_old = gsw_rho_t_exact(SA,t_old,p);
             factorqa = (rho_max - rho)./(rho_max - rho_old);
             t_a = t_max_rho + (t_old - t_max_rho).*sqrt(factorqa);
-        end
-        [Ifrozen] = find(t_freezing - t_a < 0);
-        if ~isempty(Ifrozen)
-            t_a(Ifrozen) = NaN;
-        end
+        end        
+% set temperatures that are less than the freezing point to NaN 
+        t_a(t_freezing - t_a < 0) = NaN;
         
         t_b = nan(size(SA));
         % set the initial value of the quadratic solution routes.
@@ -189,15 +184,13 @@ if ~isempty(I_fresh)
         end
 % After seven iterations of this quadratic iterative procedure,
 % the error in rho is no larger than 4.6x10^-13 kg/m^3.
-        [Ifrozen] = find(t_freezing - t_b < 0);
-        if ~isempty(Ifrozen)
-            t_b(Ifrozen) = NaN;
-        end
+% set temperatures that are less than the freezing point to NaN 
+        t_b(t_freezing - t_b < 0) = NaN;
     end
 end
 
-% begin the modified Newton-Raphson iterative method, which will only
-% operate on non-NaN t data.
+% begin the modified Newton-Raphson iterative method (McDougall and 
+% Wotherspoon, 2012), which will only operate on non-NaN t data.
 
 v_lab = ones(size(rho))./rho;
 v_t = gsw_gibbs(0,1,1,SA,t,p);
@@ -211,16 +204,10 @@ for Number_of_iterations = 1:4
 end
 
 if exist('t_a','var')
-    [I_quad] = find(~isnan(t_a));
-    if ~isempty(I_quad)
-        t(I_quad) = t_a(I_quad);
-    end
+    t(~isnan(t_a)) = t_a(~isnan(t_a));
 end
 if exist('t_b','var')
-    [I_quad] = find(~isnan(t_b));
-    if ~isempty(I_quad)
-        t_multiple(I_quad) = t_b(I_quad);
-    end
+    t_multiple(~isnan(t_b)) = t_b(~isnan(t_b));
 end
 % After three iterations of this modified Newton-Raphson iteration,
 % the error in rho is no larger than 4.6x10^-13 kg/m^3.

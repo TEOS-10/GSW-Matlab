@@ -44,8 +44,7 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -54,10 +53,10 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See appendix A.12 of this TEOS-10 Manual.    
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -96,24 +95,17 @@ end
 
 dSA = 1e-3;                 % increment of Absolute Salinity is 0.001 g/kg.
 SA_l = nan(size(SA));
-[I] = find(SA >= dSA);
-if ~isempty(I)
-    SA_l(I) = SA(I) - dSA;
-end
-[I] = find(SA < dSA);
-if ~isempty(I)
-    SA_l(I) = 0;
-end
+SA_l(SA >= dSA) = SA(SA >= dSA) - dSA;
+SA_l(SA < dSA) = 0;
+
 SA_u = SA + dSA;
 
 [CT_SA_l, dummy] = gsw_CT_first_derivatives(SA_l,pt);
 [CT_SA_u, dummy] = gsw_CT_first_derivatives(SA_u,pt);
 
 CT_SA_SA = nan(size(SA));
-[I] = find(SA_u ~= SA_l);
-if ~isempty(I)
-    CT_SA_SA(I) = (CT_SA_u(I) - CT_SA_l(I))./(SA_u(I) - SA_l(I));
-end
+CT_SA_SA(SA_u ~= SA_l) = (CT_SA_u(SA_u ~= SA_l) - CT_SA_l(SA_u ~= SA_l))./ ...
+                         (SA_u(SA_u ~= SA_l) - SA_l(SA_u ~= SA_l));
 
 dpt  = 1e-2;        % increment of potential temperature is 0.01 degrees C.
 pt_l = pt - dpt;

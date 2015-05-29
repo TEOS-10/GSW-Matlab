@@ -36,7 +36,7 @@ function [h_SA, h_CT, h_P] = gsw_enthalpy_first_derivatives(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall.                                   [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

@@ -45,7 +45,7 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height)
 %  Trevor McDougall, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -53,11 +53,14 @@ function p = gsw_p_from_z(z,lat,geo_strf_dyn_height)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
+%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %  Moritz (2000) Goedetic reference system 1980. J. Geodesy, 74, 128-133.
 %
 %  Saunders, P. M., 1981: Practical conversion of pressure to depth. 
@@ -137,8 +140,8 @@ df_dp = db2Pa * gsw_specvol_SSO_0_p(p_mid);
 p = p_old - f./df_dp;
 
 % After this one iteration through this modified Newton-Raphson iterative
-% procedure, the remaining error in p is at computer machine precision,
-% being no more than 1.6e-10 dbar. 
+% procedure (McDougall and Wotherspoon, 2012), the remaining error in p is 
+% at computer machine precision, being no more than 1.6e-10 dbar. 
 
 if transposed
     p = p.';

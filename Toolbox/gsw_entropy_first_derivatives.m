@@ -32,7 +32,7 @@ function [eta_SA, eta_CT] = gsw_entropy_first_derivatives(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall.                                   [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

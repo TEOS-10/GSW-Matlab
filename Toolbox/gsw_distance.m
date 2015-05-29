@@ -43,7 +43,7 @@ function distance = gsw_distance(long,lat,p)
 % MODIFIED:
 %  4th April, 2011 by Paul Barker and Trevor McDougall. 
 %
-% VERSION NUMBER: 3.01 (4th April, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCE:
 %  http://www.eos.ubc.ca/~rich/map.html
@@ -75,7 +75,6 @@ elseif mla == 1 & mlo == 1 & nla == 1 & nlo == 1
 end
 
 transposed = 0;
-
 if (mla == 1) & (nla == 1)            % lat is a scalar.  Fill to size of p
     lat = lat*ones(mp,np);
     long = long*ones(mp,np);
@@ -87,7 +86,11 @@ elseif (mla == mp) & (nla == 1)                   % lat is column vector.
     long = long.';
     transposed = 1;
     lat = lat(ones(1,np),:);                
-    long = long(ones(1,np),:);              
+    long = long(ones(1,np),:);  
+elseif (mla == np) & (nla == 1)                   % lat is column vector and p is a column vector
+    lat = lat.';                                  
+    long = long.';
+    transposed = 1;
 elseif (mla == mp) & (nla == np)               
     % ok
 end %if
@@ -98,9 +101,11 @@ if (mp == 1) & (np == 1)              % p is a scalar.  Fill to size of lat
     p = p*ones(mla,nla);
 elseif (np == nla) & (mp == 1)                   % p is row vector, 
     p = p(ones(1,mla),:);                %   copy down each column.
-elseif (mp == mla) & (np == 1)                   % p is column vector.
-    p = p.';
-    p = p(ones(1,nla),:);                                
+elseif (mp == nla) & (np == mla)                   % p is row vector, 
+    p = p.';    
+elseif (np == nla) & (np == 1)                   % p is column vector.
+    p = p.';                                     % transpose.
+    p = p(:,ones(1,nla));                 %   copy along each row.
 elseif (mp == mla) & (np == nla)               
     % ok
 else
@@ -117,7 +122,7 @@ earth_radius = 6371000;                         % Earth's radius in metres.
 dlong = pi180*(long(:,2:nla)-long(:,1:nla-1));
 dlat = pi180*(lat(:,2:nla)-lat(:,1:nla-1));
 
-a = (sin(dlat/2)).^2 + cos(lat(:,1:nla-1)*pi180).*cos(lat(:,2:nla)*pi180).*(sin(dlong/2)).^2;
+a = (sin(0.5*dlat)).^2 + cos(lat(:,1:nla-1)*pi180).*cos(lat(:,2:nla)*pi180).*(sin(0.5*dlong)).^2;
 angles = 2 * atan2(sqrt(a),sqrt(1-a));
 
 p_mid = 0.5*(p(:,1:nla-1) + p(:,1:nla-1));

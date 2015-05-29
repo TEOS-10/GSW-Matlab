@@ -9,22 +9,19 @@ function gibbs_pt0_pt0 = gsw_gibbs_pt0_pt0(SA,pt0)
 % "gsw_pt_from_CT(SA,CT)" ,"gsw_pt0_from_t(SA,t,p)" and
 % "gsw_pt_from_entropy(SA,entropy)".
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 %==========================================================================
 
-% These few lines ensure that SP is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 sfac = 0.0248826675584615;                % sfac = 1/(40*(35.16504/35));
 
 x2 = sfac.*SA;
 x = sqrt(x2);
-y = pt0.*0.025d0;
+y = pt0.*0.025;
 
 g03 = -24715.571866078 + ...
     y.*(4420.4472249096725 + ...

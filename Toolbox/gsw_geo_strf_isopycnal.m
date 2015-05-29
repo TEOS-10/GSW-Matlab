@@ -74,7 +74,7 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (21st March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -89,10 +89,10 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 %  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method 
 %   for forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32,
@@ -187,8 +187,8 @@ db2Pa = 1e4;
 cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 
 SA_iref_cast = nan(size(Neutral_Density));
-CT_iref_cast = nan(size(Neutral_Density));
-p_iref_cast = nan(size(Neutral_Density));
+CT_iref_cast = SA_iref_cast;
+p_iref_cast = SA_iref_cast;
 
 [Inn] = find(~isnan(Neutral_Density));
 [SA_iref_cast(Inn),CT_iref_cast(Inn),p_iref_cast(Inn)] = gsw_interp_ref_cast(Neutral_Density(Inn),A);
@@ -212,8 +212,7 @@ for Iprofile = 1:ns
     CT_nd(1:mpgn,Iprofile) = CT_plus(Idata);
 end
 
-[Isurface] = find(p_Neutral_Density == 0);
-p_Neutral_Density(Isurface) = NaN;
+p_Neutral_Density(p_Neutral_Density == 0) = NaN;
 
 part1 = 0.5*db2Pa*(p_Neutral_Density -p_iref_cast).*(gsw_specvol(SA_nd,CT_nd,p_Neutral_Density) - ...
                                    gsw_specvol(SA_iref_cast,CT_iref_cast,p_Neutral_Density));

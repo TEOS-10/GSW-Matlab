@@ -31,7 +31,7 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -41,10 +41,10 @@ function [pt_SA, pt_CT] = gsw_pt_first_derivatives(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See Eqns. (A.12.6), (A.12.3), (P.6) and (P.8) of this TEOS-10 Manual.   
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  This software is available from http://www.TEOS-10.org
 %

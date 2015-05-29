@@ -1,5 +1,5 @@
 % GSW Oceanographic Toolbox 
-% Version 3.01 (R2011a) 15-May-2011
+% Version 3.02 (R2011a) 15-May-2011
 %
 % documentation set
 %  gsw_front_page              - front page to the GSW Oceanographic Toolbox
@@ -213,10 +213,10 @@
 %  gsw_gibbs                 - the TEOS-10 Gibbs function and its derivatives
 %  gsw_SAAR                  - Absolute Salinity Anomaly Ratio (excluding the Baltic Sea)
 %  gsw_Fdelta                - ratio of Absolute to Preformed Salinity, minus 1
-%  gsw_delta_SA_ref          - Absolute Salinity Anomaly ref. value (excluding the Baltic Sea)
+%  gsw_deltaSA_atlas         - Absolute Salinity Anomaly atlas value (excluding the Baltic Sea)
 %  gsw_SA_from_SP_Baltic     - Calculates Absolute Salinity in the Baltic Sea
 %  gsw_SP_from_SA_Baltic     - Calculates Practical Salinity in the Baltic Sea
-%  gsw_infunnel              - "oceanographic funnel" check for the 25-term equation
+%  gsw_infunnel              - "oceanographic funnel" check for the 48-term equation
 %  gsw_entropy_part          - entropy minus the terms that are a function of only SA
 %  gsw_entropy_part_zerop    - entropy_part evaluated at 0 dbar
 %  gsw_interp_ref_cast       - linearly interpolates the reference cast
@@ -229,7 +229,7 @@
 %  The GSW data set.
 %  gsw_data_v3_0        - contains
 %                          (1) the global data set of Absolute Salinity Anomaly Ratio,
-%                          (2) the global data set of Absolute Salinity Anomaly Ref.,                                    
+%                          (2) the global data set of Absolute Salinity Anomaly atlas,                                    
 %                          (3) a reference cast (for the isopycnal streamfunction), 
 %                          (4) two reference casts that are used by gsw_demo 
 %                          (5) three vertical profiles of (SP, t, p) at known long & lat, plus

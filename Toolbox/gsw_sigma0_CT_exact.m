@@ -15,7 +15,7 @@ function sigma0_CT_exact = gsw_sigma0_CT_exact(SA,CT)
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely gsw_sigma0_CT(SA,CT,p), 
 %  which uses the computationally efficient 48-term expression for density 
-%  in terms of SA, CT and p (McDougall et al., 2011).   
+%  in terms of SA, CT and p (McDougall et al., 2013).   
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -31,7 +31,7 @@ function sigma0_CT_exact = gsw_sigma0_CT_exact(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (3rd April, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -40,10 +40,10 @@ function sigma0_CT_exact = gsw_sigma0_CT_exact(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (A.30.1) of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %

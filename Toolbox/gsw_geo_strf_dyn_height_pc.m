@@ -22,13 +22,13 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 %  values used for the specific volume anomaly are SA = SSO = 35.16504 g/kg
 %  and CT = 0 deg C.  The output values of geo_strf_dyn_height_pc are 
 %  given at the mid-point pressures, p_mid, of each layer in which SA and 
-%  CT are vertically piecewice constant(pc).  This function calculates 
+%  CT are vertically piecewice constant (pc).  This function calculates 
 %  specific volume anomaly using the computationally-efficient 48-term 
-%  expression for specific volume of McDougall et al. (2011). 
+%  expression for specific volume of McDougall et al. (2013). 
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -51,7 +51,7 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 % AUTHOR: 
 %  Trevor McDougall and Claire Roberts-Thomson         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (28th March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,10 +60,10 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.32.2) and (A.30.6) of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces. Ocean Modelling, 32,
@@ -119,7 +119,7 @@ end %if
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-if ~isempty(find(delta_p < 0))
+if any(delta_p < 0)
     error('gsw_geo_strf_dyn_height_pc: pressure must be monotonic')
 end
 
@@ -128,7 +128,7 @@ p_shallow = p_deep - delta_p;
 
 delta_h = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep);
 
-dyn_height_deep = -1*cumsum(delta_h);
+dyn_height_deep = -cumsum(delta_h);
 %            This is Phi minus Phi_0 of Eqn. (3.32.2) of IOC et al. (2010).
 
 p_mid = 0.5*(p_shallow  + p_deep);
@@ -145,7 +145,7 @@ geo_strf_dyn_height_pc = gsw_enthalpy_SSO_0_p(p_mid) + ...
 % of code will enable this.
 %
 %   delta_h = gsw_enthalpy_diff_CT_exact(SA,CT,p_shallow,p_deep);
-%   dyn_height_deep = -1*cumsum(delta_h);
+%   dyn_height_deep = -cumsum(delta_h);
 %   p_mid = 0.5*(p_shallow  + p_deep);
 %   delta_h_half = gsw_enthalpy_diff_CT_exact(SA,CT,p_mid,p_deep);
 %   SA_SSO = 35.16504*ones(size(SA));

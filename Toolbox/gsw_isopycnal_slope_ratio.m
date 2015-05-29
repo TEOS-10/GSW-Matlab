@@ -39,7 +39,7 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 % AUTHOR: 
 %  Trevor McDougall, Paul Barker & David Jackett       [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.01 (26th March, 2011).
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -48,10 +48,10 @@ function isopycnal_slope_ratio = gsw_isopycnal_slope_ratio(SA,CT,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %    See Eqn. (3.17.2) of this TEOS-10 Manual.   
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -139,11 +139,8 @@ end
 %--------------This is the end of the alternative code---------------------
 
 isopycnal_slope_ratio = nan(size(SA));
-[I] = find(alpha_pref ~= 0);
-if ~isempty(I)
-    isopycnal_slope_ratio(I) = (alpha(I).*beta_pref(I))./ ...
-                                 (alpha_pref(I).*beta(I));
-end
+isopycnal_slope_ratio(alpha_pref ~= 0) = (alpha(alpha_pref ~= 0).*beta_pref(alpha_pref ~= 0))./ ...
+                                           (alpha_pref(alpha_pref ~= 0).*beta(alpha_pref ~= 0));
 
 if transposed
     isopycnal_slope_ratio = isopycnal_slope_ratio.';

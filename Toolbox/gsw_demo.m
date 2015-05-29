@@ -137,7 +137,7 @@ if JavaVirtMach == 1
         clf(fig1)
         set(fig1,'pos','default','menubar','none','numbertitle','off', ...
             'name','GSW demo - An example SA_CT diagram')
-        gsw_SA_CT_plot(gsw_demo_data.SA(:,1),gsw_demo_data.CT(:,1),gsw_demo_data.p_ref,[33:0.2:38],'\itS\rm_A - \Theta plot')
+        gsw_SA_CT_plot(gsw_demo_data.SA(:,1),gsw_demo_data.CT(:,1),gsw_demo_data.p_ref,[32.5:0.5:38],'\itS\rm_A - \Theta  diagram')
         pause
     catch
         fprintf(1,' \n');

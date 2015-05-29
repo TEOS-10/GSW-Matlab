@@ -60,7 +60,7 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker, Jeff Dunn and Trevor McDougall         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (7th April, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -69,10 +69,10 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (3.7.3) and section 3.27 of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  Reiniger, R. F. and C. K. Ross, 1968: A method of interpolation with
 %   application to oceanographic data. Deep-Sea Res. 15, 185-193.
@@ -100,8 +100,7 @@ if p_ref < 0
     error('gsw_geo_strf_dyn_height: The reference pressure p_ref must be positive')
 end
 
-[InegSA] = find(SA < 0);
-if ~isempty(InegSA)
+if any(SA < 0)
     error('gsw_geo_strf_dyn_height: The Absolute Salinity must be positive!')
 end
 
@@ -130,7 +129,7 @@ else
     error('gsw_geo_strf_dyn_height: Inputs array dimensions arguments do not agree')
 end %if
 
-[Inan] = find(isnan(SA.*CT.*p));
+[Inan] = find(isnan(SA + CT + p));
 SA(Inan) = NaN;
 CT(Inan) = NaN;
 p(Inan) = NaN;
@@ -166,9 +165,9 @@ db2Pa = 1e4;
 
 Ishallow = 1:(mp-1);
 Ideep = 2:mp;
-d_p = (p(Ideep,:)-p(Ishallow,:));
+d_p = (p(Ideep,:) - p(Ishallow,:));
 
-if ~isempty(find(d_p <= 0))
+if any(d_p <= 0)
     error('gsw_geo_strf_dyn_height: pressure must be monotonic')
 end
 
@@ -252,8 +251,7 @@ if isempty(Ibg) & isempty(Inz) & isempty(Ibp_ref)
 % "geo_strf_dyn_height0" is the dynamic height anomaly with respect
 % to p_ref = 0 (the surface).  
 
-    [I_rp] = find(p == p_ref);
-    geo_strf_dyn_height_p_ref(:,Idha) = meshgrid(geo_strf_dyn_height0(I_rp),[1:mp]);
+    geo_strf_dyn_height_p_ref(:,Idha) = meshgrid(geo_strf_dyn_height0(p == p_ref),[1:mp]);
 % "geo_strf_dyn_height_p_ref" is the dynamic height anomaly at p_ref 
 % with respect to the surface.  
    
@@ -340,8 +338,7 @@ else
                 
 % Test for bottle at p_ref, if it does not exist then the reference 
 % pressure will need to be an interpolated pressure.
-                [Irb] = find(p - p_ref == 0);
-                if ~isempty(Irb)
+                if any(p - p_ref == 0)
                     %There is a bottle at p_ref. Define interpolation
                     %pressures.
                     for Ibottle = 1:(length(Inn)-1)
@@ -379,7 +376,7 @@ else
                 p_i(p_cnt+1:end) = [];
                 p_i = p_i(:);
                 SA_i = nan(size(p_i));
-                CT_i = nan(size(p_i));
+                CT_i = SA_i;
 
                 [dummy, Iidata, Ibdata] = intersect(p_i,p(:,Iprofile));
                 [Ibpr] = find(p_i == p_ref);
@@ -391,8 +388,8 @@ else
                 [Intrp] = top_pad:length(p_i);
                 SA_i(Intrp) = pinterp_from_p(p(:,Iprofile),SA(:,Iprofile),p_i(Intrp));
                 CT_i(Intrp) = pinterp_from_p(p(:,Iprofile),CT(:,Iprofile),p_i(Intrp));
-                [Inan] = find(isnan(SA_i));
-                if ~isempty(Inan)
+                if any(isnan(SA_i))
+                    [Inan] = find(isnan(SA_i));
                     [SA_i(Inan), CT_i(Inan)] = gsw_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
                 end
                 
@@ -456,7 +453,6 @@ function [sdat] = pinterp_from_p(odep,obs,sdep)
 global rr_int_cnt lin_int_cnt dir_sub_cnt r_extrp_cnt;
 grad_lim = [];
 maxdis = rr_int([],[],sdep);
-%keyboard
 odep = odep(:);
 obs = obs(:);
 sdep = sdep(:);

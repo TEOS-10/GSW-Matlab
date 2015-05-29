@@ -29,7 +29,7 @@ function SA = gsw_SA_from_rho_t_exact(rho,t,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.01 (28th March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -37,6 +37,10 @@ function SA = gsw_SA_from_rho_t_exact(rho,t,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 2.5 of this TEOS-10 Manual. 
+%
+%  McDougall, T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 
 %   The composition of Standard Seawater and the definition of the 
@@ -99,22 +103,19 @@ v_0 = gsw_gibbs(n0,n0,n1,0,t,p);
 v_120 = gsw_gibbs(n0,n0,n1,120,t,p);
 
 SA = 120*(v_lab - v_0)./(v_120 - v_0);            % initial estimate of SA.
+SA(SA < 0 | SA > 120) = NaN;
 
-[Ior] = find(SA < 0 | SA > 120);
-SA(Ior) = NaN;
 v_SA = (v_120 - v_0)./120; %initial estimate of v_SA, the SA derivative of v
 
 for Number_of_iterations = 1:2
     SA_old = SA;
     delta_v = gsw_gibbs(n0,n0,n1,SA_old,t,p) - v_lab;
-    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method
-    [Ior] = find(SA < 0 | SA > 120);
-    SA(Ior) = NaN;
+    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2012)
+    SA(SA < 0 | SA > 120) = NaN;
     SA_mean = 0.5*(SA + SA_old);
     v_SA = gsw_gibbs(n1,n0,n1,SA_mean,t,p);
     SA = SA_old - delta_v./v_SA;
-    [Ior] = find(SA < 0 | SA > 120);
-    SA(Ior) = NaN;
+    SA(SA < 0 | SA > 120) = NaN;
 end
 
 % After two iterations of this modified Newton-Raphson iteration,

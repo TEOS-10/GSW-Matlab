@@ -28,7 +28,7 @@ function t_maxdensity_exact = gsw_t_maxdensity_exact(SA,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (3rd April, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -36,6 +36,10 @@ function t_maxdensity_exact = gsw_t_maxdensity_exact(SA,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.42 of this TEOS-10 Manual.  
+%
+%  McDougall, T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -91,7 +95,7 @@ gibbs_PTT = 1.1e-8;                          % the initial guess for g_PTT.
 for Number_of_iterations = 1:3
     t_old = t;
     gibbs_PT = gsw_gibbs(n0,n1,n1,SA,t_old,p);
-    t = t_old - gibbs_PT./gibbs_PTT ; % this is half way through the modified method
+    t = t_old - gibbs_PT./gibbs_PTT ; % this is half way through the modified method (McDougall and Wotherspoon, 2012)
     t_mean = 0.5*(t + t_old);
     gibbs_PTT = (gsw_gibbs(n0,n1,n1,SA,t_mean + dt,p) - ...
         gsw_gibbs(n0,n1,n1,SA,t_mean - dt,p))./(dt + dt);

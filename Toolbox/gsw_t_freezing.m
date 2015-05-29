@@ -30,7 +30,7 @@ function t_freezing = gsw_t_freezing(SA,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall, Paul Barker and Rainer Feistal    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (3th November, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -107,8 +107,7 @@ end
 %--------------------------------------------------------------------------
 
 % These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
+if any(SA < 0)
     error(' gsw_CT_freezing: SA must be non-negative!')
 end
 
@@ -174,11 +173,8 @@ t_freezing = gsw_t_from_CT(SA,CT_freezing,p);
 %
 %---------------This is the end of the alternative code--------------------
 
-[Iout_of_range] = find(p > 10000 | SA > 120 | ...
-    p + SA.*71.428571428571402 > 13571.42857142857);
-if ~isempty(Iout_of_range)
-    t_freezing(Iout_of_range) = NaN;
-end
+t_freezing(p > 10000 | SA > 120 | ...
+    p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 
 if transposed
     t_freezing = t_freezing.';

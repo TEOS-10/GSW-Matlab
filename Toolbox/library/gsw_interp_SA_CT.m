@@ -5,7 +5,7 @@ function [SA_i, CT_i] = gsw_interp_SA_CT(SA,CT,p,p_i)
 % This function interpolates the cast with respect to the interpolating 
 % variable p. This function finds the values of SA, CT at p_i on this cast.
 %
-% VERSION NUMBER: 3.01 (8th April, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % This fuction was adapted from Matlab's interp1q.
 %==========================================================================
@@ -13,22 +13,15 @@ function [SA_i, CT_i] = gsw_interp_SA_CT(SA,CT,p,p_i)
 p = p(:);
 
 [min_p,Imin_p] = min(p);
-[Ishallow] = find(p_i <= min_p);        % Set equal to the shallowest bottle.
-if ~isempty(Ishallow)
-    SA_i(Ishallow) = SA(Imin_p);
-    CT_i(Ishallow) = CT(Imin_p);
-end
+
+SA_i(p_i <= min_p) = SA(Imin_p);% Set equal to the shallowest bottle.
+CT_i(p_i <= min_p) = CT(Imin_p);
 
 [max_p,Imax_p] = max(p);
-[Ideep] = find(p_i >= max_p);            % Set equal to the deepest bottle.
-if ~isempty(Ideep)
-    SA_i(Ideep) = SA(Imax_p);
-    CT_i(Ideep) = CT(Imax_p);
-end
+SA_i(p_i >= max_p) = SA(Imax_p);% Set equal to the deepest bottle.
+CT_i(p_i >= max_p) = CT(Imax_p);
 
-[I] = find(p_i >= min_p & p_i <= max_p);
-
-xi = p_i(I);
+xi = p_i(p_i >= min_p & p_i <= max_p);
 
 x = p;
 
@@ -82,7 +75,7 @@ if min(size(SA_ri)) == 1 && numel(xi) > 1
    CT_ri = reshape(CT_ri,siz);
 end
 
-SA_i(I) = SA_ri;
-CT_i(I) = CT_ri;
+SA_i(p_i >= min_p & p_i <= max_p) = SA_ri;
+CT_i(p_i >= min_p & p_i <= max_p) = CT_ri;
 
 end

@@ -22,7 +22,7 @@ function CT = gsw_CT_from_entropy(SA,entropy)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (3rd March, 2011)
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -62,11 +62,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 pt = gsw_pt_from_entropy(SA,entropy);
 CT = gsw_CT_from_pt(SA,pt);

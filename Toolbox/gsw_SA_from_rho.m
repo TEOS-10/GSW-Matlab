@@ -10,11 +10,11 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 %  Calculates the Absolute Salinity of a seawater sample, for given values
 %  of its density, Conservative Temperature and sea pressure (in dbar). 
 %  This function uses the computationally-efficient 48-term expression for 
-%  density in terms of SA, CT and p (McDougall et al., 2011).
+%  density in terms of SA, CT and p (McDougall et al., 2013).
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -37,7 +37,7 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %      
-% VERSION NUMBER: 3.01 (4th April, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,10 +46,10 @@ function SA = gsw_SA_from_rho(rho,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 2.5 of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall, T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008: 
 %   The composition of Standard Seawater and the definition of the 
@@ -108,11 +108,7 @@ v_0 = gsw_specvol(zeros(size(rho)),CT,p);
 v_50 = gsw_specvol(50*ones(size(rho)),CT,p);
  
 SA = 50*(v_lab - v_0)./(v_50 - v_0);            % initial estimate of SA.
-
-[Ior] = find(SA < 0 | SA > 50);
-if ~isempty(Ior)
-  SA(Ior) = NaN;
-end
+SA(SA < 0 | SA > 50) = NaN;
 
 v_SA = (v_50 - v_0)./50; %initial estimate of v_SA, the SA derivative of v
 
@@ -123,15 +119,12 @@ v_SA = (v_50 - v_0)./50; %initial estimate of v_SA, the SA derivative of v
 for Number_of_iterations = 1:2 
     SA_old = SA;
     delta_v = gsw_specvol(SA_old,CT,p) - v_lab;
-    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method
+    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2012)
     SA_mean = 0.5*(SA + SA_old);
     [rho,alpha,beta] = gsw_rho_alpha_beta(SA_mean,CT,p);
     v_SA = - beta./rho; 
     SA = SA_old - delta_v./v_SA;
-    [Ior] = find(SA < 0 | SA > 50);
-    if ~isempty(Ior)
-        SA(Ior) = NaN; 
-    end
+    SA(SA < 0 | SA > 50) = NaN; 
 end
 
 % After two iterations of this modified Newton-Raphson iteration,

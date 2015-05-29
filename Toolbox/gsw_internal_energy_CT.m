@@ -16,11 +16,11 @@ function internal_energy_CT = gsw_internal_energy_CT(SA,CT,p)
 % DESCRIPTION:
 %  Calculates specific internal energy of seawater using the 
 %  computationally-efficient 48-term expression for density in terms of SA,
-%  CT and p (McDougall et al., 2011).
+%  CT and p (McDougall et al., 2013).
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -39,7 +39,7 @@ function internal_energy_CT = gsw_internal_energy_CT(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (4th April, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -47,10 +47,10 @@ function internal_energy_CT = gsw_internal_energy_CT(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %

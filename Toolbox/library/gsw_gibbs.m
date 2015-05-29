@@ -48,7 +48,7 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 % MODIFIED:
 %  Trevor McDougall and Paul Barker 
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -85,18 +85,15 @@ function gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
 %
 %==========================================================================
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
 
 x2 = sfac.*SA;
 x = sqrt(x2);
-y = t.*0.025d0;
-z = p.*1d-4; %Note.The input pressure (p) is sea pressure in units of dbar.
+y = t.*0.025;
+z = p.*1e-4; %Note.The input pressure (p) is sea pressure in units of dbar.
 
 if ns==0 & nt==0 & np==0
     
@@ -137,10 +134,7 @@ if ns==0 & nt==0 & np==0
         z.*(-860.764303783977 + z.*(337.409530269367 + ...
         z.*(-178.314556207638 + (44.2040358308 - 7.92001547211682.*z).*z))))));
     
-    inds = find(x>0);
-    if ~isempty(inds)
-        g08(inds) = g08(inds) + x2(inds).*(5812.81456626732 + 851.226734946706.*y(inds)).*log(x(inds));
-    end
+    g08(x>0) = g08(x>0) + x2(x>0).*(5812.81456626732 + 851.226734946706.*y(x>0)).*log(x(x>0));
     
     gibbs = g03 + g08;
     
@@ -167,15 +161,8 @@ elseif ns==1 & nt==0 & np==0
         z.*(-1721.528607567954 + z.*(674.819060538734 + ...
         z.*(-356.629112415276 + (88.4080716616 - 15.84003094423364.*z).*z)))));
     
-    inds = find(x>0);
-    if ~isempty(inds)
-        g08(inds) = g08(inds) + (11625.62913253464 + 1702.453469893412.*y(inds)).*log(x(inds));
-    end
-    
-    inds = find(x==0);
-    if ~isempty(inds)
-        g08(inds) = nan;
-    end
+    g08(x>0) = g08(x>0) + (11625.62913253464 + 1702.453469893412.*y(x>0)).*log(x(x>0));
+    g08(x==0) = nan;
     
     gibbs = 0.5.*sfac.*g08;   
     
@@ -208,10 +195,7 @@ elseif ns==0 & nt==1 & np==0
         z.*(-1721.528607567954 + z.*(674.819060538734 + ...
         z.*(-356.629112415276 + (88.4080716616 - 15.84003094423364.*z).*z)))));
     
-    inds = find(x>0);
-    if ~isempty(inds)
-        g08(inds) = g08(inds) + 851.226734946706.*x2(inds).*log(x(inds));
-    end
+     g08(x>0) = g08(x>0) + 851.226734946706.*x2(x>0).*log(x(x>0));
     
     gibbs = (g03 + g08).*0.025d0;
     
@@ -265,15 +249,8 @@ elseif ns==1 & nt==1 & np==0
         z.*(-3443.057215135908 + z.*(1349.638121077468 + ...
         z.*(-713.258224830552 + (176.8161433232 - 31.68006188846728.*z).*z))));
     
-    inds = find(x>0);
-    if ~isempty(inds)
-        g08(inds) = g08(inds) + 1702.453469893412.*log(x(inds));
-    end
-    
-    inds = find(SA==0);
-    if ~isempty(inds)
-        g08(inds) = nan;
-    end
+     g08(x>0) = g08(x>0) + 1702.453469893412.*log(x(x>0));
+     g08(SA==0) = nan;
     
     gibbs = 0.5.*sfac.*0.025d0.*g08;
   
@@ -335,8 +312,8 @@ elseif ns==2 & nt==0 & np==0
         180.142097805543.*z) + ...
         z.*(-219.1676534131548 + (-16.32775915649044 - 120.7020447884644.*z).*z));
     
-    inds = find(x>0);
-    if ~isempty(inds)
+    if any(x>0)
+        inds = find(x>0);
         g08(inds) = g08(inds) + (-7296.43987145382 + z(inds).*(598.378809221703 + ...
             z(inds).*(-156.8822727844005 + (204.1334828179377 - 10.23755797323846.*z(inds)).*z(inds))) + ...
             y(inds).*(-1480.222530425046 + z(inds).*(-525.876123559641 + ...
@@ -348,10 +325,7 @@ elseif ns==2 & nt==0 & np==0
             (11625.62913253464 + 1702.453469893412.*y(inds))./x2(inds);
     end
     
-    inds = find(x==0);
-    if ~isempty(inds)
-        g08(inds) = nan;
-    end
+    g08(x==0) = nan;
     
     gibbs = 0.25.*sfac.*sfac.*g08;
 

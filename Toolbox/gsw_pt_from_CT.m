@@ -27,7 +27,7 @@ function pt = gsw_pt_from_CT(SA,CT)
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (21st September, 2012) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -37,10 +37,14 @@ function pt = gsw_pt_from_CT(SA,CT)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See sections 3.1 and 3.3 of this TEOS-10 Manual.
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%
+%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -73,11 +77,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 
@@ -104,21 +105,22 @@ pt = (pt_num)./(pt_den);
 
 dCT_dpt = (pt_den)./(CT_factor + a5CT - (b2 + b3CT + b3CT).*pt);
 
-% start the 1.5 iterations through the modified Newton-Raphson iterative method. 
+% start the 1.5 iterations through the modified Newton-Rapshon iterative 
+% method (McDougall and Wotherspoon, 2012). 
 
 CT_diff = gsw_CT_from_pt(SA,pt) - CT;
 pt_old = pt;
-pt = pt_old - (CT_diff)./dCT_dpt; % 1/2-way through the 1st modified N-R loop
-ptm = 0.5d0.*(pt + pt_old);
+pt = pt_old - CT_diff./dCT_dpt; % 1/2-way through the 1st modified N-R loop
+ptm = 0.5*(pt + pt_old);
 
 % This routine calls gibbs_pt0_pt0(SA,pt0) to get the second derivative 
 % of the Gibbs function with respect to temperature at zero sea pressure.  
 
 dCT_dpt = -(ptm + 273.15).*gsw_gibbs_pt0_pt0(SA,ptm)./cp0;
-pt = pt_old - (CT_diff)./dCT_dpt;  % end of 1st full modified N-R iteration
+pt = pt_old - CT_diff./dCT_dpt;  % end of 1st full modified N-R iteration
 CT_diff = gsw_CT_from_pt(SA,pt) - CT;
 pt_old = pt;
-pt = pt_old - (CT_diff)./dCT_dpt; % 1.5 iterations of the modified N-R method
+pt = pt_old - CT_diff./dCT_dpt; % 1.5 iterations of the modified N-R method
 
 if transposed
     pt = pt.';

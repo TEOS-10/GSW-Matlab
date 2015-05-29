@@ -18,7 +18,7 @@ function SP = gsw_SP_from_SK(SK)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (16th November, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -45,10 +45,7 @@ end %if
 
 SP = (SK - 0.03).*(1.80655/1.805); 
 
-% These few lines ensure that SP is non-negative.
-[I_neg_SP] = find(SP < 0);
-if ~isempty(I_neg_SP)
-    SP(I_neg_SP) = 0;
-end
+% This line ensures that SP is non-negative.
+SP(SP < 0) = 0;
 
 end

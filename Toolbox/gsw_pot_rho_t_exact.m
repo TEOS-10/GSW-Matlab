@@ -30,7 +30,7 @@ function pot_rho_t_exact = gsw_pot_rho_t_exact(SA,t,p,p_ref)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

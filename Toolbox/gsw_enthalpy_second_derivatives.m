@@ -36,8 +36,7 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives(SA,CT,p)
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -45,10 +44,10 @@ function [h_SA_SA, h_SA_CT, h_CT_CT] = gsw_enthalpy_second_derivatives(SA,CT,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.  
 %   
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -109,21 +108,21 @@ n2 = 2;
 pr0 = zeros(size(SA)); 
 
 pt0 = gsw_pt_from_CT(SA,CT);
-abs_pt0 = 273.15 + pt0;
+rec_abs_pt0 = 1./(273.15 + pt0);
 t = gsw_pt_from_t(SA,pt0,pr0,p);
-temp_ratio = (273.15 + t)./(abs_pt0);
+temp_ratio = (273.15 + t).*rec_abs_pt0;
 
-rec_gTT_pt0 = ones(size(SA))./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
-rec_gTT_t = ones(size(SA))./gsw_gibbs(n0,n2,n0,SA,t,p);
+rec_gTT_pt0 = 1./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
+rec_gTT_t = 1./gsw_gibbs(n0,n2,n0,SA,t,p);
 gST_pt0 = gsw_gibbs(n1,n1,n0,SA,pt0,pr0);
 gST_t = gsw_gibbs(n1,n1,n0,SA,t,p);
 gS_pt0 = gsw_gibbs(n1,n0,n0,SA,pt0,pr0);
 
 % h_CT_CT is naturally well-behaved as SA approaches zero. 
 h_CT_CT = cp0.*cp0.* ...
-    (temp_ratio.*rec_gTT_pt0 - rec_gTT_t)./(abs_pt0.*abs_pt0);
+    (temp_ratio.*rec_gTT_pt0 - rec_gTT_t).*(rec_abs_pt0.*rec_abs_pt0);
 
-part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t)./(abs_pt0);
+part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t).*rec_abs_pt0;
 factor = gS_pt0./cp0;
 
 % h_SA_SA has a singularity at SA = 0, and blows up as SA approaches zero.  
@@ -137,15 +136,14 @@ h_SA_SA = gsw_gibbs(n2,n0,n0,SA,t,p) ...
 % of code ensure that the h_SA_CT output of this function does not blow
 % up in this limit.  That is, when SA < 1e-100 g/kg, we force the h_SA_CT 
 % output to be the same as if SA = 1e-100 g/kg.  
-[Ismall_SA] = find(SA < 1e-100);
-if ~isempty(Ismall_SA)
-    SA(Ismall_SA) = 1e-100;
-    rec_gTT_pt0 = ones(size(SA))./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
-    rec_gTT_t = ones(size(SA))./gsw_gibbs(n0,n2,n0,SA,t,p);
+if any(SA < 1e-100)
+    SA(SA < 1e-100) = 1e-100;
+    rec_gTT_pt0 = 1./gsw_gibbs(n0,n2,n0,SA,pt0,pr0);
+    rec_gTT_t = 1./gsw_gibbs(n0,n2,n0,SA,t,p);
     gST_pt0 = gsw_gibbs(n1,n1,n0,SA,pt0,pr0);
     gST_t = gsw_gibbs(n1,n1,n0,SA,t,p);
     gS_pt0 = gsw_gibbs(n1,n0,n0,SA,pt0,pr0);
-    part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t)./(abs_pt0);
+    part = (temp_ratio.*gST_pt0.*rec_gTT_pt0 - gST_t.*rec_gTT_t).*rec_abs_pt0;
     factor = gS_pt0./cp0;
 end
 

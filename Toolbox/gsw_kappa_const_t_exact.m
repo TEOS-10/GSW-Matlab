@@ -27,7 +27,7 @@ function kappa_const_t_exact = gsw_kappa_const_t_exact(SA,t,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

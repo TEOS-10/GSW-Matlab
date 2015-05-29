@@ -16,7 +16,7 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 %  alternative to calling this function, namely 
 %  gsw_rho_alpha_beta(SA,CT,p), which uses the computationally-efficient
 %  48-term expression for density in terms of SA, CT and p (McDougall et 
-%  al., 2011).  
+%  al., 2013).  
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -37,7 +37,7 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,10 +46,10 @@ function [rho_CT_exact, alpha_CT_exact, beta_CT_exact] = gsw_rho_alpha_beta_CT_e
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %     See sections (2.8), (2.18) and (2.19) of this TEOS-10 Manual.
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 % The software is available from http://www.TEOS-10.org
 %

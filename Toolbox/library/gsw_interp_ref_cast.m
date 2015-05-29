@@ -13,7 +13,7 @@ function [SA_iref_cast, CT_iref_cast, p_iref_cast] = gsw_interp_ref_cast(spycnl,
 % the interpolation will take place in sigma 2 space, any other input
 % will result in the programme working in gamma_n space.
 %
-% VERSION NUMBER: 3.01 (14th April, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCE:
 %  Jackett, D. R. and T. J. McDougall, 1997: A neutral density variable
@@ -48,24 +48,16 @@ else
 end
 
 [min_spycnl_ref_cast, Imin_spycnl_ref_cast] = min(spycnl_ref_cast);
-[Ishallow] = find(spycnl <= min_spycnl_ref_cast); % Set equal to the shallowest bottle.
-if ~isempty(Ishallow)
-    SA_iref_cast(Ishallow) = SA_ref_cast(Imin_spycnl_ref_cast);
-    CT_iref_cast(Ishallow) = CT_ref_cast(Imin_spycnl_ref_cast);
-    p_iref_cast(Ishallow) = p_ref_cast(Imin_spycnl_ref_cast);
-end
+SA_iref_cast(spycnl <= min_spycnl_ref_cast) = SA_ref_cast(Imin_spycnl_ref_cast);% Set equal to the shallowest bottle.
+CT_iref_cast(spycnl <= min_spycnl_ref_cast) = CT_ref_cast(Imin_spycnl_ref_cast);
+p_iref_cast(spycnl <= min_spycnl_ref_cast) = p_ref_cast(Imin_spycnl_ref_cast);
 
 [max_spycnl_ref_cast, Imax_spycnl_ref_cast] = max(spycnl_ref_cast);
-[Ideep] = find(spycnl >= max_spycnl_ref_cast);       % Set equal to the deepest bottle.
-if ~isempty(Ideep)
-    SA_iref_cast(Ideep) = SA_ref_cast(Imax_spycnl_ref_cast);
-    CT_iref_cast(Ideep) = CT_ref_cast(Imax_spycnl_ref_cast);
-    p_iref_cast(Ideep) = p_ref_cast(Imax_spycnl_ref_cast);
-end
+SA_iref_cast(spycnl >= max_spycnl_ref_cast) = SA_ref_cast(Imax_spycnl_ref_cast);% Set equal to the deepest bottle.
+CT_iref_cast(spycnl >= max_spycnl_ref_cast) = CT_ref_cast(Imax_spycnl_ref_cast);
+p_iref_cast(spycnl >= max_spycnl_ref_cast) = p_ref_cast(Imax_spycnl_ref_cast);
 
-[I] = find(spycnl >= 21.805 & spycnl <= 28.3614);
-
-xi = spycnl(I);
+xi = spycnl(spycnl >= 21.805 & spycnl <= 28.3614);
 
 x = spycnl_ref_cast;
 
@@ -128,8 +120,8 @@ if min(size(SA_ref_casti)) == 1 && numel(xi) > 1
    p_ref_casti = reshape(p_ref_casti,siz);
 end
 
-SA_iref_cast(I) = SA_ref_casti;
-CT_iref_cast(I) = CT_ref_casti;
-p_iref_cast(I) = p_ref_casti;
+SA_iref_cast(spycnl >= 21.805 & spycnl <= 28.3614) = SA_ref_casti;
+CT_iref_cast(spycnl >= 21.805 & spycnl <= 28.3614) = CT_ref_casti;
+p_iref_cast(spycnl >= 21.805 & spycnl <= 28.3614) = p_ref_casti;
 
 end

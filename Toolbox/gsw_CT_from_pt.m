@@ -22,8 +22,7 @@ function CT = gsw_CT_from_pt(SA,pt)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %  
-% VERSION NUMBER: 3.01 (29th March, 2011) 
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -63,11 +62,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 cp0 = 3991.86795711963;     % defined in Eqn. (3.3.3) of IOC et al. (2010).
 

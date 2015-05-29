@@ -17,7 +17,7 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %  for the specific volume anomaly are SA = SSO = 35.16504 g/kg and  
 %  CT = 0 deg C.  This function calculates specific volume anomaly using 
 %  the computationally efficient 48-term expression for specific volume of 
-%  McDougall et al. (2011).
+%  McDougall et al. (2013).
 %
 %  Note that p_ref, is the reference pressure to which the streamfunction
 %  is referenced.  When p_ref is zero, "gsw_geo_strf_Montgomery" returns 
@@ -27,7 +27,7 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -51,7 +51,7 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,10 +60,10 @@ function geo_strf_Montgomery = gsw_geo_strf_Montgomery(SA,CT,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.28 of this TEOS-10 Manual. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  Montgomery, R. B., 1937: A suggested method for representing gradient 
 %   flow in isentropic surfaces.  Bull. Amer. Meteor. Soc. 18, 210-212.  

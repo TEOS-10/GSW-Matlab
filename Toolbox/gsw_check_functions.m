@@ -1171,10 +1171,10 @@ for I = 1:45
 end
 [I] = find(~isnan(gsw_cv.p_chck_cast));
 gsw_cf.delta_sa_ref = nan(45,3);
-gsw_cf.delta_sa_ref(I) = gsw_delta_SA_ref(gsw_cv.p_chck_cast(I),gsw_cf.long_chck_cast_temp(I),gsw_cf.lat_chck_cast_temp(I));
+gsw_cf.delta_sa_ref(I) = gsw_deltaSA_atlas(gsw_cv.p_chck_cast(I),gsw_cf.long_chck_cast_temp(I),gsw_cf.lat_chck_cast_temp(I));
 [gsw_cf.Idelta_sa_ref] = find(abs(gsw_cv.delta_sa_ref - gsw_cf.delta_sa_ref) >= gsw_cv.delta_sa_ref_ca);
 if ~isempty(gsw_cf.Idelta_sa_ref)
-    fprintf(2,'gsw_delta_SA_ref:   Failed. \n');
+    fprintf(2,'gsw_deltaSA_atlas:   Failed. \n');
     gsw_cf.gsw_chks = 0;
 end
 

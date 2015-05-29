@@ -26,7 +26,7 @@ function adiabatic_lapse_rate_t_exact = gsw_adiabatic_lapse_rate_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

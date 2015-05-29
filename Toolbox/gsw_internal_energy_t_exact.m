@@ -24,7 +24,7 @@ function internal_energy_t_exact = gsw_internal_energy_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall                                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -26,7 +26,7 @@ function rho_t_exact = gsw_rho_t_exact(SA,t,p)
 % AUTHOR: 
 %  Paul Barker, David Jackett & Trevor McDougall       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -86,7 +86,7 @@ end
 n0 = 0;
 n1 = 1;
 
-rho_t_exact = ones(size(SA))./gsw_gibbs(n0,n0,n1,SA,t,p);
+rho_t_exact = 1./gsw_gibbs(n0,n0,n1,SA,t,p);
 
 if transposed
     rho_t_exact = rho_t_exact.';

@@ -52,7 +52,7 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (17th March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -67,10 +67,10 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 %  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method 
 %   for forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32,
@@ -146,16 +146,15 @@ db2Pa = 1e4;
 cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 
 SA_iref_cast = nan(size(gamma_n));
-CT_iref_cast = nan(size(gamma_n));
-p_iref_cast = nan(size(gamma_n));
+CT_iref_cast = SA_iref_cast;
+p_iref_cast = SA_iref_cast;
 
 [Inn] = find(~isnan(gamma_n));
 [SA_iref_cast(Inn),CT_iref_cast(Inn),p_iref_cast(Inn)] = gsw_interp_ref_cast(gamma_n(Inn),A);
 
 [dyn_height_pc, p_mid_fine] = gsw_geo_strf_dyn_height_pc(SA,CT,delta_p);
 
-[Isurface] = find(p_mid_fine == 0);
-p_mid_fine(Isurface) = NaN;
+p_mid_fine(p_mid_fine == 0) = NaN;
 p_mid = p_mid_fine(layer_index,:);
 
 SA_iref_cast_nd = SA_iref_cast.* ones(size(p_mid));

@@ -36,7 +36,7 @@ function brineSA_CT = gsw_brineSA_CT(CT,p,saturation_fraction)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (28th March, 2011)
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -44,6 +44,10 @@ function brineSA_CT = gsw_brineSA_CT(CT,p,saturation_fraction)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %    See section 3.33 of this TEOS-10 Manual.  
+%
+%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -163,10 +167,8 @@ p_r = p.*1e-4;
 % Form the first estimate of brineSA_CT from a polynomial in CT and p_r. 
 SA = -(CT + 9*p_r)./0.06;       % A rough estimate to get the saturated CT.
 
-[Ineg] = find(SA < 0);
-if ~isempty(Ineg)
-    SA(Ineg) = 0;
-end
+SA(SA < 0) = 0;
+
 CTsat = CT ...
     - (1-saturation_fraction).*(1e-3).*(2.4-a.*SA).*(1+b.*(1-SA./35.16504));
 
@@ -190,17 +192,10 @@ SA_cut_off = 2.5; % This is the band of SA within +- 2.5 g/kg of SA = 0,
 %                   which we treat differently in calculating the initial
 %                   values of both SA and dCT_dSA. 
 [Ico] = find(abs(SA) < SA_cut_off);
-
-[Icoa] = find(SA < 0 & SA >= -SA_cut_off);
-if ~isempty(Icoa)
-    SA(Icoa) = 0;
-end
+SA(SA < 0 & SA >= -SA_cut_off) = 0;
 
 % Find SA < -SA_cut_off, set them to NaN.
-[Inan] = find(SA < -SA_cut_off);
-if ~isempty(Inan)
-    SA(Inan) = NaN;
-end
+SA(SA < -SA_cut_off) = NaN;
 
 %--------------------------------------------------------------------------
 % Form the first estimate of dCT_dSA, the derivative of CT with respect 
@@ -245,8 +240,9 @@ CT_freezing = c0 ...
  - saturation_fraction.*(1e-3).*(2.4 - a.*SA).*(1 + b.*(1 - SA./35.16504));
 
 SA = SA_old - (CT_freezing - CT)./dCT_dSA;
-% This is the half-way point of the modified Newton-Raphson solution method. 
- SA_r = 0.5*0.01*(SA + SA_old); % This is now the mean value of SA and SA_old. 
+% This is the half-way point of the modified Newton-Raphson solution 
+% method (McDougall and Wotherspoon, 2012). 
+SA_r = 0.5*0.01*(SA + SA_old); % This is now the mean value of SA and SA_old. 
 x = sqrt(SA_r);
 dCT_dSA_part = 2*c1 + x.*(3*c2 + x.*(4*c3 + x.*(5*c4 + x.*(6*c5 + 7*c6.*x))))...
     + p_r.*(2*c10 + p_r.*(2*c12 + p_r.*(2*c15 + 4*c21.*x.*x))...
@@ -281,21 +277,16 @@ end
 % 
 % CT_error = abs(CT_freezing - CT);
 % 
-% [Iout_of_range] = find(p > 10000 | SA > 120 | ...
-%     p + SA.*71.428571428571402 > 13571.42857142857);
-% if ~isempty(Iout_of_range)
-%     CT_error(Iout_of_range) = NaN;
-% end
+% CT_error(p > 10000 | SA > 120 | ...
+%     p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 %
 %--------------------This is the end of the error calculation--------------
 
 brineSA_CT = SA;
 
-[Iout_of_range] = find(p > 10000 | SA > 120 | ...
-    p + SA.*71.428571428571402 > 13571.42857142857);
-if ~isempty(Iout_of_range)
-    brineSA_CT(Iout_of_range) = NaN;
-end
+%Find SA that are out of range, set them to NaN. 
+brineSA_CT(p > 10000 | SA > 120 | ...
+    p + SA.*71.428571428571402 > 13571.42857142857) = NaN;
 
 if ~isempty(Itw)
     brineSA_CT(Itw) = -99; % If the CT input is too warm, then there is 

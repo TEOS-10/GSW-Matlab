@@ -13,11 +13,11 @@ function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 %  of seawater is a maximum, at given Absolute Salinity, SA, and sea 
 %  pressure, p (in dbar).  This function uses the computationally-efficient
 %  48-term expression for density in terms of SA, CT and p (McDougall et
-%  al., 2011).
+%  al., 2013).
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -45,10 +45,14 @@ function CT_maxdensity = gsw_CT_maxdensity(SA,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.42 of this TEOS-10 Manual.  
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%
+%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation. 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -111,8 +115,9 @@ for Number_of_iterations = 1:3
     CT = CT_old - alpha./dalpha_dCT;
 end
 
-% After three iterations of this modified Newton-Raphson iteration, the 
-% error in CT_maxdensity is typically no larger than 1x10^-15 degress C.  
+% After three iterations of this modified Newton-Raphson (McDougall and 
+% Wotherspoon, 2012) iteration, the error in CT_maxdensity is typically no
+% larger than 1x10^-15 degress C.  
 
 CT_maxdensity = CT;
 

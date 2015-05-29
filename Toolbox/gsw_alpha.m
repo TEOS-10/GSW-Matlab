@@ -14,7 +14,7 @@ function alpha = gsw_alpha(SA,CT,p)
 %   
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -34,7 +34,7 @@ function alpha = gsw_alpha(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -43,10 +43,10 @@ function alpha = gsw_alpha(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqn. (2.18.3) of this TEOS-10 manual.
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -96,11 +96,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 v01 =  9.998420897506056e+2;
 v02 =  2.839940833161907;
@@ -202,8 +199,6 @@ v_hat_numerator = v21 + CT.*(v22 + CT.*(v23 + CT.*(v24 + v25*CT))) ...
             + p.*(v43 + CT.*(v44 + v45*CT + v46*SA) ...
             + p.*(v47 + v48*CT)));
        
-spec_vol = v_hat_numerator./v_hat_denominator;
-
 dvhatden_dCT = a01 + CT.*(a02 + a03*CT) ...
         + SA.*(a04 + a05*CT ...
     + sqrtSA.*(a06 + CT.*(a07 + a08*CT))) ...
@@ -216,7 +211,8 @@ dvhatnum_dCT = a14 + CT.*(a15 + CT.*(a16 + a17*CT)) ...
          + p.*(a26 + CT.*(a27 + a28*CT) + a29*SA ...
          + p.*(a30 + a31*CT + a32*SA + a33*p));
  
-alpha = (dvhatnum_dCT - dvhatden_dCT.*spec_vol)./v_hat_numerator;
+alpha = (v_hat_denominator.*dvhatnum_dCT - v_hat_numerator.*dvhatden_dCT)./...
+    (v_hat_numerator.*v_hat_denominator);
 
 if transposed
     alpha = alpha.';

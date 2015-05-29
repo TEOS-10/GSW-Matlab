@@ -20,8 +20,8 @@ function C = gsw_C_from_SP(SP,t,p)
 %  salinities.  This accuracy is achieved by having four different 
 %  polynomials for the starting value of Rtx (the square root of Rt) in 
 %  four different ranges of SP, and by using one and a half iterations of 
-%  a computationally efficient modified Newton-Raphson technique to find 
-%  the root of the equation.  
+%  a computationally efficient modified Newton-Raphson technique (McDougall 
+%  and Wotherspoon, 2012) to find the root of the equation.  
 %
 %  Note that strictly speaking PSS-78 (Unesco, 1983) defines Practical
 %  Salinity in terms of the conductivity ratio, R, without actually
@@ -43,7 +43,7 @@ function C = gsw_C_from_SP(SP,t,p)
 % AUTHOR:
 %  Trevor McDougall, Paul Barker and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (1st April, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee and D.J. Woods, 1986: The extension of the
@@ -55,6 +55,10 @@ function C = gsw_C_from_SP(SP,t,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See appendix E of this TEOS-10 Manual.
+%
+%  McDougall, T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  Unesco, 1983: Algorithms for computation of fundamental properties of
 %   seawater. Unesco Technical Papers in Marine Science, 44, 53 pp.
@@ -71,9 +75,8 @@ if ~(nargin == 3)
     error('gsw_C_from_SP: Must have 3 input arguments')
 end %if
 
-% These few lines ensure that SP is non-negative.
-[I_neg_SP] = find(SP < 0);
-if ~isempty(I_neg_SP)
+% This line ensures that SP is non-negative.
+if any(SP < 0)
     error('gsw_C_from_SP: SP must be non-negative!')
 end
 
@@ -242,32 +245,33 @@ Rtx = nan(size(SP));
 % Finding the starting value of Rtx, the square root of Rt, using four 
 % different polynomials of SP and t68.  
 %--------------------------------------------------------------------------
-[I] = find( SP >= 9);
-if ~isempty(I)
+
+if any(SP >= 9)
+    [I] = find(SP >= 9);
     Rtx(I) =  p0 + x(I).*(p1 + p4*t68(I) + x(I).*(p3 + p7*t68(I) + x(I).*(p6 ...
         + p11*t68(I) + x(I).*(p10 + p16*t68(I)+ x(I).*p15))))...
         + t68(I).*(p2+ t68(I).*(p5 + x(I).*x(I).*(p12 + x(I).*p17) + p8*x(I) ...
         + t68(I).*(p9 + x(I).*(p13 + x(I).*p18)+ t68(I).*(p14 + p19*x(I) + p20*t68(I)))));
 end
 
-[I] = find(SP >= 0.25 & SP < 9);
-if ~isempty(I)
+if any(SP >= 0.25 & SP < 9)
+    [I] = find(SP >= 0.25 & SP < 9);
     Rtx(I) =  q0 + x(I).*(q1 + q4*t68(I) + x(I).*(q3 + q7*t68(I) + x(I).*(q6 ...
         + q11*t68(I) + x(I).*(q10 + q16*t68(I)+ x(I).*q15))))...
         + t68(I).*(q2+ t68(I).*(q5 + x(I).*x(I).*(q12 + x(I).*q17) + q8*x(I) ...
         + t68(I).*(q9 + x(I).*(q13 + x(I).*q18)+ t68(I).*(q14 + q19*x(I) + q20*t68(I)))));
 end
 
-[I] = find(SP >= 0.003 & SP < 0.25);
-if ~isempty(I)
+if any(SP >= 0.003 & SP < 0.25)
+    [I] = find(SP >= 0.003 & SP < 0.25);
     Rtx(I) =  r0 + x(I).*(r1 + r4*t68(I) + x(I).*(r3 + r7*t68(I) + x(I).*(r6 ...
         + r11*t68(I) + x(I).*(r10 + r16*t68(I)+ x(I).*r15))))...
         + t68(I).*(r2+ t68(I).*(r5 + x(I).*x(I).*(r12 + x(I).*r17) + r8*x(I) ...
         + t68(I).*(r9 + x(I).*(r13 + x(I).*r18)+ t68(I).*(r14 + r19*x(I) + r20*t68(I)))));
 end
 
-[I] = find(SP < 0.003);
-if ~isempty(I)
+if any(SP < 0.003)
+    [I] = find(SP < 0.003);
     Rtx(I) =  u0 + x(I).*(u1 + u4*t68(I) + x(I).*(u3 + u7*t68(I) + x(I).*(u6 ...
         + u11*t68(I) + x(I).*(u10 + u16*t68(I)+ x(I).*u15))))...
         + t68(I).*(u2+ t68(I).*(u5 + x(I).*x(I).*(u12 + x(I).*u17) + u8*x(I) ...
@@ -280,8 +284,9 @@ end
 %--------------------------------------------------------------------------
 dSP_dRtx =  a1 + (2*a2 + (3*a3 + (4*a4 + 5*a5.*Rtx).*Rtx).*Rtx).*Rtx ...
     + ft68.*(b1 + (2*b2 + (3*b3 + (4*b4 + 5*b5.*Rtx).*Rtx).*Rtx).*Rtx);
-[I2] = find(SP < 2);
-if ~isempty(I2)
+
+if any(SP < 2)
+    [I2] = find(SP < 2);
     x = 400.*(Rtx(I2).*Rtx(I2));
     sqrty = 10.*Rtx(I2);
     part1 = 1 + x.*(1.5 + x) ;
@@ -294,11 +299,11 @@ if ~isempty(I2)
 end
 
 %--------------------------------------------------------------------------
-% One iteration through the modified Newton-Raphson method achieves an
-% error in Practical Salinity of about 10^-12 for all combinations of the
-% inputs.  One and a half iterations of the modified Newton-Raphson method  
-% achevies a maximum error in terms of Practical Salinity of better than 
-% 2x10^-14 everywhere. 
+% One iteration through the modified Newton-Raphson method (McDougall and 
+% Wotherspoon, 2012) achieves an error in Practical Salinity of about 
+% 10^-12 for all combinations of the inputs.  One and a half iterations of 
+% the modified Newton-Raphson method achevies a maximum error in terms of 
+% Practical Salinity of better than 2x10^-14 everywhere. 
 %
 % We recommend one and a half iterations of the modified Newton-Raphson
 % method. 
@@ -307,8 +312,8 @@ end
 %--------------------------------------------------------------------------
     SP_est = a0 + (a1 + (a2 + (a3 + (a4 + a5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx ...
         + ft68.*(b0 + (b1 + (b2+ (b3 + (b4 + b5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx);
-    [I2] = find(SP_est < 2);
-    if ~isempty(I2)
+    if any(SP_est < 2)
+        [I2] = find(SP_est < 2);
         x = 400.*(Rtx(I2).*Rtx(I2));
         sqrty = 10.*Rtx(I2);
         part1 = 1 + x.*(1.5 + x) ;
@@ -326,9 +331,8 @@ end
     
     dSP_dRtx =  a1 + (2*a2 + (3*a3 + (4*a4 + 5*a5.*Rtxm).*Rtxm).*Rtxm).*Rtxm ...
         + ft68.*(b1 + (2*b2 + (3*b3 + (4*b4 + 5*b5.*Rtxm).*Rtxm).*Rtxm).*Rtxm);
-    
-    [I2] = find(SP_est < 2);
-    if ~isempty(I2)
+    if any(SP_est < 2)
+        [I2] = find(SP_est < 2);
         x = 400.*(Rtxm(I2).*Rtxm(I2));
         sqrty = 10.*Rtxm(I2);
         part1 = 1 + x.*(1.5 + x) ;
@@ -351,8 +355,8 @@ end
 %-------------------------------------------------------------------------- 
 SP_est = a0 + (a1 + (a2 + (a3 + (a4 + a5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx ...
         + ft68.*(b0 + (b1 + (b2+ (b3 + (b4 + b5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx);
-    [I2] = find(SP_est < 2);
-    if ~isempty(I2)
+    if any(SP_est < 2)
+        [I2] = find(SP_est < 2);
         x = 400.*(Rtx(I2).*Rtx(I2));
         sqrty = 10.*Rtx(I2);
         part1 = 1 + x.*(1.5 + x) ;
@@ -369,8 +373,8 @@ SP_est = a0 + (a1 + (a2 + (a3 + (a4 + a5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx ...
 %
 % SP_est = a0 + (a1 + (a2 + (a3 + (a4 + a5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx ...
 %     + ft68.*(b0 + (b1 + (b2+ (b3 + (b4 + b5.*Rtx).*Rtx).*Rtx).*Rtx).*Rtx);
-% [I2] = find(SP_est < 2);
-% if ~isempty(I2)
+% if any(SP_est < 2)
+%     [I2] = find(SP_est < 2);
 %     x = 400.*(Rtx(I2).*Rtx(I2));
 %     sqrty = 10.*Rtx(I2);
 %     part1 = 1 + x.*(1.5 + x) ;

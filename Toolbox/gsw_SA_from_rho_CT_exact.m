@@ -14,7 +14,7 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 %  alternative to calling this function, namely 
 %  gsw_SA_from_rho_CT(rho,CT,p), which uses the computationally 
 %  efficient 48-term expression for density in terms of SA, CT and p 
-%  (McDougall et al., 2011).   
+%  (McDougall et al., 2013).   
 %
 % INPUT:
 %  rho =  density of a seawater sample (e.g. 1026 kg/m^3).       [ kg/m^3 ]
@@ -35,7 +35,7 @@ function SA = gsw_SA_from_rho_CT_exact(rho,CT,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                     [ help_gsw@csiro.au ]
 %      
-% VERSION NUMBER: 3.0 (5th April, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -101,11 +101,7 @@ v_0 = gsw_specvol_CT_exact(zeros(size(rho)),CT,p);
 v_120 = gsw_specvol_CT_exact(120*ones(size(rho)),CT,p);
  
 SA = 120*(v_lab - v_0)./(v_120 - v_0);            % initial estimate of SA.
-
-[Ior] = find(SA < 0 | SA > 120);
-if ~isempty(Ior)
-  SA(Ior) = NaN;
-end
+SA(SA < 0 | SA > 120) = NaN;
 
 v_SA = (v_120 - v_0)./120; %initial estimate of v_SA, the SA derivative of v
 
@@ -116,15 +112,12 @@ v_SA = (v_120 - v_0)./120; %initial estimate of v_SA, the SA derivative of v
 for Number_of_iterations = 1:2 
     SA_old = SA;
     delta_v = gsw_specvol_CT_exact(SA_old,CT,p) - v_lab;
-    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method
+    SA = SA_old - delta_v./v_SA ; % this is half way through the modified N-R method (McDougall and Wotherspoon, 2012)
     SA_mean = 0.5*(SA + SA_old);
     [rho,alpha,beta] = gsw_rho_alpha_beta_CT_exact(SA_mean,CT,p);
     v_SA = - beta./rho; 
     SA = SA_old - delta_v./v_SA;
-    [Ior] = find(SA < 0 | SA > 120);
-    if ~isempty(Ior)
-        SA(Ior) = NaN; 
-    end
+    SA(SA < 0 | SA > 120) = NaN; 
 end
 
 % After two iterations of this modified Newton-Raphson iteration,

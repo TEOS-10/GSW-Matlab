@@ -21,17 +21,17 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %  Note. The term "funnel" describes the range of SA, CT and p over which 
 %    the error in the fit of the computationally-efficient 48-term 
 %    expression for density in terms of SA, CT and p was calculated
-%    (McDougall et al., 2011).
+%    (McDougall et al., 2013).
 %
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -70,19 +70,15 @@ end %if
 
 in_funnel = ones(size(SA));
 
-[Inan] = find(isnan(SA) | isnan(CT) | isnan(p));
-
-[Ifunnel] = find( p > 8000 |...
+in_funnel(p > 8000 |...
     SA < 0 |...
     SA > 42 |...
     (p < 500 & CT < gsw_CT_freezing(SA,p)) |...
     (p > 500 & p < 6500 & SA < p*5e-3 - 2.5) |...
     (p > 500 & p < 6500 & CT > (31.66666666666667 - p*3.333333333333334e-3)) | ...
     (p > 6500 & SA < 30) |...
-    (p > 6500 & CT > 10.0) );
+    (p > 6500 & CT > 10.0)) = 0;
 
-in_funnel(Ifunnel) = 0;
-
-in_funnel(Inan) = NaN;
+in_funnel(isnan(SA) | isnan(CT) | isnan(p)) = NaN;
 
 end

@@ -31,13 +31,18 @@ function [Sstar, in_ocean] = gsw_Sstar_from_SA(SA,p,long,lat)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (27th March, 2011)
+% VERSION NUMBER: 3.02 (7th January, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+%
+%  McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and 
+%   P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.
+%   Ocean Science, 8, 1123-1134.  
+%   http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf 
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -87,10 +92,8 @@ else
 end %if
 
 [mlo,nlo] = size(long);
-[Iwest] =find(long < 0);
-if ~isempty(Iwest)
-    long(Iwest) = long(Iwest) + 360; 
-end
+long(long < 0) = long(long < 0) + 360; 
+
 if (mlo == 1) & (nlo == 1)            % long is a scalar - fill to size of SA
     long = long*ones(size(SA));
 elseif (ns == nlo) & (mlo == 1)       % long is a row vector,
@@ -122,11 +125,11 @@ end
 
 r_1 = 0.35;
 
-[Iocean] = find(~isnan(SA.*p.*lat.*long));
+[Iocean] = find(~isnan(SA + p + lat + long));
 
 Sstar = nan(size(SA));
-SAAR = nan(size(SA));
-in_ocean = nan(size(SA));
+SAAR = Sstar;
+in_ocean = Sstar;
 
 [SAAR(Iocean), in_ocean(Iocean)] = gsw_SAAR(p(Iocean),long(Iocean),lat(Iocean));
 

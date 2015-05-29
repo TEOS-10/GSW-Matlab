@@ -24,7 +24,7 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (26th May, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -32,6 +32,10 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.41 of this TEOS-10  Manual
+%
+%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -81,11 +85,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 db2Pa = 1e4; % conversion factor from dbar to Pa
 
@@ -104,8 +105,8 @@ for Number_of_iterations = 1:2
     p = p_old - f./df_dp;     
 end
    
-% After two iterations though the modified Newton-Raphson technique the
-% maximum error is 6x10^-12 dbar.
+% After two iterations though the modified Newton-Raphson technique 
+% (McDougall and Wotherspoon, 2012) the maximum error is 6x10^-12 dbar.
 
 osmotic_pressure_t_exact = p - pw; % osmotic pressure of seawater, in dbar.
 

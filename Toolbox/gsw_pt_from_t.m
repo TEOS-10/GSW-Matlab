@@ -36,7 +36,7 @@ function pt = gsw_pt_from_t(SA,t,p,p_ref)
 %  Trevor McDougall, David Jackett, Claire Roberts-Thomson and Paul Barker. 
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:
@@ -46,10 +46,14 @@ function pt = gsw_pt_from_t(SA,t,p,p_ref)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.1 of this TEOS-10 Manual.
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
+%
+%  McDougall T.J. and S.J. Wotherspoon, 2012: A simple modification of 
+%   Newton’s method to achieve convergence of order "1 + sqrt(2)".
+%   Submitted to Applied Mathematics and Computation.  
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -122,11 +126,8 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 cp0 = 3991.86795711963;           % from Eqn. (3.3.3) of IOC et al. (2010).
 SSO = 35.16504;                    % from section 2.4 of IOC et al. (2010).
@@ -150,7 +151,7 @@ true_entropy_part = gsw_entropy_part(SA,t,p);
 for Number_of_iterations = 1:2
     pt_old = pt;
     dentropy = gsw_entropy_part(SA,pt_old,p_ref) - true_entropy_part;
-    pt = pt_old - dentropy./dentropy_dt ; % this is half way through the modified method
+    pt = pt_old - dentropy./dentropy_dt ; % this is half way through the modified method (McDougall and Wotherspoon, 2012)
     ptm = 0.5*(pt + pt_old);
     dentropy_dt = -gsw_gibbs(n0,n2,n0,SA,ptm,p_ref);
     pt = pt_old - dentropy./dentropy_dt;

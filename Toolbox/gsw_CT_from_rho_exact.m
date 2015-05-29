@@ -1,6 +1,6 @@
 function [CT,CT_multiple] = gsw_CT_from_rho_exact(rho,SA,p)
 
-% gsw_t_from_rho_exact                     in situ temperature from density
+% gsw_t_from_rho_exact                     in-situ temperature from density
 % =========================================================================
 %
 % USAGE:
@@ -34,7 +34,7 @@ function [CT,CT_multiple] = gsw_CT_from_rho_exact(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (21th April, 2011)
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of

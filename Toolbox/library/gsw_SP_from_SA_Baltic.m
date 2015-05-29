@@ -23,7 +23,7 @@ function SP_baltic = gsw_SP_from_SA_Baltic(SA,long,lat)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall & Paul Barker       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (7th January, 2013)
 %
 % REFERENCES:
 %  Feistel, R., S. Weinreben, H. Wolf, S. Seitz, P. Spitzer, B. Adel, 
@@ -36,19 +36,18 @@ function SP_baltic = gsw_SP_from_SA_Baltic(SA,long,lat)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall, T.J., D.R. Jackett and F.J. Millero, 2010: An algorithm 
-%   for estimating Absolute Salinity in the global ocean.  Submitted to 
-%   Ocean Science. A preliminary version is available at Ocean Sci. Discuss.,
-%   6, 215-242.  
-%   http://www.ocean-sci-discuss.net/6/215/2009/osd-6-215-2009-print.pdf 
+%  McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and 
+%   P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.
+%   Ocean Science, 8, 1123-1134.  
+%   http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf 
 %
 %  The software is available from http://www.TEOS-10.org
 %
 %==========================================================================
 
 if ~(nargin == 3)
-   error('gsw_SP_from_SA_Baltic.m:  Requires 3 inputs')
-end %if
+   error('gsw_SP_from_SA_Baltic:  Requires 3 inputs')
+end
 
 xb1 = 12.6; 
 xb2 = 7; 
@@ -60,18 +59,16 @@ yb1 = 50;
 yb2 = 59; 
 yb3 = 69;
 
-inds_baltic = find(xb2<long & long<xb1a & yb1<lat & lat<yb3);
-
 SP_baltic = nan(size(SA));
 
-if ~isempty(inds_baltic)
+if any(xb2<long & long<xb1a & yb1<lat & lat<yb3)
+    inds_baltic = find(xb2<long & long<xb1a & yb1<lat & lat<yb3);  
     xx_left = interp1([yb1,yb2,yb3],[xb1,xb2,xb3],lat(inds_baltic));
     xx_right = interp1([yb1,yb3],[xb1a,xb3a],lat(inds_baltic));
-    inds_baltic1 = find(xx_left<=long(inds_baltic) & long(inds_baltic)<=xx_right);
-    if ~isempty(inds_baltic1)
+    if any(xx_left<=long(inds_baltic) & long(inds_baltic)<=xx_right)
+        inds_baltic1 = find(xx_left<=long(inds_baltic) & long(inds_baltic)<=xx_right);
         SP_baltic(inds_baltic(inds_baltic1)) = (35/(35.16504 - 0.087))*(SA(inds_baltic(inds_baltic1)) - 0.087);
     end
-%    SP_baltic = reshape(SP_baltic,size(long));
 end
 
 end

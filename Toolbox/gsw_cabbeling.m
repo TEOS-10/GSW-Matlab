@@ -11,11 +11,11 @@ function cabbeling = gsw_cabbeling(SA,CT,p)
 %  Calculates the cabbeling coefficient of seawater with respect to  
 %  Conservative Temperature.  This function uses the computationally-
 %  efficient 48-term expression for density in terms of SA, CT and p
-%  (McDougall et al., 2011)
+%  (McDougall et al., 2013)
 %   
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -35,7 +35,7 @@ function cabbeling = gsw_cabbeling(SA,CT,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]   
 %
-% VERSION NUMBER: 3.01 (23rd March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -44,10 +44,10 @@ function cabbeling = gsw_cabbeling(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.9.2) and (P.4) of this TEOS-10 manual.
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -106,25 +106,21 @@ alpha_u = gsw_alpha(SA,CT_u,p);
 alpha_l = gsw_alpha(SA,CT_l,p);
 
 alpha_on_beta = alpha./beta;
-alpha_CT = (alpha_u - alpha_l)./(CT_u-CT_l);
+alpha_CT = (alpha_u - alpha_l)./(CT_u - CT_l);
 
 dSA = 1e-3;                % increment in Absolute Salinity is 1e-3 g kg^-1
-inds_l = find(SA>=dSA);
+
 SA_l = nan(size(SA));
-if ~isempty(inds_l)
-    SA_l(inds_l) = SA(inds_l) - dSA;
-end
-inds_l = find(SA<dSA);
-if ~isempty(inds_l)
-    SA_l(inds_l) = 0;
-end
+SA_l(SA >= dSA) = SA(SA >= dSA) - dSA;
+SA_l(SA<dSA) = 0;
+
 SA_u = SA + dSA;  
 
 [dummy,alpha_u,beta_u] = gsw_rho_alpha_beta(SA_u,CT,p);
 [dummy,alpha_l,beta_l] = gsw_rho_alpha_beta(SA_l,CT,p);
 
-alpha_SA = (alpha_u - alpha_l)./(SA_u-SA_l);
-beta_SA = (beta_u - beta_l)./(SA_u-SA_l);
+alpha_SA = (alpha_u - alpha_l)./(SA_u - SA_l);
+beta_SA = (beta_u - beta_l)./(SA_u - SA_l);
 cabbeling = alpha_CT + alpha_on_beta.*(2.*alpha_SA - alpha_on_beta.*beta_SA);
 
 %--------------------------------------------------------------------------
@@ -149,14 +145,8 @@ cabbeling = alpha_CT + alpha_on_beta.*(2.*alpha_SA - alpha_on_beta.*beta_SA);
 %   alpha_CT = (gsw_alpha_wrt_CT_t_exact(SA,t_u,p)-gsw_alpha_wrt_CT_t_exact(SA,t_l,p))./(CT_u-CT_l);
 %   dSA = 1e-3;                %increment in Absolute Salinity is 1e-3 g/kg
 %   SA_l = nan(size(SA));
-%   inds_l = find(SA>=dSA);
-%   if ~isempty(inds_l)   
-%     SA_l(inds_l) = SA(inds_l)-dSA;
-%   end
-%   inds_l = find(SA<dSA);
-%   if ~isempty(inds_l)   
-%     SA_l(inds_l) = 0; 
-%   end
+%   SA_l(SA>=dSA) = SA(SA>=dSA)-dSA;
+%   SA_l(SA<dSA) = 0; 
 %   SA_u = SA + dSA;  
 %   alpha_SA  = (gsw_alpha_wrt_CT_t_exact(SA_u,t,p)-gsw_alpha_wrt_CT_t_exact(SA_l,t,p))./(SA_u-SA_l);
 %   beta_SA   = (gsw_beta_const_CT_t_exact(SA_u,t,p)-gsw_beta_const_CT_t_exact(SA_l,t,p))./(SA_u-SA_l);

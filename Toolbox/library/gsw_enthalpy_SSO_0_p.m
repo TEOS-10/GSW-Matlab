@@ -9,7 +9,13 @@ function enthalpy_SSO_0_p = gsw_enthalpy_SSO_0_p(p)
 %  version of the Gibbs function, that is, a streamlined version of the 
 %  code "gsw_enthalpy(SA,CT,p)".
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+%  VERSION NUMBER: 3.02 (16th November, 2012)
+%
+% REFERENCES:
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
+%   computationally efficient 48-term expression for the density of 
+%   seawater in terms of Conservative Temperature, and related properties
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %==========================================================================
 

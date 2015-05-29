@@ -10,23 +10,20 @@ function entropy_part = gsw_entropy_part(SA,t,p)
 % but are not needed when calculating potential temperature from in-situ 
 % temperature.  
 %
-% VERSION NUMBER: 3.01 (29th March, 2011) 
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 %==========================================================================
 
-% These few lines ensure that SA is non-negative.
-[I_neg_SA] = find(SA < 0);
-if ~isempty(I_neg_SA)
-    SA(I_neg_SA) = 0;
-end
+% This line ensures that SA is non-negative.
+SA(SA < 0) = 0;
 
 sfac = 0.0248826675584615;                % sfac = 1/(40*(35.16504/35));
 
 x2 = sfac.*SA;
 x = sqrt(x2);
-y = t.*0.025d0;
-z = p.*1d-4;
+y = t.*0.025;
+z = p.*1e-4;
 
 g03 = z.*(-270.983805184062 + ...
     z.*(776.153611613101 + z.*(-196.51255088122 + (28.9796526294175 - 2.13290083518327.*z).*z))) + ...

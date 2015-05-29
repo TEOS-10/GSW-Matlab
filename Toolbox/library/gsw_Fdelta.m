@@ -34,7 +34,7 @@ function Fdelta = gsw_Fdelta(p,long,lat)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (26th May, 2011)
+% VERSION NUMBER: 3.02 (7th January, 2013)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -43,11 +43,15 @@ function Fdelta = gsw_Fdelta(p,long,lat)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 2.5 and appendices A.4 and A.5 of this TEOS-10 Manual. 
 %
-%  McDougall, T.J., D.R. Jackett and F.J. Millero, 2010: An algorithm 
-%   for estimating Absolute Salinity in the global ocean.  Submitted to 
-%   Ocean Science. A preliminary version is available at Ocean Sci. Discuss.,
-%   6, 215-242.  
-%   http://www.ocean-sci-discuss.net/6/215/2009/osd-6-215-2009-print.pdf 
+%  McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and 
+%   P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.
+%   Ocean Science, 8, 1123-1134.  
+%   http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf 
+%
+% Pawlawicz, R., D.G. Wright and F.J. Millero, 2011; The effects of
+%   biogeochemical processes on oceanic conductivity/salinty/density
+%   relationships and the characterization of real seawater. Ocean Science,
+%   7, 363-387.  http://www.ocean-sci.net/7/363/2011/os-7-363-2011.pdf
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -80,10 +84,7 @@ else
 end %if
 
 [mlo,nlo] = size(long);
-[Iwest] =find(long < 0);
-if ~isempty(Iwest)
-    long(Iwest) = long(Iwest) + 360; 
-end
+long(long < 0) = long(long < 0) + 360; 
 
 if (mlo == 1) & (nlo == 1)            % long is a scalar - fill to size of p
     long = long*ones(size(p));
@@ -112,20 +113,18 @@ else
     transposed = 0;
 end
 
-[Inan] = find(abs(p) == 99999 | abs(p) == 999999);
-p(Inan) = NaN;
-[Inan] = find(abs(long) == 9999 | abs(long) == 99999);
-long(Inan) = NaN;
-[Inan] = find(abs(lat) == 9999 | abs(lat) == 99999);
-lat(Inan) = NaN;
+% change standard blank fill values to NaN's.
+p(abs(p) == 99999 | abs(p) == 999999) = NaN;
+long(abs(long) == 9999 | abs(long) == 99999) = NaN;
+lat(abs(lat) == 9999 | abs(lat) == 99999) = NaN;
 
-if ~isempty(find(p < -1.5 | p > 12000))
+if any(find(p < -1.5 | p > 12000))
     error('gsw_Fdelta: pressure is out of range')
 end
-if ~isempty(find(long < 0 | long > 360))
+if any(find(long < 0 | long > 360))
     error('gsw_Fdelta: longitude is out of range')
 end
-if ~isempty(find(abs(lat) > 90))
+if any(find(abs(lat) > 90))
     error('gsw_Fdelta: latitude is out of range')
 end
 
@@ -136,8 +135,9 @@ end
 r_1 = 0.35;
 
 SAAR = nan(size(p));
-[I] = find(~isnan(p.*long.*lat));
-if ~isempty(I)
+
+if any(~isnan(p + long + lat))
+    [I] = find(~isnan(p + long + lat));
     SAAR(I) = gsw_SAAR(p(I),long(I),lat(I));
 end
 

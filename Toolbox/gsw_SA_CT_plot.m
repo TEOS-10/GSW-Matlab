@@ -47,13 +47,13 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 % MODIFIED:
 %  Paul Barker & Trevor McDougall
 %
-% VERSION NUMBER: 3.01 (6th March, 2012)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -96,6 +96,7 @@ min_CT_data = min(min(CT(:)));
 max_CT_data = max(max(CT(:)));
 
 SA_min = min_SA_data - 0.1*(max_SA_data - min_SA_data);
+SA_min(SA_min < 0) = 0;
 SA_max = max_SA_data + 0.1*(max_SA_data - min_SA_data);
 SA_axis = [SA_min:(SA_max-SA_min)/200:SA_max];
 
@@ -114,30 +115,45 @@ CT_gridded = meshgrid(CT_axis,1:length(SA_axis))';
 
 isopycs_gridded = gsw_rho_CT(SA_gridded,CT_gridded,p_ref)-1000;
 % figure
+
+%scaling for macs
+sz = 1;
+try
+    if ismac
+        sz = sz*(96/72);
+    end
+end
+
 if ~isempty(isopycs)
     [c1,h] = contour(SA_gridded,CT_gridded,isopycs_gridded,isopycs,':','Color',[.5 .5 .5]);
 end
 hold on;
-[c2] = plot(SA,CT,'.','linewidth',2);
+
+[c2] = plot(SA,CT,'.','linewidth',2*sz);
+
+set(c2,'Marker','o','MarkerSize',5*sz,'MarkerEdgeColor','none', ...
+  'MarkerFaceColor','b');
 
 if exist('c1','var')
-    clabel(c1,h,'labelspacing',360,'fontsize',8,'color',[.5 .5 .5]);
+    clabel(c1,h,'labelspacing',360,'fontsize',8*sz,'color',[.5 .5 .5]);
 end
 
 axis('square');
 axis([SA_min SA_max CT_min CT_max]);
-xlabel('Absolute Salinity, \it{S}\rm_A (g kg^-^1) ','fontsize',13);
-ylabel('Conservative Temperature,  {\Theta} ({\circ}C)','fontsize',13);
+xlabel('Absolute Salinity, \it{S}\rm_A (g kg^-^1) ','fontsize',13*sz);
+ylabel('Conservative Temperature,  {\Theta} ({\circ}C)','fontsize',13*sz);
 if exist('title_string','var')
-    title([title_string])
+    title([title_string],'fontsize',14*sz)
 else
-    title('\it{S}\rm_A - {\Theta} diagram','fontsize',14)
+    title('\it{S}\rm_A - {\Theta}  diagram','fontsize',14*sz)
 end
 set(gca,'tickdir','out')
 
 line(SA_axis,CT_freezing,'LineStyle','--');
 
-text(0.01,0.99,[' p_r_e_f = ' int2str(p_ref) ' dbar'],...
+txt = text(0.01,0.99,[' p_r_e_f = ' int2str(p_ref) ' dbar'], ...
     'horiz','left','Vert','top','units','normalized','color',[.3 .3 .3]);
+txt_fs = get(txt,'fontsize');
+set(txt,'fontsize',txt_fs*sz);
 
 end

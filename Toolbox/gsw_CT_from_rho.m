@@ -43,7 +43,7 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (21th April, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -51,10 +51,10 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -115,40 +115,35 @@ alpha_limit = 1e-5;
 rec_half_rho_TT = -110.0;
 
 CT = nan(size(SA));
-CT_multiple = nan(size(SA));
+CT_multiple = CT;
 
-[I_SA_p] = find(SA<0 | SA>42 | p <-1.5 | p>12000);
-if ~isempty(I_SA_p)
-    SA(I_SA_p) = NaN;
-end
+% SA out of range, set to NaN.
+SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;
 
 rho_40 = gsw_rho_CT(SA,40*ones(size(SA)),p);
-[I_rho_light] = find((rho - rho_40) < 0);
-if ~isempty(I_rho_light)
-    SA(I_rho_light) = NaN;
-end
+% rho too light, set to NaN.
+SA((rho - rho_40) < 0) = NaN;
 
 CT_max_rho = gsw_CT_maxdensity(SA,p);
 rho_max = gsw_rho(SA,CT_max_rho,p);
 rho_extreme = rho_max;
 CT_freezing = gsw_CT_freezing(SA,p); % this assumes that the seawater is always saturated with air
 rho_freezing = gsw_rho(SA,CT_freezing,p);
-[I_fr_gr_max] = find((CT_freezing - CT_max_rho) > 0);
-rho_extreme(I_fr_gr_max) = rho_freezing(I_fr_gr_max);
-[I_rho_dense] = find(rho > rho_extreme);
-if ~isempty(I_rho_dense)
-    SA(I_rho_dense) = NaN;
-end
+% reset the extreme values
+rho_extreme((CT_freezing - CT_max_rho) > 0) = rho_freezing((CT_freezing - CT_max_rho) > 0);
 
-[I_bad] = find(isnan(SA.*p.*rho));
-if ~isempty (I_bad)
+% set SA values to NaN for the rho's that are too dense.
+SA(rho > rho_extreme) = NaN;
+
+if any(isnan(SA + p + rho))
+    [I_bad] = find(isnan(SA + p + rho));
     SA(I_bad) = NaN;
 end
 
 alpha_freezing = gsw_alpha(SA,CT_freezing,p);
-[I_salty] = find(alpha_freezing > alpha_limit);
 
-if ~isempty(I_salty)
+if any(alpha_freezing > alpha_limit)
+    [I_salty] = find(alpha_freezing > alpha_limit);
     CT_diff = 40*ones(size(I_salty)) - CT_freezing(I_salty);
     
     top = rho_40(I_salty) - rho_freezing(I_salty) ...
@@ -162,20 +157,21 @@ if ~isempty(I_salty)
     CT(I_salty) = CT_freezing(I_salty) + 0.5*(-b - sqrt_disc)./a;
 end
 
-[I_fresh] = find(alpha_freezing <= alpha_limit);
-if ~isempty(I_fresh)
+if any(alpha_freezing <= alpha_limit)
+    [I_fresh] = find(alpha_freezing <= alpha_limit);
+
     CT_diff = 40*ones(size(I_fresh)) - CT_max_rho(I_fresh);
     factor = (rho_max(I_fresh) - rho(I_fresh))./ ...
                (rho_max(I_fresh) - rho_40(I_fresh));
     delta_CT = CT_diff.*sqrt(factor);
     
-    [I_fresh_NR] = find(delta_CT > 5);
-    if ~isempty(I_fresh_NR)
+    if any(delta_CT > 5)
+        [I_fresh_NR] = find(delta_CT > 5);
         CT(I_fresh(I_fresh_NR)) = CT_max_rho(I_fresh(I_fresh_NR)) + delta_CT(I_fresh_NR);
     end
-    
-    [I_quad] = find(delta_CT <= 5);
-    if ~isempty(I_quad)
+     
+    if any(delta_CT <= 5)
+        [I_quad] = find(delta_CT <= 5);
         CT_a = nan(size(SA));
         % set the initial value of the quadratic solution routes.
         CT_a(I_fresh(I_quad)) = CT_max_rho(I_fresh(I_quad)) + ...
@@ -186,10 +182,8 @@ if ~isempty(I_fresh)
             factorqa = (rho_max - rho)./(rho_max - rho_old);
             CT_a = CT_max_rho + (CT_old - CT_max_rho).*sqrt(factorqa);
         end
-        [Ifrozen] = find(CT_freezing - CT_a < 0);
-        if ~isempty(Ifrozen)
-            CT_a(Ifrozen) = NaN;
-        end
+        
+        CT_a(CT_freezing - CT_a < 0) = NaN;
         
         CT_b = nan(size(SA));
         % set the initial value of the quadratic solution roots.
@@ -203,10 +197,7 @@ if ~isempty(I_fresh)
         end
 % After seven iterations of this quadratic iterative procedure,
 % the error in rho is no larger than 4.6x10^-13 kg/m^3.
-        [Ifrozen] = find(CT_freezing - CT_b < 0);
-        if ~isempty(Ifrozen)
-            CT_b(Ifrozen) = NaN;
-        end
+        CT_b(CT_freezing - CT_b < 0) = NaN;
     end
 end
 
@@ -226,16 +217,10 @@ for Number_of_iterations = 1:3
 end
 
 if exist('t_a','var')
-    [I_quad] = find(~isnan(CT_a));
-    if ~isempty(I_quad)
-        CT(I_quad) = CT_a(I_quad);
-    end
+    CT(~isnan(CT_a)) = CT_a(~isnan(CT_a));
 end
 if exist('t_b','var')
-    [I_quad] = find(~isnan(CT_b));
-    if ~isempty(I_quad)
-        CT_multiple(I_quad) = CT_b(I_quad);
-    end
+    CT_multiple(~isnan(CT_b)) = CT_b(~isnan(CT_b));
 end
 % After three iterations of this modified Newton-Raphson iteration,
 % the error in rho is no larger than 1.6x10^-12 kg/m^3.

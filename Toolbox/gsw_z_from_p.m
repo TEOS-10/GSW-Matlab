@@ -9,7 +9,7 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height)
 % DESCRIPTION:
 %  Calculates height from sea pressure using the computationally-efficient
 %  48-term expression for density in terms of SA, CT and p (McDougall et 
-%  al., 2011).  Dynamic height anomaly, geo_strf_dyn_height, if provided,
+%  al., 2013).  Dynamic height anomaly, geo_strf_dyn_height, if provided,
 %  must be computed with its p_ref = 0 (the surface).  
 %
 %  Note. Height z is NEGATIVE in the ocean. i.e. Depth is -z.  
@@ -17,7 +17,7 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height)
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -45,7 +45,7 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height)
 %  Trevor McDougall, Claire Roberts-Thomson & Paul Barker.
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (26th March, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -53,10 +53,10 @@ function z = gsw_z_from_p(p,lat,geo_strf_dyn_height)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  Moritz (2000) Goedetic reference system 1980. J. Geodesy, 74, 128-133.
 %   

@@ -10,11 +10,11 @@ function thermobaric = gsw_thermobaric(SA,CT,p)
 %  Calculates the thermobaric coefficient of seawater with respect to
 %  Conservative Temperature.  This routine calculates rho from the 
 %  computationally-efficient 48-term expression for density in terms of
-%  SA, CT and p (McDougall et al., 2011).
+%  SA, CT and p (McDougall et al., 2013).
 %
 %  Note that the 48-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2011).  The GSW library function 
+%  described in McDougall et al. (2013).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -36,7 +36,7 @@ function thermobaric = gsw_thermobaric(SA,CT,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (24th March, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -45,10 +45,10 @@ function thermobaric = gsw_thermobaric(SA,CT,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See Eqns. (3.8.2) and (P.2) of this TEOS-10 manual.
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -101,18 +101,11 @@ end
 db2Pa = 1e4;
 dp = 1e-1;                        % pressure increment is 1e-1 dbar (10 Pa)
 
-if p == 0
-    p = p + dp;
-end
-
-inds = find(p >= dp); 
 p_u = zeros(size(p));
-p_l = dp*ones(size(p));
+p_u(p >= dp) = p(p >= dp) - dp;
 
-if ~isempty(inds)
-    p_u(inds) = p(inds) - dp;
-    p_l(inds) = p(inds) + dp;
-end
+p_l = dp*ones(size(p));
+p_l(p >= dp) = p(p >= dp) + dp;
 
 [dummy,alpha,beta] = gsw_rho_alpha_beta(SA,CT,p);
 [dummy,alpha_u,beta_u] = gsw_rho_alpha_beta(SA,CT,p_u);

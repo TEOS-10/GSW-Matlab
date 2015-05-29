@@ -16,7 +16,7 @@ function sigma2_CT_exact = gsw_sigma2_CT_exact(SA,CT)
 %  Note that this function uses the full Gibbs function.  There is an 
 %  alternative to calling this function, namely gsw_sigma2_CT(SA,CT,p), 
 %  which uses the computationally efficient 48-term expression for density 
-%  in terms of SA, CT and p (McDougall et al., 2011).   
+%  in terms of SA, CT and p (McDougall et al., 2013).   
 %
 % INPUT:
 %  SA  =  Absolute Salinity                                        [ g/kg ]
@@ -32,7 +32,7 @@ function sigma2_CT_exact = gsw_sigma2_CT_exact(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (3rd April, 2011)
+% VERSION NUMBER: 3.02 (16th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

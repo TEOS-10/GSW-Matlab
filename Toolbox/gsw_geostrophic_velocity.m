@@ -59,7 +59,7 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 % AUTHOR: 
 %  Paul Barker, Trevor McDougall and Phil Morgan       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (24th March, 2011)
+% VERSION NUMBER: 3.02 (15th November, 2012)
 %
 % REFERENCES:
 %  Cunningham, S. A., 2000: Circulation and volume flux of the North 
@@ -78,10 +78,10 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 %  Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method for
 %   forming approximately neutral surfaces.  Ocean Sci., 5, 155-172. 
 %
-%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2011:  A 
+%  McDougall T.J., P.M. Barker, R. Feistel and D.R. Jackett, 2013:  A 
 %   computationally efficient 48-term expression for the density of 
 %   seawater in terms of Conservative Temperature, and related properties
-%   of seawater.  To be submitted to Ocean Science Discussions. 
+%   of seawater.  To be submitted to J. Atm. Ocean. Technol., xx, yyy-zzz.
 %
 %  McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic 
 %   streamfunction for use in density surfaces.  Ocean Modelling, 32, 
@@ -121,10 +121,7 @@ else
     error('gsw_geostrophic_velocity: Inputs array dimensions arguments do not agree')
 end %if
 
-[Iwest] = find(long < 0);
-if ~isempty(Iwest)
-    long(Iwest) = long(Iwest) + 360;
-end
+long(long < 0) = long(long < 0) + 360;
 
 if (nla == 1) & (mla == 1)            
     error('gsw_geostrophic_velocity: need more than one station')
@@ -175,29 +172,15 @@ mid_long = 0.5*(long(:,1:ng-1) + long(:,2:ng));
 diff_long = (long(1,1:ng-1) - long(1,2:ng));
 
 long2 = long;
-[Iwest2] = find(long2 > 180);
-if ~isempty(Iwest2)
-    long2(Iwest2) = long2(Iwest2) - 360;
-end
+long2(long2 > 180) = long2(long2 > 180) - 360;
 mid_long2 = 0.5*(long2(:,1:ng-1) + long2(:,2:ng));
 diff_long2 = (long2(1,1:ng-1) - long2(1,2:ng));
 
 [dummy,gmc] = min([abs(diff_long); abs(diff_long2)]);
 
-[Igmc] = find(gmc == 2);
-if ~isempty(Igmc)
-    mid_long(Igmc) = mid_long2(Igmc);
-end
-
-[Iwest2] = find(mid_long < 0);
-if ~isempty(Iwest2)
-    mid_long(Iwest2) = mid_long(Iwest2) + 360;
-end
-
-if ~isempty(Iwest)
-    [Iwestrestore] = find(mid_long > 180);
-    mid_long(Iwestrestore) = mid_long(Iwestrestore) - 360;
-end
+mid_long(gmc == 2) = mid_long2(gmc == 2);
+mid_long(mid_long < 0) = mid_long(mid_long < 0) + 360;
+mid_long(mid_long > 180) = mid_long(mid_long > 180) - 360;
 
 % Note. This geostrophic velocity difference, v - v0, when positive, is 
 %   directed to the left of the horizontal vector which points from one

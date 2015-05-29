@@ -25,8 +25,7 @@ function CT = gsw_CT_from_t(SA,t,p)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.01 (27th March, 2011)
-%  This function is unchanged from version 2.0 (24th September, 2010).
+% VERSION NUMBER: 3.02 (13th November, 2012)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -70,14 +69,9 @@ else
     error('gsw_CT_from_t: Inputs array dimensions arguments do not agree')
 end %if
 
-[Iout_of_range] = find(p < 100 & (t > 80 | t < -12));
-if (~isempty(Iout_of_range))
-    t(Iout_of_range) = NaN;
-end
-[Iout_of_range] = find(p >= 100 & (t > 40 | t < -12));
-if (~isempty(Iout_of_range))
-    t(Iout_of_range) = NaN;
-end
+%Find values that are out of range, set them to NaN. 
+t(p < 100 & (t > 80 | t < -12)) = NaN;
+t(p >= 100 & (t > 40 | t < -12)) = NaN;
 
 if ms == 1
     SA = SA.';

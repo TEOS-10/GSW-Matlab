@@ -396,7 +396,7 @@ rho_CT = -rho2.*0.025.*v_CT;
 
 Pa2db = 1e-4;                      % factor to convert from Pa to dbar
 
-rho_P = 1e-4.*Pa2db.*-rho2.*v_p;
+rho_P = -rho2.*1e-4.*Pa2db.*v_p;
 
 if transposed
     rho_SA = rho_SA.'; 

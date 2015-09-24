@@ -29,12 +29,12 @@ function Nesol = gsw_Nesol(SA,CT,p,long,lat)
 %  dimensions 1x1 or Mx1 or 1xN or MxN, where SA is MxN.
 %
 % OUTPUT:
-%  Nesol = solubility of neon in micro-moles per kg             [ umol/kg ] 
+%  Nesol = solubility of neon in nano-moles per kg              [ nmol/kg ] 
 % 
 % AUTHOR:  Roberta Hamme, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05 (24th September 2015)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

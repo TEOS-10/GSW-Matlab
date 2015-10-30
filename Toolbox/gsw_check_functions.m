@@ -728,6 +728,13 @@ if ~isempty(gsw_cf.Igeo_strf_steric_height)
     gsw_cf.gsw_chks = 0;
 end
 
+gsw_cf.geo_strf_PISH = gsw_geo_strf_PISH(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr_05);
+[gsw_cf.Igeo_strf_PISH] = find(abs(gsw_cv.geo_strf_PISH - gsw_cf.geo_strf_PISH) >= gsw_cv.geo_strf_PISH_ca);
+if ~isempty(gsw_cf.Igeo_strf_PISH)
+    fprintf(2,'gsw_geo_strf_PISH:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
 gsw_cf.travel_time = gsw_travel_time(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast(1));
 [gsw_cf.Itravel_time] = find(abs(gsw_cv.travel_time - gsw_cf.travel_time) >= gsw_cv.travel_time_ca);
 if ~isempty(gsw_cf.Itravel_time)
@@ -1459,19 +1466,19 @@ if ~isempty(gsw_cf.IKrsol_SP_pt)
     gsw_chks = 0;
 end
  
-gsw_cf.N2Osol = gsw_N2Osol(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.long_chck_cast,gsw_cv.lat_chck_cast);   
-[gsw_cf.IN2Osol] = find(abs(gsw_cv.N2Osol - gsw_cf.N2Osol) >= gsw_cv.N2Osol_ca);
-if ~isempty(gsw_cf.IN2Osol)
-    fprintf(2,'gsw_N2Osol:   Failed\n');
-    gsw_chks = 0;
-end
- 
-gsw_cf.N2Osol_SP_pt = gsw_N2Osol_SP_pt(gsw_cv.SP_chck_cast,gsw_cv.pt0_from_t); 
-[gsw_cf.IN2Osol_SP_pt] = find(abs(gsw_cv.N2Osol_SP_pt - gsw_cf.N2Osol_SP_pt) >= gsw_cv.N2Osol_SP_pt_ca);
-if ~isempty(gsw_cf.IN2Osol_SP_pt)
-    fprintf(2,'gsw_N2Osol_SP_pt:   Failed\n');
-    gsw_chks = 0;
-end
+% gsw_cf.N2Osol = gsw_N2Osol(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.long_chck_cast,gsw_cv.lat_chck_cast);   
+% [gsw_cf.IN2Osol] = find(abs(gsw_cv.N2Osol - gsw_cf.N2Osol) >= gsw_cv.N2Osol_ca);
+% if ~isempty(gsw_cf.IN2Osol)
+%     fprintf(2,'gsw_N2Osol:   Failed\n');
+%     gsw_chks = 0;
+% end
+
+% gsw_cf.N2Osol_SP_pt = gsw_N2Osol_SP_pt(gsw_cv.SP_chck_cast,gsw_cv.pt0_from_t); 
+% [gsw_cf.IN2Osol_SP_pt] = find(abs(gsw_cv.N2Osol_SP_pt - gsw_cf.N2Osol_SP_pt) >= gsw_cv.N2Osol_SP_pt_ca);
+% if ~isempty(gsw_cf.IN2Osol_SP_pt)
+%     fprintf(2,'gsw_N2Osol_SP_pt:   Failed\n');
+%     gsw_chks = 0;
+% end
  
 gsw_cf.N2sol = gsw_N2sol(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.long_chck_cast,gsw_cv.lat_chck_cast); 
 [gsw_cf.IN2sol] = find(abs(gsw_cv.N2sol - gsw_cf.N2sol) >= gsw_cv.N2sol_ca);

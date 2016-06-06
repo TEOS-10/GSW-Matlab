@@ -14,7 +14,7 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %  the vertical gradient of locally-referenced potential density.  This 
 %  ratio is also the ratio of the planetary Isopycnal Potential Vorticity
 %  (IPV) to f times N^2, hence the name for this variable,
-%  IPV_vs_fNsquared_ratio (see Eqn. (3.20.5) of IOC et al. (2010)). 
+%  IPV_vs_fNsquared_ratio (see Eqn. (3.20.17) of IOC et al. (2010)). 
 %  The reference sea pressure, p_ref, of the potential density surface must
 %  have a constant value.
 %
@@ -30,9 +30,9 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %  some of one's data lies outside this "funnel".  
 %
 % INPUT:  
-%  SA  =  Absolute Salinity                                        [ g/kg ]
-%  CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
-%  p   =  sea pressure                                             [ dbar ]
+%  SA    = Absolute Salinity                                       [ g/kg ]
+%  CT    = Conservative Temperature (ITS-90)                      [ deg C ]
+%  p     = sea pressure                                            [ dbar ]
 %         ( i.e. absolute pressure - 10.1325 dbar )
 %  p_ref = reference sea pressure of the potential density surface
 %         ( i.e. absolute reference pressure - 10.1325 dbar )      [ dbar ]
@@ -42,12 +42,12 @@ function [IPV_vs_fNsquared_ratio, p_mid] = gsw_IPV_vs_fNsquared_ratio(SA,CT,p,p_
 %
 % OUTPUT:
 %  IPV_vs_fNsquared_ratio = The ratio of the vertical gradient of 
-%               potential density referenced to p_ref, to the vertical 
-%               gradient of locally-referenced potential density.  It is 
-%               output on the same vertical (M-1)xN grid as p_mid. 
-%               IPV_vs_fNsquared_ratio is dimensionless.       [ unitless ]
-%  p_mid  =  mid pressure between the individual points of the p grid.
-%            That is, p_mid is on a (M-1)xN grid.                  [ dbar ]
+%          potential density referenced to p_ref, to the vertical 
+%          gradient of locally-referenced potential density.  It is 
+%          output on the same vertical (M-1)xN grid as p_mid. 
+%          IPV_vs_fNsquared_ratio is dimensionless.            [ unitless ]
+%  p_mid = mid pressure between the individual points of the p grid.
+%          That is, p_mid is on a (M-1)xN grid.                    [ dbar ]
 %
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]

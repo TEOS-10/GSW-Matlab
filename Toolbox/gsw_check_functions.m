@@ -648,6 +648,14 @@ end
 
 %% vertical stability
 
+[gsw_cf.Tu, gsw_cf.Rsubrho, gsw_cf.p_mid_TuRsr] = gsw_Turner_Rsubrho(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast);
+[gsw_cf.ITurner] = find(abs(gsw_cv.Tu - gsw_cf.Tu) >= gsw_cv.Tu_ca | abs(gsw_cv.Rsubrho - gsw_cf.Rsubrho) >= gsw_cv.Rsubrho_ca | ...
+    abs(gsw_cv.p_mid_TuRsr - gsw_cf.p_mid_TuRsr) >= gsw_cv.p_mid_TuRsr_ca);
+if ~isempty(gsw_cf.ITurner)
+    fprintf(2,'gsw_Turner_Rsubrho:   Failed\n');
+    gsw_chks = 0;
+end
+
 [gsw_cf.n2, gsw_cf.p_mid_n2] = gsw_Nsquared(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast);
 [gsw_cf.INsquared] = find(abs(gsw_cv.n2 - gsw_cf.n2) >= gsw_cv.n2_ca | abs(gsw_cv.p_mid_n2 - gsw_cf.p_mid_n2) >= gsw_cv.p_mid_n2_ca);
 if ~isempty(gsw_cf.INsquared)
@@ -655,12 +663,28 @@ if ~isempty(gsw_cf.INsquared)
     gsw_cf.gsw_chks = 0;
 end
 
-[gsw_cf.Tu, gsw_cf.Rsubrho, gsw_cf.p_mid_TuRsr] = gsw_Turner_Rsubrho(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast);
-[gsw_cf.ITurner] = find(abs(gsw_cv.Tu - gsw_cf.Tu) >= gsw_cv.Tu_ca | abs(gsw_cv.Rsubrho - gsw_cf.Rsubrho) >= gsw_cv.Rsubrho_ca | ...
-    abs(gsw_cv.p_mid_TuRsr - gsw_cf.p_mid_TuRsr) >= gsw_cv.p_mid_TuRsr_ca);
-if ~isempty(gsw_cf.ITurner)
-    fprintf(2,'gsw_Turner_Rsubrho:   Failed\n');
-    gsw_chks = 0;
+[gsw_cf.n2min, gsw_cf.n2min_pmid, gsw_cf.n2min_specvol, gsw_cf.n2min_alpha, gsw_cf.n2min_beta, gsw_cf.n2min_dsa, gsw_cf.n2min_dct, gsw_cf.n2min_dp] = gsw_Nsquared_min(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast);
+[gsw_cf.INsquared_min] = find(abs(gsw_cv.n2min - gsw_cf.n2min) >= gsw_cv.n2min_ca | abs(gsw_cv.n2min_pmid - gsw_cf.n2min_pmid) >= gsw_cv.n2min_pmid_ca | ...
+    abs(gsw_cv.n2min_specvol - gsw_cf.n2min_specvol) >= gsw_cv.n2min_specvol_ca | abs(gsw_cv.n2min_alpha - gsw_cf.n2min_alpha) >= gsw_cv.n2min_alpha_ca | ...
+    abs(gsw_cv.n2min_beta - gsw_cf.n2min_beta) >= gsw_cv.n2min_beta_ca | abs(gsw_cv.n2min_dsa - gsw_cf.n2min_dsa) >= gsw_cv.n2min_dsa_ca | ...
+    abs(gsw_cv.n2min_dct - gsw_cf.n2min_dct) >= gsw_cv.n2min_dct_ca | abs(gsw_cv.n2min_dp - gsw_cf.n2min_dp) >= gsw_cv.n2min_dp_ca);
+if ~isempty(gsw_cf.INsquared_min)
+    fprintf(2,'gsw_Nsquared_min:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.mlp = gsw_mlp(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast);
+[gsw_cf.Imlp] = find(abs(gsw_cv.mlp - gsw_cf.mlp) >= gsw_cv.mlp_ca);
+if ~isempty(gsw_cf.Imlp)
+    fprintf(2,'gsw_mlp:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.n2_lowerlimit = gsw_Nsquared_lowerlimit(gsw_cv.p_chck_cast,gsw_cv.long_chck_cast,gsw_cv.lat_chck_cast);
+[gsw_cf.INsquared_lowerlimit] = find(abs(gsw_cv.n2_lowerlimit - gsw_cf.n2_lowerlimit) >= gsw_cv.n2_lowerlimit_ca);
+if ~isempty(gsw_cf.INsquared_lowerlimit)
+    fprintf(2,'gsw_Nsquared_lowerlimit:   Failed\n');
+    gsw_cf.gsw_chks = 0;
 end
 
 [gsw_cf.IPVfN2, gsw_cf.p_mid_IPVfN2] = gsw_IPV_vs_fNsquared_ratio(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);

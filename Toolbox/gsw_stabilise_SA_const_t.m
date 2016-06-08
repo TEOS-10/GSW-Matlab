@@ -91,21 +91,20 @@ function SA_out = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 if exist('tomlabVersion') == 2
     [TomV,os,TV] = tomlabVersion;
     if TV(9)
-        software_solver = 1; % 'tomlab_cplex';
+        software_solver = 1; 
     else
         fprintf('gsw_stabilise_SA_const_t: No valid license for the CPLEX solver\n');
         if license('checkout', 'Optimization_Toolbox')
-            software_solver = 2; % 'matlab_optim';
+            software_solver = 2; 
         else
             error('gsw_stabilise_SA_const_t: No valid license for Tomlab or MATLAB-Optimization')
         end
     end
 elseif license('checkout', 'Optimization_Toolbox')
-    software_solver = 2; % 'matlab_optim';
+    software_solver = 2; 
 else
     error('gsw_stabilise_SA_const_t: No valid license for Tomlab or MATLAB-Optimization')
 end
-
 
 %--------------------------------------------------------------------------
 % Check variables and resize if necessary
@@ -225,7 +224,6 @@ if nargin == 5
     clear long mla nla lat mlo mlo 
 end
 
-
 %--------------------------------------------------------------------------
 % Start of the calculation
 %--------------------------------------------------------------------------
@@ -247,32 +245,8 @@ t(p < -1.5 | p > 12000) = NaN;
 
 SA_out = NaN(mp,number_profiles);
 
-if number_profiles > 100
-    try
-        start_time = datetime('now');
-        fprintf('      Estimated completion time: ... Calculating ....');
-        
-    catch
-        fprintf('            Percent completed: ....');
-    end
-end
-
 for Iprofile = 1:number_profiles
-   
-    %--------------------------------------------------------------------------
-    % Estimate and display time to finish if there are more than 100 profiles
-    %--------------------------------------------------------------------------
-    if Iprofile > 100
-        try
-            end_time = start_time + (datetime('now') - start_time).*number_profiles./Iprofile;
-            fprintf('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b %20s', datestr(end_time));
-        catch
-            percent_done = round((Iprofile./number_profiles) * 100);
-            fprintf('\b\b\b\b\b %3s%%', num2str(percent_done));
-        end
-    end
-    %--------------------------------------------------------------------------
-    
+       
     [Inn] = find(~isnan(SA_in(:,Iprofile) + t(:,Iprofile) + p(:,Iprofile)));
 
     if length(Inn) < 2
@@ -325,13 +299,10 @@ for Iprofile = 1:number_profiles
                 
                 Number_of_iterations = Number_of_iterations + 1;
                  
-                % Note that c = 1.2*db2Pa./(grav.^2);
                 
                 b_U = N2_beta_ratio_tmp.*( dSA_tmp - (N2_alpha_tmp./N2_beta_tmp).*dCT_tmp ...
                                              - c*(Nsquared_lowerlimit.*dp_tmp.*N2_specvol_tmp./N2_beta_tmp) );
-                
-%                  b_U = N2_beta_ratio_tmp.*(dSA_tmp - (N2_alpha_tmp./N2_beta_tmp).*dCT_tmp ...
-%                      - (db2Pa*dp_tmp.*1.2.*Nsquared_lowerlimit.*N2_rho_tmp.*(N2_beta_tmp*grav_squared));
+                % Note that c = 1.2*db2Pa./(grav.^2);                
 
                 %--------------------------------------------------------------------------
                 % The solver
@@ -382,7 +353,6 @@ for Iprofile = 1:number_profiles
                         end
                         
                         x = quadprog(H, f, A, b_U, [], [], x_L, x_U, x_0, opts);
-                      % x = quadprog(H, f, A, b, Aeq, beq, lb, ub, x0, options, Prob, varargin)
                       
                         SA_tmp = SA_tmp + x;
                         
@@ -413,10 +383,6 @@ for Iprofile = 1:number_profiles
                             Nsquared_lowerlimit = dummy(2:end);
                         end
                         
-%                         f = zeros(pl,1);
-%                         b_L = -inf*ones(pl-1,1);
-%                         x_U = inf*ones(pl,1);
-%                         x_0 = zeros(pl,1);                        
                     end
                     set_bounds = 1;
                 end
@@ -438,8 +404,6 @@ for Iprofile = 1:number_profiles
         end
     end
 end
-
-fprintf(1,'\n');
 
 if transposed
     SA_out = SA_out.';
@@ -486,9 +450,7 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp, N2_beta_ratio] 
 %  Note. If lat is not supplied, a default gravitational acceleration
 %    of 9.7963 m/s^2 (Griffies, 2004) will be applied.
 %
-%  SA & t need to have the same dimensions. 
-%  p & lat (if provided) may have dimensions 1x1 or Mx1 or 1xN or MxN, 
-%  where SA & t are MxN.
+%  SA, t, p & lat (if provided) need to have the same dimensions. 
 %
 % OUTPUT:
 %  N2         =  minimum Brunt-Vaisala Frequency squared          [ 1/s^2 ]
@@ -498,10 +460,10 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp, N2_beta_ratio] 
 %                to Conservative Temperature at the minimum N2
 %  N2_beta    =  saline contraction coefficient at constant        [ kg/g ]
 %                Conservative Temperature at the minimum N2
-%  dSA        =  difference in salinity between bottles            [ g/kg ]
-%  dCT        =  difference in Conservative Temperature between   [ deg C ]
+%  dSA        =  salinity difference between bottles               [ g/kg ]
+%  dCT        =  Conservative Temperature difference between      [ deg C ]
 %                bottles
-%  dp         =  difference in pressure between bottles            [ dbar ]
+%  dp         =  pressure difference between bottles               [ dbar ]
 %  N2_beta_ratio = ratio of the saline contraction             [ unitless ]
 %                coefficient at constant Conservative Temperature to  
 %                the saline contraction coefficient at constant in-situ  
@@ -510,7 +472,7 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp, N2_beta_ratio] 
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.05.5 (6th June, 2016)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -535,84 +497,9 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp, N2_beta_ratio] 
 %
 %==========================================================================
 
-%--------------------------------------------------------------------------
-% Check variables and resize if necessary
-%--------------------------------------------------------------------------
-
-if ~(nargin == 3 | nargin == 4)
-   error('gsw_Nsquared_min_const_t:  Requires three or four inputs')
-end 
-if ~(nargout >= 2)
-   error('gsw_Nsquared_min_const_t:  Requires at least two outputs')
-end 
-
-[ms,ns] = size(SA);
-[mt,nt] = size(t);
-[mp,np] = size(p);
-
-if (mt ~= ms | nt ~= ns)
-    error('gsw_Nsquared_min_const_t: SA and t must have same dimensions')
-end
-
-if (ms*ns == 1)
-    error('gsw_Nsquared_min_const_t: There must be at least 2 bottles')
-end
-
-if (mp == 1) & (np == 1)
-    error('gsw_Nsquared_min_const_t:  There must be at least 2 bottles')
-elseif (ns == np) & (mp == 1)
-    p = p(ones(1,ms), :);
-elseif (ms == mp) & (np == 1)
-    p = p(:,ones(1,ns));
-elseif (ns == mp) & (np == 1)
-    p = p.'; 
-    p = p(ones(1,ms), :);
-elseif (ms == np) & (mp == 1)
-     p = p.';  
-     p = p(:,ones(1,ns));
-elseif (ms == np) & (ns == mp)
-     p = p.';   
-elseif (ms == mp) & (ns == np)
-    % ok
-else
-    error('gsw_Nsquared_min_const_t: Inputs array dimensions arguments do not agree')
-end 
-
-if ms == 1
-    SA = SA.';
-    t = t.';
-    p = p.';
-    transposed = 1;
-else
-    transposed = 0;
-end
-
 [mp,number_profiles] = size(p); 
 
 if exist('lat','var')
-    if transposed
-        lat = lat.';
-    end
-    [mL,nL] = size(lat);
-    if (mL == 1) & (nL == 1)
-        lat = lat*ones(mp,number_profiles);
-    elseif (number_profiles == nL) & (mL == 1)
-        lat = lat(ones(1,mp), :);
-    elseif (mp == mL) & (nL == 1)
-        lat = lat(:,ones(1,number_profiles));
-    elseif (number_profiles == mL) & (nL == 1)
-        lat = lat.';
-        lat = lat(ones(1,mp), :);
-    elseif (mp == nL) & (mL == 1)
-        lat = lat.';
-        lat = lat(:,ones(1,nL));
-    elseif (mp == nL) & (number_profiles == mL)
-        lat = lat.';
-    elseif (mp == mL) & (number_profiles == nL)
-        % ok
-    else
-        error('gsw_Nsquared_min_const_t: Inputs array dimensions arguments do not agree')
-    end
     grav = gsw_grav(lat,p);
 else
     grav = 9.7963*ones(mp,number_profiles);             % (Griffies, 2004)
@@ -665,18 +552,6 @@ for Iprofile = 1:number_profiles
         N2_beta(Ibottle,Iprofile) = dummy_beta(Ibottle,IN2(Ibottle));
         N2_beta_ratio(Ibottle,Iprofile) = dummy_beta_ratio(Ibottle,IN2(Ibottle));
     end
-end
-
-if transposed
-    N2 = N2.';
-    N2_p = N2_p.';
-    N2_specvol = N2_specvol.';
-    N2_alpha = N2_alpha.';
-    N2_beta = N2_beta.';
-    N2_beta_ratio = N2_beta_ratio.';
-    dSA = dSA.';
-    dCT = dCT.';
-    dp = dp.';
 end
 
 end

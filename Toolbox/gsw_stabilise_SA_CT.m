@@ -59,7 +59,7 @@ function [SA_out, CT_out] = gsw_stabilise_SA_CT(SA_in,CT_in,p,opt_1,opt_2)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.05.5 (14th June, 2016)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton,
@@ -92,17 +92,17 @@ function [SA_out, CT_out] = gsw_stabilise_SA_CT(SA_in,CT_in,p,opt_1,opt_2)
 if exist('tomlabVersion') == 2
     [TomV,os,TV] = tomlabVersion;
     if TV(9)
-        software_solver = 1; % 'tomlab_cplex';
+        software_solver = 1; 
     else
         fprintf('gsw_stabilise_SA_CT: No valid license for the CPLEX solver\n');
         if license('checkout', 'Optimization_Toolbox')
-            software_solver = 2; % 'matlab_optim';
+            software_solver = 2; 
         else
             error('gsw_stabilise_SA_CT: No valid license for Tomlab or MATLAB-Optimization')
         end
     end
 elseif license('checkout', 'Optimization_Toolbox')
-    software_solver = 2; % 'matlab_optim';
+    software_solver = 2; 
 else
     error('gsw_stabilise_SA_CT: No valid license for Tomlab or MATLAB-Optimization')
 end
@@ -254,6 +254,9 @@ for Iprofile = 1:number_profiles
         CT_tmp = CT_in(Inn,Iprofile);
         p_tmp = p(Inn,Iprofile);
         
+        mean_SA_in = mean(SA_tmp);
+        mean_CT_in = mean(CT_tmp);
+        
         pl = length(p_tmp);
         
         % Calculate Nsquared of the cast
@@ -356,7 +359,7 @@ for Iprofile = 1:number_profiles
                     % of the indivdual bottles.
                     %-------------------------------------------------------------
                                                          
-%                     SA_CT_angle_bottle = gsw_stabilsation_constraints_quicker(SA_neutral,CT_neutral,p_tmp,Nsquared_lowerlimit,pl,Imlp,N);
+%                     SA_CT_angle_bottle = gsw_stabilsation_constraints(SA_neutral,CT_neutral,p_tmp,Nsquared_lowerlimit,pl,Imlp,N);
 %                     dSA_bottle = cos(SA_CT_angle_bottle);
 %                     dCT_bottle = sin(SA_CT_angle_bottle);
                     
@@ -470,31 +473,48 @@ for Iprofile = 1:number_profiles
                     % Set limits and interpolate variables of any bottles
                     % ouside of the limits
                     %--------------------------------------------------------------------------
-                    CT_tmp(p_tmp < 100 & (CT_tmp > 80 | CT_tmp < -12)) = NaN;
-                    CT_tmp(p_tmp >= 100 & (CT_tmp > 40 | CT_tmp < -12)) = NaN;
-                    CT_tmp(SA_tmp > 120 | p_tmp > 12000) = NaN;
-                    
-                    if any(isnan(CT_tmp))
-                        [Inan] = find(isnan(SA_tmp + CT_tmp));
-                        [Inn2] = find(~isnan(SA_tmp + CT_tmp));
-                        [SA_tmp(Inan),CT_tmp(Inan)] = gsw_rr68_interp_SA_CT(SA_tmp(Inn2),CT_tmp(Inn2),p_tmp(Inn2),p_tmp(Inan));
-                        if any(isnan(SA_tmp + CT_tmp))
+                    if abs(nanmean(CT_tmp) - mean_CT_in) < 10 & ...
+                            abs(nanmean(SA_tmp) - mean_SA_in) < (10*mean(alpha_beta))
+                        
+                        CT_tmp(p_tmp < 100 & (CT_tmp > 80 | CT_tmp < -12)) = NaN;
+                        CT_tmp(p_tmp >= 100 & (CT_tmp > 40 | CT_tmp < -12)) = NaN;
+                        CT_tmp(SA_tmp > 120 | p_tmp > 12000) = NaN;
+                        
+                        if any(isnan(CT_tmp))
                             [Inan] = find(isnan(SA_tmp + CT_tmp));
-                            [Inn2] = find(~isnan(SA_tmp + CT_tmp ));
-                            [SA_tmp(Inan),CT_tmp(Inan)] = gsw_linear_interp_SA_CT(SA_tmp(Inn2),CT_tmp(Inn2),p_tmp(Inn2),p_tmp(Inan));
+                            [Inn2] = find(~isnan(SA_tmp + CT_tmp));
+                            if ~isempty(Inn2)
+                                [SA_tmp(Inan),CT_tmp(Inan)] = gsw_rr68_interp_SA_CT(SA_tmp(Inn2),CT_tmp(Inn2),p_tmp(Inn2),p_tmp(Inan));
+                                if any(isnan(SA_tmp + CT_tmp))
+                                    [Inan] = find(isnan(SA_tmp + CT_tmp));
+                                    [Inn2] = find(~isnan(SA_tmp + CT_tmp ));
+                                    [SA_tmp(Inan),CT_tmp(Inan)] = gsw_linear_interp_SA_CT(SA_tmp(Inn2),CT_tmp(Inn2),p_tmp(Inn2),p_tmp(Inan));
+                                end
+                                
+                                [SA_neutral, CT_neutral] = gsw_stabilise_unconstrained_SA_CT(SA_tmp,CT_tmp,p_tmp,Nsquared_lowerlimit_default,software_solver);
+                                [Inan_neutral] = find(isnan(SA_neutral + CT_neutral));
+                                if ~isempty(Inan_neutral)
+                                    [Inn_neutral] = find(~isnan(SA_neutral + CT_neutral));
+                                    [SA_neutral, CT_neutral] = gsw_linear_interp_SA_CT(SA_neutral(Inn_neutral), CT_neutral(Inn_neutral),p_tmp(Inn_neutral),p_tmp);
+                                    SA_neutral = SA_neutral(:);
+                                    CT_neutral = CT_neutral(:);
+                                end
+                                set_bounds = 1; %This may not be needed.
+                            else
+                                [Inn] = find(~isnan(SA_in(:,Iprofile) + CT_in(:,Iprofile) + p(:,Iprofile)));
+                                [SA_tmp, CT_tmp] = gsw_stabilise_unconstrained_SA_CT(SA_in(Inn,Iprofile),CT_in(Inn,Iprofile),p(Inn,Iprofile),Nsquared_lowerlimit_default,software_solver);
+                                unstable = 1;
+                                if isempty(SA_tmp) | isempty(CT_tmp)
+                                    continue
+                                end
+                            end
                         end
-                        
-                        [SA_neutral, CT_neutral] = gsw_stabilise_unconstrained_SA_CT(SA_tmp,CT_tmp,p_tmp,Nsquared_lowerlimit_default,software_solver);
-                        [Inan_neutral] = find(isnan(SA_neutral + CT_neutral));
-                        if ~isempty(Inan_neutral)
-                            [Inn_neutral] = find(~isnan(SA_neutral + CT_neutral));
-                            [SA_neutral, CT_neutral] = gsw_linear_interp_SA_CT(SA_neutral(Inn_neutral), CT_neutral(Inn_neutral),p_tmp(Inn_neutral),p_tmp);
-                            SA_neutral = SA_neutral(:);
-                            CT_neutral = CT_neutral(:);
-                        end
-                        set_bounds = 1; %This may not be needed.
-                        
+                    else
+                        [Inn] = find(~isnan(SA_in(:,Iprofile) + CT_in(:,Iprofile) + p(:,Iprofile)));
+                        [SA_tmp, CT_tmp] = gsw_stabilise_unconstrained_SA_CT(SA_in(Inn,Iprofile),CT_in(Inn,Iprofile),p(Inn,Iprofile),Nsquared_lowerlimit_default,software_solver);
+                        unstable = 1;
                     end
+                    
                      
                     %--------------------------------------------------------------------------
                     % Final N2 test
@@ -530,8 +550,6 @@ for Iprofile = 1:number_profiles
         end
     end
 end
-
-fprintf(1,'\n');
 
 if transposed
     SA_out = SA_out.';
@@ -597,7 +615,7 @@ function [SA_unconstrained, CT_unconstrained] = gsw_stabilise_unconstrained_SA_C
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.05.5 (14th June, 2016)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton,
@@ -746,13 +764,17 @@ if any(N2 - Nsquared_lowerlimit < 0)
         if any(isnan(CT))
             [Inan] = find(isnan(SA + CT));
             [Inn2] = find(~isnan(SA + CT));
-            [SA(Inan),CT(Inan)] = gsw_rr68_interp_SA_CT(SA(Inn2),CT(Inn2),p(Inn2),p(Inan));
-            if any(isnan(SA + CT))
-                [Inan] = find(isnan(SA + CT));
-                [Inn2] = find(~isnan(SA + CT ));
-                [SA(Inan),CT(Inan)] = gsw_linear_interp_SA_CT(SA(Inn2),CT(Inn2),p(Inn2),p(Inan));
+            if ~isempty(Inn2)
+                [SA(Inan),CT(Inan)] = gsw_rr68_interp_SA_CT(SA(Inn2),CT(Inn2),p(Inn2),p(Inan));
+                if any(isnan(SA + CT))
+                    [Inan] = find(isnan(SA + CT));
+                    [Inn2] = find(~isnan(SA + CT ));
+                    [SA(Inan),CT(Inan)] = gsw_linear_interp_SA_CT(SA(Inn2),CT(Inn2),p(Inn2),p(Inan));
+                end
+                set_bounds = 1;
+            else
+                continue
             end
-            set_bounds = 1;
         end
         %--------------------------------------------------------------------------
         
@@ -828,7 +850,7 @@ function [dSA_bottle, dCT_bottle] = gsw_stabilsation_constraints(SA_neutral,CT_n
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.05.5 (14th June, 2016)
 %
 % REFERENCES:
 %
@@ -893,7 +915,7 @@ if pl > N
     % bottles are not stable adjust SA and CT to force them to be.
     [N2_smooth, dummy,dummy,dummy,dummy,dummy,dummy,dummy] = gsw_Nsquared_min(SA_smooth,CT_smooth,p_smooth);
     if any((N2_smooth - Nsquared_lowlimit_smooth) < 0)
-        [SA_smooth,CT_smooth] = gsw_stabilise_unconstrained_SA_CT(SA_smooth,CT_smooth,p_smooth,Nsquared_lowlimit_smooth);
+        [SA_smooth,CT_smooth] = gsw_stabilise_unconstrained_SA_CT(SA_smooth,CT_smooth,p_smooth,Nsquared_lowlimit_smooth,software_solver);
         [Inan_smooth] = find(isnan(SA_smooth + CT_smooth));
         if ~isempty(Inan_smooth)
             [Inn_smooth] = find(~isnan(SA_smooth + CT_smooth));
@@ -951,7 +973,6 @@ else % not so many bottles
     % Make sure the background cast is stable. If any
     % bottles are not stable adjust SA to force them to be.
     [N2_neutral,p_mid_neutral,dummy,dummy,dummy,dummy,dummy,dummy] = gsw_Nsquared_min(SA_neutral(Imlp:pl),CT_neutral(Imlp:pl),p(Imlp:pl));
-    %Nsquared_lowerlimit_belowmlp = Nsquared_lowlimit(Imlp:pl-1)
     if any((N2_neutral - Nsquared_lowlimit(Imlp:pl-1)) < 0)
         SA_stable(1:Imlp-1) = SA_neutral(1:Imlp-1); % these bottles are never used.
         CT_stable(1:Imlp-1) = CT_neutral(1:Imlp-1);

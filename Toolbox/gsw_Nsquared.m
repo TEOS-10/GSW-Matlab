@@ -11,16 +11,15 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %  Calculates the buoyancy frequency squared (N^2)(i.e. the Brunt-Vaisala 
 %  frequency squared) at the mid pressure from the equation,
 %
-%
-%           2      2             beta.d(SA) - alpha.d(CT)
-%         N   =  g  .rho_local. -------------------------
-%                                          dP
+%           2      2     beta.dSA - alpha.dCT
+%         N   =  g  . -------------------------
+%                         specvol_local.dP
 %
 %  The pressure increment, dP, in the above formula is in Pa, so that it is
 %  10^4 times the pressure increment dp in dbar. 
 %
-%  Note. This routine uses rho from "gsw_rho", which is based on the
-%  computationally efficient expression for specific volume in terms of 
+%  Note. This routine uses specvol from "gsw_specvol", which is based on 
+%  the computationally efficient expression for specific volume in terms of 
 %  SA, CT and p (Roquet et al., 2015).
 %
 %  Note that this 75-term equation has been fitted in a restricted range of 
@@ -51,7 +50,7 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05.6 (8th August, 2016)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -70,7 +69,7 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling, 90, pp. 29-43.
 %
 %   The software is available from http://www.TEOS-10.org
 %
@@ -165,7 +164,7 @@ CT_mid = 0.5*(CT(Ishallow,:) + CT(Ideep,:));
 dp = (p(Ideep,:) - p(Ishallow,:));
 p_mid = 0.5*(p(Ishallow,:) + p(Ideep,:));
 
-[rho_mid, alpha_mid, beta_mid] = gsw_rho_alpha_beta(SA_mid,CT_mid,p_mid);
+[specvol_mid, alpha_mid, beta_mid] = gsw_specvol_alpha_beta(SA_mid,CT_mid,p_mid);
 
 %--------------------------------------------------------------------------
 % This function calculates rho, alpha & beta using the computationally
@@ -173,13 +172,13 @@ p_mid = 0.5*(p(Ishallow,:) + p(Ideep,:));
 % one wanted to use the full TEOS-10 Gibbs function expression for specific
 % volume, the following lines of code will enable this.
 %
-%    rho_mid = gsw_rho_CT_exact(SA_mid,CT_mid,p_mid);
+%    specvol_mid = gsw_specvol_CT_exact(SA_mid,CT_mid,p_mid);
 %    alpha_mid = gsw_alpha_CT_exact(SA_mid,CT_mid,p_mid);
 %    beta_mid = gsw_beta_CT_exact(SA_mid,CT_mid,p_mid);
 %
 %--This is the end of the alternative code to evaluate rho, alpha & beta---
 
-N2 = (grav_local.*grav_local).*(rho_mid./(db2Pa*dp)).*(beta_mid.*dSA - alpha_mid.*dCT);
+N2 = ((grav_local.*grav_local)./(specvol_mid.*db2Pa.*dp)).*(beta_mid.*dSA - alpha_mid.*dCT);
 
 if transposed
     N2 = N2.';

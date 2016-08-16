@@ -23,11 +23,12 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %  expression for specific volume of Roquet et al. (2015). 
 %
 %  This function evaluates the pressure integral of specific volume using 
-%  SA and CT interpolated with respect to pressure using the method of 
-%  Reiniger and Ross (1968).  It uses a weighted mean of (i) values 
-%  obtained from linear interpolation of the two nearest data points, and 
-%  (ii) a linear extrapolation of the pairs of data above and below.  This 
-%  "curve fitting" method resembles the use of cubic splines.  
+%  SA and CT interpolated with respect to the intergral of bouyancy 
+%  frequency N2 using the method of Reiniger and Ross (1968).  It uses a 
+%  weighted mean of (i) values obtained from linear interpolation of the 
+%  two nearest data points, and (ii) a linear extrapolation of the pairs of
+%  data above and below.  This "curve fitting" method resembles the use of
+%  cubic splines.  
 %
 %  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
@@ -59,7 +60,7 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05.6 (16th August 2016)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -76,9 +77,9 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %  Reiniger, R. F. and C. K. Ross, 1968: A method of interpolation with
 %   application to oceanographic data. Deep-Sea Res. 15, 185-193.
 % 
-%  Roquet, F., G. Madec, T.J. McDougall and P.M. Barker, 2015: Accurate
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling, 90, pp. 29-43.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -228,7 +229,7 @@ if isempty(Ibg) & isempty(Inz) & isempty(Ibp_ref)
 %--------------------------------------------------------------------------
 % This function calculates dynamic height anomaly using the computationally
 % efficient 75-term expression for specific volume in terms of SA, CT and 
-% p. If one wanted to compute dynamic height anomaly with the full TEOS-10
+% p.  If one wanted to compute dynamic height anomaly with the full TEOS-10
 % Gibbs function expression for specific volume, the following lines of 
 % code will enable this.
 %
@@ -247,48 +248,47 @@ if isempty(Ibg) & isempty(Inz) & isempty(Ibp_ref)
     D = B_av.*dp.*db2Pa;
     
     geo_strf_dyn_height0(:,Idha) = -cumsum(D);   
-   
-% "geo_strf_dyn_height0" is the dynamic height anomaly with respect
-% to p_ref = 0 (the surface).  
+    % "geo_strf_dyn_height0" is the dynamic height anomaly with respect
+    % to p_ref = 0 (the surface).  
 
     geo_strf_dyn_height_p_ref(:,Idha) = meshgrid(geo_strf_dyn_height0(p == p_ref),[1:mp]);
-% "geo_strf_dyn_height_p_ref" is the dynamic height anomaly at p_ref 
-% with respect to the surface.  
+    % "geo_strf_dyn_height_p_ref" is the dynamic height anomaly at p_ref 
+    % with respect to the surface.  
    
     geo_strf_dyn_height = geo_strf_dyn_height0 - geo_strf_dyn_height_p_ref;
-% "geo_strf_dyn_height" is the dynamic height anomaly with respect 
-% to p_ref, and is returned.  The code will  have gotten to here iff the 
-% data is "perfect" in the sense that
-%      (i)  it has very fine vertical resolution, 
-%     (ii)  each cast starts at p = 0, and
-%    (iii)  every cast contains a bottle at exactly p_ref.  
+    % "geo_strf_dyn_height" is the dynamic height anomaly with respect 
+    % to p_ref, and is returned.  The code will  have gotten to here iff the 
+    % data is "perfect" in the sense that
+    %      (i)  it has very fine vertical resolution, 
+    %     (ii)  each cast starts at p = 0, and
+    %    (iii)  every cast contains a bottle at exactly p_ref.  
 
 else
     % will need to interpolate profiles, doing so one profile at a time.
     for Iprofile = 1:np
         [Inn] = find(~isnan(p(:,Iprofile)));
-% test that there is more than 1 bottle in the profile        
+        % test that there is more than 1 bottle in the profile        
         if isempty(Inn) | length(Inn) == 1
             continue
         end
-% Test if the depth of the cast extends to the reference pressure
+        % Test if the depth of the cast extends to the reference pressure
         if (max(p(Inn,Iprofile)) >= p_ref)     
-% p_ref is shallower than the pressure of the deepest “bottle” on the
-% vertical profile, thus the dynamic height can be calculated.
+        % p_ref is shallower than the pressure of the deepest “bottle” on the
+        % vertical profile, thus the dynamic height can be calculated.
 
-% Test if there are vertical gaps between adjacent "bottles" which are
-% greater than max_dp_i, and that there is a "bottle" exactly at the 
-% reference pressure.
+        % Test if there are vertical gaps between adjacent "bottles" which are
+        % greater than max_dp_i, and that there is a "bottle" exactly at the 
+        % reference pressure.
             [Ibg_i] = find(d_p(:,Iprofile) > max_dp_i);
             [Ibrp] = find(p(Inn,Iprofile) == p_ref);
             if isempty(Ibg_i) & ~isempty(Ibrp) 
-% Vertical resultion is already good (no larger than max_dp_i, and on this 
-% vertical profile there is a "bottle" at exactly p_ref. 
+            % Vertical resultion is already good (no larger than max_dp_i, and on this 
+            % vertical profile there is a "bottle" at exactly p_ref. 
                 
- %Test if the the shallowest "bottle" is not at p = 0 dbar.  
+                % Test if the the shallowest "bottle" is not at p = 0 dbar.  
                 if min(p(Inn,Iprofile)) > 0
-                    %resolution is fine and there is a bottle at p_ref, but
-                    %there is not a bottle at p =0
+                    % resolution is fine and there is a bottle at p_ref, but
+                    % there is not a bottle at p =0
                     SA_i = SA(Inn(1),Iprofile);
                     SA_i(2:length(Inn)+1) = SA(Inn,Iprofile);
                     CT_i = CT(Inn(1),Iprofile);
@@ -298,8 +298,8 @@ else
                     [dummy Iidata Ibdata] = intersect(p_i,p(:,Iprofile));
                     [Ibpr] = find(p_i == p_ref);
                 else
-                    %resolution is fine, there is a bottle at p_ref, and
-                    %there is a bottle at p =0
+                    % resolution is fine, there is a bottle at p_ref, and
+                    % there is a bottle at p =0
                     SA_i = SA(Inn,Iprofile);
                     CT_i = CT(Inn,Iprofile);
                     p_i = p(Inn,Iprofile);
@@ -310,10 +310,10 @@ else
                 % interpolation is needed.
                 p_i = nan(2*round(max(p(Inn,Iprofile)/max_dp_i)),1);
                
-% Test if there is a bottle at p = 0.
+                % Test if there is a bottle at p = 0.
                 if min(p(Inn,Iprofile)) > 0
                     % there is not a bottle at p = 0.
-% Test if p_ref is shallower than the minimum bottle pressure of the profile
+                    % Test if p_ref is shallower than the minimum bottle pressure of the profile
                     if p_ref < min(p(Inn,Iprofile))
                         % p_ref is shallower than the minimum bottle pressure.                       
                         dp_iIbottle1 = p_ref;
@@ -339,11 +339,11 @@ else
                     p_cnt = 1;
                 end
                 
-% Test for bottle at p_ref, if it does not exist then the reference 
-% pressure will need to be an interpolated pressure.
+                % Test for bottle at p_ref, if it does not exist then the reference 
+                % pressure will need to be an interpolated pressure.
                 if any(p(Inn,Iprofile) - p_ref == 0)
-                    %There is a bottle at p_ref. Define interpolation
-                    %pressures.
+                    % There is a bottle at p_ref. Define interpolation
+                    % pressures.
                     for Ibottle = 1:(length(Inn)-1)
                         dp_iIbottle = p(Inn(Ibottle+1),Iprofile) - p(Inn(Ibottle),Iprofile);
                         p_iIbottle = p(Inn(Ibottle),Iprofile):dp_iIbottle/ceil(dp_iIbottle/max_dp_i):p(Inn(Ibottle+1),Iprofile);
@@ -352,15 +352,15 @@ else
                         p_i(p_cnt_ld:p_cnt) = p_iIbottle(2:length(p_iIbottle));
                     end
                 else
-                    %There is not a bottle at p_ref. Define interpolation
-                    %pressures to include p_ref.
+                    % There is not a bottle at p_ref. Define interpolation
+                    % pressures to include p_ref.
                     for Ibottle = 1:(length(Inn)-1)
-% Test if the bottle pair spans the reference pressure
+                        % Test if the bottle pair spans the reference pressure
                         dp_iIbottle = p(Inn(Ibottle+1),Iprofile) - p(Inn(Ibottle),Iprofile);
                         if (p(Inn(Ibottle+1),Iprofile) - p_ref > 0) & (p(Inn(Ibottle),Iprofile) - p_ref < 0)
-                            %reference pressure is spanned by bottle pairs,
-                            %need to include p_ref as an interpolated
-                            %pressure.
+                            % reference pressure is spanned by bottle pairs,
+                            % need to include p_ref as an interpolated
+                            % pressure.
                             dp_iIbottle1 = p_ref - p(Inn(Ibottle),Iprofile);
                             dp_iIbottle2 = p(Inn(Ibottle+1),Iprofile) - p_ref;
                             p_iIbottle1 = p(Inn(Ibottle),Iprofile):dp_iIbottle1/ceil(dp_iIbottle1/max_dp_i):p_ref;
@@ -368,7 +368,7 @@ else
                             p_iIbottle = p_iIbottle1(1:end-1);
                             p_iIbottle((length(p_iIbottle1)):length(p_iIbottle1)+length(p_iIbottle2)-1) =  p_iIbottle2;
                         else
-                            %reference pressure is not spanned by bottle pairs.
+                            % reference pressure is not spanned by bottle pairs.
                             p_iIbottle = p(Inn(Ibottle),Iprofile):dp_iIbottle/ceil(dp_iIbottle/max_dp_i):p(Inn(Ibottle+1),Iprofile);
                         end
                         p_cnt_ld = p_cnt+1;
@@ -388,12 +388,12 @@ else
 % "Cowboy/cowgirl" oceanographers would not action the next 7 lines of
 % code.  Instead these "rough & ready" oceanographers would implement the
 % one line of code which linearly interpolates.  
-                [Intrp] = top_pad:length(p_i);
-                [SA_i(Intrp),CT_i(Intrp)] = gsw_rr68_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
+               [Intrp] = top_pad:length(p_i);
+               [SA_i(Intrp), CT_i(Intrp)] = gsw_rr68_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
                 if any(isnan(SA_i))
                     [Inan] = find(isnan(SA_i));
                     [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
-                end
+                end  
                 
 % The linear interpolation below is for use by "cowboy/cowgirl" oceanographers only 
 % (i.e. those "rough & ready" oceanographers who do not care about accuracy).

@@ -1,6 +1,6 @@
 function in_funnel = gsw_infunnel(SA,CT,p)
 
-% gsw_infunnel        "oceanographic funnel" check for the 76-term equation
+% gsw_infunnel        "oceanographic funnel" check for the 75-term equation
 %==========================================================================
 % 
 % USAGE:  
@@ -20,7 +20,7 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %             =  1, if SA, CT and p are inside the "funnel"
 %  Note. The term "funnel" (McDougall et al., 2003) describes the range of
 %    SA, CT and p over which the error in the fit of the computationally
-%    efficient 76-term expression for specific volume in terms of SA, CT 
+%    efficient 75-term expression for specific volume in terms of SA, CT
 %    and p was calculated (Roquet et al., 2015).
 %
 % AUTHOR: 

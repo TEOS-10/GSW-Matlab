@@ -1,11 +1,11 @@
 function enthalpy_SSO_0 = gsw_enthalpy_SSO_0(p)
     
 % gsw_enthalpy_SSO_0                               enthalpy at (SSO,CT=0,p)
-%                                                            (76-term eqn.)
+%                                                            (75-term eqn.)
 %==========================================================================
 %  This function calculates enthalpy at the Standard Ocean Salinity, SSO, 
 %  and at a Conservative Temperature of zero degrees C, as a function of
-%  pressure, p, in dbar, using a streamlined version of the 76-term 
+%  pressure, p, in dbar, using a streamlined version of the 75-term
 %  computationally-efficient expression for specific volume, that is, a 
 %  streamlined version of the code "gsw_enthalpy(SA,CT,p)".
 %

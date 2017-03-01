@@ -1,6 +1,6 @@
 function p = gsw_p_from_z(z,lat,geo_strf_dyn_height,sea_surface_geopotental)
 
-% gsw_p_from_z                      pressure from height (76-term equation)
+% gsw_p_from_z                      pressure from height (75-term equation)
 %==========================================================================
 %
 % USAGE:

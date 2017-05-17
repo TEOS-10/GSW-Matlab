@@ -1,4 +1,4 @@
-function c2 = gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
+function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 
 % gsw_SA_CT_plot         plots Absolute Salinity - Conservative Temperature
 %                   profiles on a SA-CT diagram including freezing line and
@@ -133,7 +133,7 @@ if ~isempty(isopycs)
 end
 hold on;
 
-[c2] = plot(SA,CT,'.','linewidth',2*sz);
+[c2] = plot(SA,CT,'-.','linewidth',2*sz);
 
 set(c2,'Marker','o','MarkerSize',5*sz,'MarkerEdgeColor','none', ...
   'MarkerFaceColor','b');
@@ -147,11 +147,11 @@ axis([SA_min SA_max CT_min CT_max]);
 xlabel('Absolute Salinity, \it{S}\rm_A (g kg^-^1) ','fontsize',13*sz);
 ylabel('Conservative Temperature,  {\Theta} ({\circ}C)','fontsize',13*sz);
 if exist('title_string','var')
-    title([title_string],'fontsize',14*sz)
+    title([title_string],'fontsize',14*sz);
 else
-    title('\it{S}\rm_A - {\Theta}  diagram','fontsize',14*sz)
+    title('\it{S}\rm_A - {\Theta}  diagram','fontsize',14*sz);
 end
-set(gca,'tickdir','out')
+set(gca,'tickdir','out');
 
 line(SA_axis,CT_freezing,'LineStyle','--');
 

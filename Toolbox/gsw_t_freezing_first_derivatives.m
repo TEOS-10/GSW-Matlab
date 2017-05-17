@@ -9,7 +9,7 @@ function [tfreezing_SA, tfreezing_P] = gsw_t_freezing_first_derivatives(SA,p,sat
 %                gsw_t_freezing_first_derivatives(SA,p,saturation_fraction)
 %
 % DESCRIPTION:
-%  Calculates the frist derivatives of the in-situ temperature at which 
+%  Calculates the first derivatives of the in-situ temperature at which 
 %  seawater freezes with respect to Absolute Salinity SA and pressure P (in
 %  Pa).  These expressions come from differentiating the expression that
 %  defines the freezing temperature, namely the equality between the 
@@ -41,7 +41,7 @@ function [tfreezing_SA, tfreezing_P] = gsw_t_freezing_first_derivatives(SA,p,sat
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05 (20th March 2017)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

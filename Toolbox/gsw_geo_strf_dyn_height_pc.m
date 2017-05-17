@@ -51,7 +51,7 @@ function [geo_strf_dyn_height_pc, p_mid] = gsw_geo_strf_dyn_height_pc(SA,CT,delt
 % AUTHOR: 
 %  Trevor McDougall and Claire Roberts-Thomson         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06 (15th May 2017)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -132,7 +132,6 @@ p_deep = cumsum(delta_p);
 p_shallow = p_deep - delta_p;
 
 delta_h = gsw_enthalpy_diff(SA,CT,p_shallow,p_deep);
-
 dyn_height_deep = -cumsum(delta_h);
 %            This is Phi minus Phi_0 of Eqn. (3.32.2) of IOC et al. (2010).
 

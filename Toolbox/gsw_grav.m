@@ -27,7 +27,7 @@ function grav = gsw_grav(lat,p)
 % AUTHOR:  
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05 (12th September 2016)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -36,10 +36,11 @@ function grav = gsw_grav(lat,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See appendix D of this TEOS-10 Manual. 
 %
-%  Moritz (2000) Goedetic reference system 1980. J. Geodesy,74,128-133.
+%  Moritz, H., 2000: Geodetic reference system 1980. J. Geodesy, 74, 
+%   pp. 128-133.
 %
-%  Saunders, P.M., and N.P. Fofonoff (1976) Conversion of pressure to
-%   depth in the ocean. Deep-Sea Res.,pp. 109 - 111.
+%  Saunders, P.M., and N.P. Fofonoff, 1976: Conversion of pressure to
+%   depth in the ocean. Deep-Sea Res., pp. 109-111.
 %   
 %  The software is available from http://www.TEOS-10.org
 %
@@ -48,6 +49,7 @@ function grav = gsw_grav(lat,p)
 %--------------------------------------------------------------------------
 % Check variables and resize if necessary
 %--------------------------------------------------------------------------
+
 if ~(nargin == 1 | nargin == 2)
    error('gsw_grav:  Requires either one or two inputs, latitude and pressure')
 end 
@@ -61,7 +63,7 @@ end
 [mp,np] = size(p);
 
 if (ml == 1) & (nl == 1)                        % lat is a scalar.  Fill to size of p
-    lat = lat*ones(size(p));
+    lat = lat*ones(mp,np);
 elseif (nl == np) & (ml == 1)                   % lat is row vector, 
     lat = lat(ones(1,mp),:);                %   copy down each column.
 elseif (ml == mp) & (nl == 1)                   % lat is column vector,
@@ -102,13 +104,17 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
+z = gsw_z_from_p(p,lat);
+clear p
+
 gamma = 2.26e-7;
 deg2rad = pi/180;
 sinlat = sin(lat*deg2rad);  % convert to radians
-sin2 = sinlat.*sinlat;
-gs = 9.780327*(1.0 + (5.2792e-3 + (2.32e-5*sin2)).*sin2) ;
+clear lat deg2rad
 
-z = gsw_z_from_p(p,lat);
+sin2 = sinlat.*sinlat;
+clear sinlat
+gs = 9.780327*(1.0 + (5.2792e-3 + (2.32e-5*sin2)).*sin2) ;
 
 grav = gs.*(1 - gamma*z);             % z is the height corresponding to p. 
                                         % Note. In the ocean z is negative.

@@ -53,7 +53,7 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 % VERSION NUMBER: 3.05.6 (8th August, 2016)
 %
 % REFERENCES:
-%  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
+%  Griffies, S.M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
 %   NJ: Princeton University Press, 518 pp + xxxiv.
 %   
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

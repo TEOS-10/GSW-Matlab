@@ -24,11 +24,8 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %
 %  This function evaluates the pressure integral of specific volume using 
 %  SA and CT interpolated with respect to the intergral of bouyancy 
-%  frequency N2 using the method of Reiniger and Ross (1968).  It uses a 
-%  weighted mean of (i) values obtained from linear interpolation of the 
-%  two nearest data points, and (ii) a linear extrapolation of the pairs of
-%  data above and below.  This "curve fitting" method resembles the use of
-%  cubic splines.  
+%  frequency N2 using the method of Barker et al. (2017).  This "curve 
+%  fitting" method resembles the use of cubic splines.  
 %
 %  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
@@ -60,9 +57,12 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.6 (16th August 2016)
+% VERSION NUMBER: 3.06 (15th May 2017)
 %
 % REFERENCES:
+%  Barker, P.M., T.J. McDougall and S.J. Wotherspoon, 2017: An 
+%   interpolation method for oceanographic data. JOAT. (To be submitted).
+%
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
@@ -73,9 +73,6 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %   Accurate and computationally efficient algorithms for potential 
 %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
 %   pp. 730-741.
-%
-%  Reiniger, R. F. and C. K. Ross, 1968: A method of interpolation with
-%   application to oceanographic data. Deep-Sea Res. 15, 185-193.
 % 
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
@@ -389,11 +386,11 @@ else
 % code.  Instead these "rough & ready" oceanographers would implement the
 % one line of code which linearly interpolates.  
                [Intrp] = top_pad:length(p_i);
-               [SA_i(Intrp), CT_i(Intrp)] = gsw_rr68_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
-                if any(isnan(SA_i))
-                    [Inan] = find(isnan(SA_i));
-                    [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
-                end  
+               [SA_i(Intrp), CT_i(Intrp)] =  gsw_SA_CT_interp(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
+               if any(isnan(SA_i))
+                   [Inan] = find(isnan(SA_i));
+                   [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
+               end  
                 
 % The linear interpolation below is for use by "cowboy/cowgirl" oceanographers only 
 % (i.e. those "rough & ready" oceanographers who do not care about accuracy).

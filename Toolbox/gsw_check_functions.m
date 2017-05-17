@@ -2,7 +2,7 @@ if isempty(which('gsw_gibbs.html'))
     fprintf(2,'You need to add the GSW "html" subdirectory to your path. \n');
 end
 
-if isempty(which('gsw_gibbs.p'))
+if isempty(which('gsw_gibbs.m'))
     fprintf(2,'You need to add the GSW "library" subdirectory to your path. \n');
 end
 
@@ -14,7 +14,7 @@ if isempty(which('gsw_rho_t_exact.m'))
     fprintf(2,'You need to add the GSW "thermodynamics_from_t" subdirectory to your path. \n');
 end
 
-if isempty(which('gsw_gibbs.html')) | isempty(which('gsw_gibbs.p')) | ...
+if isempty(which('gsw_gibbs.html')) | isempty(which('gsw_gibbs.m')) | ...
         isempty(which('gibbs.pdf')) | isempty(which('gsw_rho_t_exact.m'))
     error('You have not added the GSW subdirectories to you MATLAB Path')
 end
@@ -618,7 +618,7 @@ if ~isempty(gsw_cf.Iu_sd)
     gsw_cf.gsw_chks = 0;
 end
 
-gsw_cf.CT_from_enthalpy = gsw_CT_from_enthalpy(gsw_cf.enthalpy,gsw_cv.SA_chck_cast,gsw_cv.p_chck_cast);
+gsw_cf.CT_from_enthalpy = gsw_CT_from_enthalpy(gsw_cv.SA_chck_cast,gsw_cf.enthalpy,gsw_cv.p_chck_cast);
 [gsw_cf.ICT_from_h] = find(abs(gsw_cv.CT_from_enthalpy - gsw_cf.CT_from_enthalpy) >= gsw_cv.CT_from_enthalpy_ca);
 if ~isempty(gsw_cf.ICT_from_h)
     fprintf(2,'gsw_CT_from_enthalpy:   Failed\n');
@@ -1215,7 +1215,7 @@ if ~isempty(gsw_cf.Icp_ice)
 end
 
 gsw_cf.chem_potential_water_ice = gsw_chem_potential_water_ice(gsw_cv.t_seaice,gsw_cv.p_Arctic);
- [gsw_cf.Ichem_potential_water_ice] = find(abs(gsw_cv.chem_potential_water_ice - gsw_cf.chem_potential_water_ice) >= gsw_cv.kappa_const_t_ice_ca);
+ [gsw_cf.Ichem_potential_water_ice] = find(abs(gsw_cv.chem_potential_water_ice - gsw_cf.chem_potential_water_ice) >= gsw_cv.chem_potential_water_ice_ca);
 if ~isempty(gsw_cf.Ichem_potential_water_ice)
     fprintf(2,'gsw_chem_potential_water_ice:   Failed\n');
     gsw_chks = 0;

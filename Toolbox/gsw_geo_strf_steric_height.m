@@ -74,7 +74,7 @@ function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06 (15th May 2017)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -91,9 +91,9 @@ function steric_height = gsw_geo_strf_steric_height(SA,CT,p,p_ref)
 %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
 %   pp. 730-741.
 %
-%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+%  Roquet, F., G. Madec, T.J. McDougall and P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling, 90, 29-43.  
 %
 %  The software is available from http://www.TEOS-10.org
 %

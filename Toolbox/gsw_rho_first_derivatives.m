@@ -1,7 +1,7 @@
 function [rho_SA, rho_CT, rho_P] = gsw_rho_first_derivatives(SA,CT,p)
 
 % gsw_rho_first_derivatives                SA, CT and p partial derivatives
-%                                             of density (76-term equation)
+%                                             of density (75-term equation)
 %==========================================================================
 % 
 % USAGE:  

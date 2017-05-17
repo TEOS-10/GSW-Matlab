@@ -52,7 +52,7 @@ function rho = gsw_rho(SA,CT,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling, 90, pp. 29-43.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -90,9 +90,9 @@ else
 end 
 
 if ms == 1
-    SA = SA';
-    CT = CT';
-    p = p';
+    SA = SA.';
+    CT = CT.';
+    p = p.';
     transposed = 1;
 else
     transposed = 0;

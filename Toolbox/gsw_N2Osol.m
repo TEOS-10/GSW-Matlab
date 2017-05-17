@@ -29,12 +29,12 @@ function N2Osol = gsw_N2Osol(SA,CT,p,long,lat)
 %  dimensions 1x1 or Mx1 or 1xN or MxN, where SA and CT are MxN.
 %
 % OUTPUT:
-%  N2Osol = solubility of nitrous oxide                         [ umol/kg ] 
+%  N2Osol = solubility of nitrous oxide                           [ mol/L ] 
 % 
 % AUTHOR:  Rich Pawlowicz, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05.9 (20th Febuary 2017)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -161,7 +161,7 @@ m3 = 0.000544;
 
 ph2odP = exp(m0 - m1*100./y - m2*log(y_100) - m3*x); % Moist air correction at 1 atm.
 
-N2Osol = (exp(a0 + a1*100./y + a2*log(y_100) + a3*y_100 ...
+N2Osol = (exp(a0 + a1*100./y + a2*log(y_100) + a3*y_100.^2 ...
            + x.*(b1 + y_100.*(b2 + b3*y_100))))./(1-ph2odP);
 
 if transposed

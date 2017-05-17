@@ -10,7 +10,7 @@ function N2Osol = gsw_N2Osol_SP_pt(SP,pt)
 %  Calculates the nitrous oxide, N2O, concentration expected at equilibrium  
 %  with air at an Absolute Pressure of 101325 Pa (sea pressure of 0 dbar) 
 %  including saturated water vapor  This function uses the solubility 
-%  coefficients as listed in Hamme and Emerson (2004).
+%  coefficients as listed in Weiss and Price (1980).
 %
 %  Note that this algorithm has not been approved by IOC and is not work 
 %  from SCOR/IAPSO Working Group 127. It is included in the GSW
@@ -24,12 +24,12 @@ function N2Osol = gsw_N2Osol_SP_pt(SP,pt)
 %  SP & pt need to have the same dimensions.
 %
 % OUTPUT:
-%  N2Osol = solubility of argon                                  [ umol/kg ] 
+%  N2Osol = solubility of nitrous oxide                           [ mol/L ] 
 % 
 % AUTHOR:  Rich Pawlowicz, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.05.9 (20th Febuary 2017)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -37,7 +37,7 @@ function N2Osol = gsw_N2Osol_SP_pt(SP,pt)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  Weiss, R.F. and B.A. Price, 1980: Nitrous oxide solubility in water and
+%  Weiss, R.F., and B.A. Price, 1980: Nitrous oxide solubility in water and
 %   seawater. Mar. Chem., 8, 347-359.
 %
 %  The software is available from http://www.TEOS-10.org
@@ -97,7 +97,7 @@ m3 = 0.000544;
 
 ph2odP = exp(m0 - m1*100./y - m2*log(y_100) - m3*x); % Moist air correction at 1 atm.
 
-N2Osol = (exp(a0 + a1*100./y + a2*log(y_100) + a3*y_100 ...
+N2Osol = (exp(a0 + a1*100./y + a2*log(y_100) + a3*y_100.^2 ...
            + x.*(b1 + y_100.*(b2 + b3*y_100))))./(1-ph2odP);
 
 if transposed

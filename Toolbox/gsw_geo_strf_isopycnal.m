@@ -73,7 +73,7 @@ function geo_strf_isopycnal = gsw_geo_strf_isopycnal(SA,CT,p,p_ref,Neutral_Densi
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06 (15th May 2017)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -242,6 +242,6 @@ geo_strf_isopycnal = part1 + part2 + part3;
 
 if transposed
     geo_strf_isopycnal = geo_strf_isopycnal.';
-end %if
+end
 
 end

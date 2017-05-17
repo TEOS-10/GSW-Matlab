@@ -52,7 +52,7 @@ function [geo_strf_isopycnal_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06 (15th May 2017)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of

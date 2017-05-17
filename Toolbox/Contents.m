@@ -105,11 +105,12 @@
 % vertical stability  
 %  gsw_Turner_Rsubrho                - Turner angle & Rsubrho
 %  gsw_Nsquared                      - buoyancy (Brunt-Vaisala) frequency squared (N^2)
-%  gsw_Nsquared                      - minimum buoyancy (Brunt-Vaisala) frequency squared (N^2)
+%  gsw_Nsquared_min                  - minimum buoyancy (Brunt-Vaisala) frequency squared (N^2)
 %  gsw_stabilise_SA_const_t	         - minimally adjust SA to produce a stable water column, keeping in-situ temperature constant
 %  gsw_stabilise_SA_CT	             - minimally adjusts SA & CT to produce a stable water column
 %  gsw_mlp	                         - mixed-layer pressure
 %  gsw_Nsquared_lowerlimit           - specified profile of minimum buoyancy frequency squared
+%  gsw_SA_CT_interp                  - interpolates SA & CT to defined pressures
 %  gsw_IPV_vs_fNsquared_ratio        - ratio of the vertical gradient of potential density
 %                                      (with reference pressure, p_ref), to the vertical 
 %                                      gradient of locally-referenced potential density
@@ -289,44 +290,45 @@
 %  gsw_CT_maxdensity_exact                              - Conservative Temperature of maximum density of seawater
 %
 % Laboratory functions, for use with densimeter measurements
-%  gsw_SA_from_rho_t_exact              - Absolute Salinity from density
-%  gsw_deltaSA_from_rho_t_exact         - Absolute Salinity Anomaly from density
-%  gsw_rho_t_exact                      - in-situ density
+%  gsw_SA_from_rho_t_exact                     - Absolute Salinity from density
+%  gsw_deltaSA_from_rho_t_exact                - Absolute Salinity Anomaly from density
+%  gsw_rho_t_exact                             - in-situ density
 %
 % basic thermodynamic properties in terms of in-situ t, based on the exact Gibbs function
-%  gsw_specvol_t_exact                        - specific volume
-%  gsw_alpha_wrt_CT_t_exact                   - thermal expansion coefficient with respect to 
-%                                               Conservative Temperature.
-%  gsw_alpha_wrt_pt_t_exact                   - thermal expansion coefficient with respect to 
-%                                               potential temperature
-%  gsw_alpha_wrt_t_exact                      - thermal expansion coefficient with respect to 
-%                                               in-situ temperature
-%  gsw_beta_const_CT_t_exact                  - saline contraction coefficient at constant 
-%                                               Conservative Temperature.
-%  gsw_beta_const_pt_t_exact                  - saline contraction coefficient at constant 
-%                                               potential temperature
-%  gsw_beta_const_t_exact                     - saline contraction coefficient at constant 
-%                                               in-situ temperature
-%  gsw_specvol_anom_t_exact                   - specific volume anomaly
-%  gsw_rho_t_exact                            - in-situ density
-%  gsw_pot_rho_t_exact                        - potential density
-%  gsw_sigma0_pt0_exact                       - sigma0 from pt0 with reference pressure of 0 dbar
-%  gsw_enthalpy_t_exact                       - enthalpy
-%  gsw_dynamic_enthalpy_t_exact               - dynamic enthalpy
-%  gsw_CT_first_derivatives_wrt_t_exact	first - derivatives of Conservative Temperature with respect to t
-%  gsw_enthalpy_first_derivatives_wrt_t_exact - first derivatives of enthalpy with respect to t
-%  gsw_sound_speed_t_exact                    - sound speed
-%  gsw_kappa_t_exact                          - isentropic compressibility
-%  gsw_kappa_const_t_exact                    - isothermal compressibility
-%  gsw_internal_energy_t_exact                - internal energy
-%  gsw_SA_from_rho_t_exact                    - Absolute Salinity from density
-%  gsw_t_from_rho_exact                       - in-situ temperature from density
-%  gsw_t_maxdensity_exact                     - in-situ temperature of maximum density of seawater
+%  gsw_specvol_t_exact                         - specific volume
+%  gsw_alpha_wrt_CT_t_exact                    - thermal expansion coefficient with respect to 
+%                                                Conservative Temperature.
+%  gsw_alpha_wrt_pt_t_exact                    - thermal expansion coefficient with respect to 
+%                                                potential temperature
+%  gsw_alpha_wrt_t_exact                       - thermal expansion coefficient with respect to 
+%                                                in-situ temperature
+%  gsw_beta_const_CT_t_exact                   - saline contraction coefficient at constant 
+%                                                Conservative Temperature.
+%  gsw_beta_const_pt_t_exact                   - saline contraction coefficient at constant 
+%                                                potential temperature
+%  gsw_beta_const_t_exact                      - saline contraction coefficient at constant 
+%                                                in-situ temperature
+%  gsw_specvol_anom_t_exact                    - specific volume anomaly
+%  gsw_rho_t_exact                             - in-situ density
+%  gsw_pot_rho_t_exact                         - potential density
+%  gsw_sigma0_pt0_exact                        - sigma0 from pt0 with reference pressure of 0 dbar
+%  gsw_enthalpy_t_exact                        - enthalpy
+%  gsw_dynamic_enthalpy_t_exact                - dynamic enthalpy
+%  gsw_CT_first_derivatives_wrt_t_exact	first  - derivatives of Conservative Temperature with respect to t
+%  gsw_enthalpy_first_derivatives_wrt_t_exact  - first derivatives of enthalpy with respect to t
+%  gsw_sound_speed_t_exact                     - sound speed
+%  gsw_kappa_t_exact                           - isentropic compressibility
+%  gsw_kappa_const_t_exact                     - isothermal compressibility
+%  gsw_internal_energy_t_exact                 - internal energy
+%  gsw_SA_from_rho_t_exact                     - Absolute Salinity from density
+%  gsw_t_from_rho_exact                        - in-situ temperature from density
+%  gsw_t_maxdensity_exact                      - in-situ temperature of maximum density of seawater
 %  gsw_cp_t_exact                              - isobaric heat capacity
 %  gsw_isochoric_heat_cap_t_exact              - isochoric heat capacity
 %  gsw_chem_potential_relative_t_exact         - relative chemical potential
 %  gsw_chem_potential_water_t_exact            - chemical potential of water in seawater
 %  gsw_chem_potential_salt_t_exact             - chemical potential of salt in seawater
+%  gsw_Gibbs_energy_t_exact                    - Gibbs energy
 %  gsw_Helmholtz_energy_t_exact                - Helmholtz energy
 %  gsw_osmotic_coefficient_t_exact             - osmotic coefficient of seawater
 %  gsw_osmotic_pressure_t_exact                - osmotic pressure of seawater
@@ -345,7 +347,11 @@
 %  gsw_entropy_part_zerop    - entropy_part evaluated at 0 dbar
 %  gsw_interp_ref_cast       - linearly interpolates the reference cast
 %  gsw_linear_interp_SA_CT   - linearly interpolates (SA,CT,p) to the desired p
-%  gsw_rr68_interp_SA_CT     - Reininger & Ross (1968) interpolation of (SA,CT,p) to the desired p%  gsw_gibbs_pt0_pt0         - gibbs(0,2,0,SA,t,0)
+%  gsw_pchip_interp_SA_CT    - pchip interpolation of (SA,CT,p) to the desired p
+%  gsw_rr68_interp_SA_CT     - Reininger & Ross (1968) interpolation of (SA,CT,p) to the desired p
+%  gsw_spline_interp_SA_CT   - spline interpolation of (SA,CT,p) to the desired p
+%  gsw_wiggliness            - amount of variation in a cast
+%  gsw_gibbs_pt0_pt0         - gibbs(0,2,0,SA,t,0)
 %  gsw_gibbs_pt0_pt0         - gibbs(0,2,0,SA,t,0)
 %  gsw_gibbs_ice_part_t      - part of gibbs_ice(1,0,t,p)
 %  gsw_gibbs_ice_pt0         - part of gibbs_ice(1,0,pt0,0)

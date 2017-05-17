@@ -323,12 +323,12 @@ else
 % "Cowboy/cowgirl" oceanographers would not action the next 6 lines of
 % code.  Instead these "rough & ready" oceanographers would implement the
 % one line of code which linearly interpolates.
-[Intrp] = top_pad:length(p_i);
-[SA_i(Intrp),CT_i(Intrp)] = gsw_rr68_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
-if any(isnan(SA_i))
-    [Inan] = find(isnan(SA_i));
-    [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
-end
+               [Intrp] = top_pad:length(p_i);
+               [SA_i(Intrp), CT_i(Intrp)] =  gsw_SA_CT_interp(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
+               if any(isnan(SA_i))
+                   [Inan] = find(isnan(SA_i));
+                   [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
+               end  
 % The linear interpolation below is for use by "cowboy/cowgirl" oceanographers only
 % (i.e. those "rough & ready" oceanographers who do not care about accuracy).
 %              [SA_i, CT_i] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i);

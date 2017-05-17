@@ -16,11 +16,11 @@ function geo_strf_PISH = gsw_geo_strf_PISH(SA,CT,p,p_ref)
 %  (see page 46 of Griffies, 2004).  
 %
 %  This function evaluates the pressure integral of specific volume using 
-%  SA and CT interpolated with respect to pressure using the method of 
-%  Reiniger and Ross (1968).  It uses a weighted mean of (i) values 
-%  obtained from linear interpolation of the two nearest data points, and 
-%  (ii) a linear extrapolation of the pairs of data above and below.  This 
-%  "curve fitting" method resembles the use of cubic splines.  
+%  SA and CT interpolated with respect to the intergral of bouyancy 
+%  frequency N2 using the method of Barker et al. (2017).  This "curve 
+%  fitting" method uses a Piecewise Cubic Hermite Interpolating Polynomial 
+%  to produce a smooth curve with minimal artificial watermasses  between
+%  the observed data points.  
 %
 %  The reference values used for the specific volume anomaly are 
 %  SSO = 35.16504 g/kg and CT = 0 deg C.  This function calculates 
@@ -59,9 +59,13 @@ function geo_strf_PISH = gsw_geo_strf_PISH(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall and Tom Haine         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (30th October 2015)
+% VERSION NUMBER: 3.06 (15th May 2017)
 %
 % REFERENCES:
+%  Barker, P.M., T.J. McDougall and S.J. Wotherspoon, 2017: An 
+%   interpolation method for oceanographic data. J. Atmosph. Ocean. Tech.
+%   (To be submitted).
+%
 %  Griffies, S.M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
 %   NJ: Princeton University Press, 518 pp + xxxiv.
 %
@@ -76,9 +80,6 @@ function geo_strf_PISH = gsw_geo_strf_PISH(SA,CT,p,p_ref)
 %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
 %   pp. 730-741.
 %
-%  Reiniger, R. F. and C. K. Ross, 1968: A method of interpolation with
-%   application to oceanographic data. Deep-Sea Res. 15, 185-193.
-% 
 %  Roquet, F., G. Madec, T.J. McDougall and P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
 %   using the TEOS-10 standard. Ocean Modelling, 90, 29-43.  
@@ -382,12 +383,12 @@ else
 % "Cowboy/cowgirl" oceanographers would not action the next 7 lines of
 % code.  Instead these "rough & ready" oceanographers would implement the
 % one line of code which linearly interpolates.  
-                [Intrp] = top_pad:length(p_i);
-                [SA_i(Intrp),CT_i(Intrp)] = gsw_rr68_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
-                if any(isnan(SA_i))
-                    [Inan] = find(isnan(SA_i));
-                    [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
-                end
+               [Intrp] = top_pad:length(p_i);
+               [SA_i(Intrp), CT_i(Intrp)] =  gsw_SA_CT_interp(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
+               if any(isnan(SA_i))
+                   [Inan] = find(isnan(SA_i));
+                   [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
+               end  
                 
 % The linear interpolation below is for use by "cowboy/cowgirl" oceanographers only 
 % (i.e. those "rough & ready" oceanographers who do not care about accuracy).

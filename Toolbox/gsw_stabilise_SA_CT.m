@@ -14,17 +14,20 @@ function [SA_out, CT_out, wiggliness, wiggliness_uc,stab_method] = gsw_stabilise
 %  values such that the minimum stability is adjusted to be atleast
 %  1/5th of the square of earth's rotation rate.
 %
-%  To conserve either heat or salt when stabilising a profile change lines
-%  497 or 498 if using Tomlab or lines 549 or 550 if using Matlab's 
-%  Optimization toolbox.
+%  When running versions of Matlab earlier than 2016b, this programme 
+%  requires either Tomlab CPLEX or IBM CPLEX or the Optimization toolbox.  
+%  For newer versions of Matlab, including 2016b, it requires either Tomlab
+%  CPLEX or IBM CPLEX. Note that if there are a up to several hundred data
+%  points in the cast then Matlab's Optimization toolbox produces 
+%  reasonable results, but if there are thousands of bottles in the cast or
+%  the best possible output is wanted then the CPLEX solver is required. 
+%  This programme will determine if a slover is available to the user, if 
+%  there is more than one it will use first in the following order Tomlab,
+%  IBM, then Matlab.
 %
-%  This programme requires either the Optimization toolbox or Tomlab CPLEX.
-%  If there are a up to several hundred data points in the cast then
-%  Matlab's Optimization toolbox produces reasonable results, but if there
-%  are thousands of bottles in the cast or the best possible output is
-%  wanted then the CPLEX solver is required. This programme will determine
-%  if Tomlab or the Optimization toolbox is available to the user, if both
-%  are available it will use Tomlab.
+%  To conserve either heat or salt when stabilising a profile change lines
+%  511 or 512 if using Tomlab, 618 or 619 if using IBM, or lines 566 or 567
+%  if using Matlab's Optimization toolbox.
 %
 %  Note that this 75-term equation has been fitted in a restricted range of
 %  parameter space, and is most accurate inside the "oceanographic funnel"
@@ -63,11 +66,12 @@ function [SA_out, CT_out, wiggliness, wiggliness_uc,stab_method] = gsw_stabilise
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.6 (24th November, 2016)
+% VERSION NUMBER: 3.06.3 (20th July, 2017)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2016: Stabilisation of hydrographic 
-%    profiles.  J. Atmosph. Ocean. Tech., submitted.
+%  Barker, P.M., and T.J. McDougall, 2017: Stabilising hydrographic 
+%   profiles with minimal change to the water masses. 
+%   J. Atmosph. Ocean. Tech.
 %
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
@@ -92,23 +96,29 @@ function [SA_out, CT_out, wiggliness, wiggliness_uc,stab_method] = gsw_stabilise
 %--------------------------------------------------------------------------
 % Check if necessary software exists
 %--------------------------------------------------------------------------
-
+[matlab_version, matlab_release_date] = version();
 if exist('tomlabVersion') == 2
     [TomV,os,TV] = tomlabVersion;
     if TV(9)
-        software_solver = 1; 
+        software_solver = 1;
     else
         fprintf('gsw_stabilise_SA_CT: No valid license for the CPLEX solver\n');
-        if license('checkout', 'Optimization_Toolbox')
-            software_solver = 2; 
+        if exist('cplexqp.p') == 6 %IBM CLPEX
+            software_solver = 3;
+        elseif license('checkout', 'Optimization_Toolbox') & datenum(matlab_release_date) < 736574
+            software_solver = 2;
+            warning off
         else
-            error('gsw_stabilise_SA_CT: No valid license for Tomlab or MATLAB-Optimization')
+            error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
         end
     end
-elseif license('checkout', 'Optimization_Toolbox')
-    software_solver = 2; 
+elseif exist('cplexqp.p') == 6 %IBM CLPEX
+    software_solver = 3;
+elseif license('checkout', 'Optimization_Toolbox')  & datenum(matlab_release_date) < 736574
+    software_solver = 2;
+    warning off
 else
-    error('gsw_stabilise_SA_CT: No valid license for Tomlab or MATLAB-Optimization')
+    error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
 end
 
 %--------------------------------------------------------------------------
@@ -251,7 +261,7 @@ wiggliness_uc = wiggliness;
 stab_method = zeros(number_profiles,1);
 
 for Iprofile = 1:number_profiles
-        
+
     [Inn] = find(~isnan(SA_in(:,Iprofile) + CT_in(:,Iprofile) + p(:,Iprofile)));
     
     if length(Inn) < 2
@@ -500,8 +510,7 @@ for Iprofile = 1:number_profiles
                                 A = zeros(A_s,two_pl);
                                 % change the last row for conservation of either property
                                 %  A(pl_pair+pl,2:2:two_pl) = ones(1,pl);      % conserve CT
-                                %  A(pl_pair+pl,1:2:two_pl-1) = ones(1,pl);    % conserve SA
-                                
+                                %  A(pl_pair+pl,1:2:two_pl-1) = ones(1,pl);    % conserve SA                               
                                 f = zeros(two_pl,1);                               
                                 b_L = -inf*ones(pl-1,1);
                                 b_L(pl:two_pl-1,1) = zeros(pl,1);
@@ -592,6 +601,62 @@ for Iprofile = 1:number_profiles
                             
                             SA_bottle = SA_bottle + x(1:2:two_pl-1);
                             CT_bottle = CT_bottle + x(2:2:two_pl);
+                         
+                    %--------------------------------------------------------------------------
+                    
+                        case 3 % IBM CPLEX solver
+                            
+                            if set_bounds == 1
+                                pl_pair = pl-1;
+                                two_pl = 2*pl;
+                                H_dummy = ones(two_pl,1);
+                                
+                                A_s = pl_pair + pl;
+                                A_i = 2*A_s + 1;
+                                A_e =  A_i*(pl_pair-1) + pl;
+                                A = zeros(A_s,two_pl);
+                                % change the last row for conservation of either property
+                                %  A(pl_pair+pl,2:2:two_pl) = ones(1,pl);      % conserve CT
+                                %  A(pl_pair+pl,1:2:two_pl-1) = ones(1,pl);    % conserve SA                            
+                                f = zeros(two_pl,1);                               
+                                b_L = -inf*ones(pl-1,1);
+                                b_L(pl:two_pl-1,1) = zeros(pl,1);
+                                x_L = -inf*ones(two_pl,1);
+                                x_U = inf*ones(two_pl,1);
+                                x_0 = zeros(two_pl,1);                                
+                                set_bounds = 0;
+                            end
+                            
+                            H_dummy(2:2:two_pl) = alpha_beta_bottle.*alpha_beta_bottle;
+                            H = sparse(1:two_pl,1:two_pl, H_dummy);
+                            
+                            A([1:A_i:A_e]) = N2_beta_mid;
+                            A([A_s+1:A_i:(A_e+A_s+1)]) = -N2_alpha_mid;
+                            A([2*A_s+1:A_i:(A_e+2*A_s+1)]) = -N2_beta_mid;
+                            A([3*A_s+1:A_i:(A_e+3*A_s+1)]) = N2_alpha_mid;
+                            A([pl:A_i:(pl+((pl-1)*A_i))]) = dCT_bottle;
+                            A([(pl+A_s):A_i:(pl+A_s+((pl-1)*A_i))]) = -dSA_bottle;
+                            
+                            b_U(pl:two_pl-1,1) = zeros(pl,1);
+                            x_L(1:2:two_pl-1) = -SA_bottle;
+                            x_U(1:2:two_pl-1) = 45 - SA_bottle;
+                            CT_lower = (gsw_CT_freezing_poly(SA_bottle,p_bottle)-super_cooling) - CT_bottle;
+                            [Inan] = find(isnan(CT_lower));
+                            CT_lower(Inan) = -12 - CT_bottle(Inan);
+                            x_L(2:2:two_pl) = CT_lower;
+                            % x_L(2:2:two_pl) = (gsw_CT_freezing_poly(SA_bottle,p_bottle)-super_cooling) - CT_bottle; %assume SA will not change by much
+                            x_U(2:2:two_pl) = 0.5; % 
+                            
+                            if any(x_U - x_L <= 0)
+                                [Iadjust_limit] = find(x_U - x_L <= 0);
+                                x_U(Iadjust_limit) = x_L(Iadjust_limit) + 0.5;
+                            end
+                            
+                            x = cplexqp(H, f, A, b_U, [], [], x_L, x_U, x_0);
+                            
+                            SA_bottle = SA_bottle +  x(1:2:two_pl-1);
+                            CT_bottle = CT_bottle + x(2:2:two_pl);
+
                             
                     %--------------------------------------------------------------------------
                     end
@@ -689,6 +754,11 @@ for Iprofile = 1:number_profiles
             CT_out(Inn,Iprofile) = CT_in(Inn,Iprofile);
         end
     end
+end
+
+if license('checkout', 'Optimization_Toolbox')
+    software_solver = 2;
+    warning on
 end
 
 if transposed
@@ -810,7 +880,7 @@ if any(N2 - Nsquared_lowerlimit < 0)
                 
         b_U = beta_mid.*dSA_mid - alpha_mid.*dCT_mid - c*(Nsquared_lowerlimit.*dp_mid).*specvol_mid;
         % Note that c = 1.2*db2Pa./(grav.^2);
-       
+
         %--------------------------------------------------------------------------
         % The solver
         %--------------------------------------------------------------------------
@@ -907,6 +977,54 @@ if any(N2 - Nsquared_lowerlimit < 0)
                 
                 SA = SA + x(1:2:two_pl-1);
                 CT = CT + x(2:2:two_pl);
+                
+        %--------------------------------------------------------------------------
+        
+             case 3 % IBM CPLEX solver
+                 
+                if set_bounds == 1
+                    pl = length(p);
+                    pl_pair = pl-1;
+                    two_pl = 2*pl;
+                    f = zeros(two_pl,1);
+                    b_L = -inf*ones(pl_pair,1);
+                    x_L = -inf*ones(two_pl,1);
+                    x_U = inf*ones(two_pl,1);
+                    x_0 = zeros(two_pl,1);
+                    H_dummy = ones(two_pl,1);
+                    A_s = pl_pair;
+                    A_i = 2*A_s + 1;
+                    A_e = A_i*(pl_pair-1);
+                    A = zeros(pl_pair,two_pl);
+                    set_bounds = 0;
+                end
+                
+                H_dummy(2:2:(two_pl)) = alpha_on_beta_bottle.*alpha_on_beta_bottle;
+                H = sparse(1:two_pl,1:two_pl, H_dummy);
+                
+                A([1:A_i:(A_e+1)]) = beta_mid;
+                A([A_s+1:A_i:(A_e+A_s+1)]) = -alpha_mid;
+                A([2*A_s+1:A_i:(A_e+2*A_s+1)]) = -beta_mid;
+                A([3*A_s+1:A_i:(A_e+3*A_s+1)]) = alpha_mid;
+                
+                x_L(1:2:two_pl-1) = -SA;
+                x_U(1:2:two_pl-1) = 45 - SA;
+                CT_lower = (gsw_CT_freezing_poly(SA,p)-super_cooling) - CT;
+                [Inan] = find(isnan(CT_lower));
+                CT_lower(Inan) = -12 - CT(Inan);
+                x_L(2:2:two_pl) = CT_lower; %assume SA will not change by much
+                x_U(2:2:two_pl) = 0.5; %40 - CT;
+                
+                if any(x_U - x_L <= 0)
+                    [Iadjust_limit] = find(x_U - x_L <= 0);
+                    x_U(Iadjust_limit) = x_L(Iadjust_limit) + 0.5;
+                end
+                
+                x = cplexqp(H, f, A, b_U, [], [], x_L, x_U, x_0);
+                
+                SA = SA + x(1:2:two_pl-1);
+                CT = CT + x(2:2:two_pl);
+
                 
         %--------------------------------------------------------------------------
         end
@@ -1325,6 +1443,23 @@ while unstable < 1
             x = quadprog(H,f,A,b_U,[],[],x_L,x_U,x_0,opts);
             
             SA_bottle = SA_bottle + x;
+            
+        case 3 % IBM CPLEX solver
+            
+            if Number_of_iterations < 2
+                H = speye(pl);
+                e = ones(pl,1);
+                A = spdiags([e,-e],0:1,pl,pl);
+                A(pl,:) = [];
+            end
+            
+            x_L = -SA_bottle;
+            x_U = 45 - SA_bottle;
+            
+            x = cplexqp(H, f, A, b_U, [], [], x_L, x_U, x_0);
+            
+            SA_bottle = SA_bottle + x;
+
     end
     
     [N2,N2_p_mid,N2_specvol_mid,N2_alpha_mid,N2_beta_mid, dSA_mid, dCT_mid, dp_mid] = gsw_Nsquared_min(SA_bottle,CT,p);

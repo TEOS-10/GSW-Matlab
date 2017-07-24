@@ -16,13 +16,16 @@ function [SA_out, wiggliness] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 %  of the square of earth's rotation rate. There are no changes made to
 %  either in-situ temperature or pressure.
 %
-%  This programme requires either the Optimization toolbox or Tomlab CPLEX.
-%  if there are a up to several hundred data points in the cast then 
-%  Matlab's Optimization toolbox produces reasonable results, but if there 
-%  are thousands of bottles in the cast or the best possible output is  
-%  wanted then the CPLEX solver is required. This programme will determine
-%  if Tomlab or the Optimization toolbox is available to the user, if both
-%  are available it will use Tomlab.
+%  When running versions of Matlab earlier than 2016b, this programme 
+%  requires either Tomlab CPLEX or IBM CPLEX or the Optimization toolbox.  
+%  For newer versions of Matlab, including 2016b, it requires either Tomlab
+%  CPLEX or IBM CPLEX. Note that if there are a up to several hundred data
+%  points in the cast then Matlab's Optimization toolbox produces 
+%  reasonable results, but if there are thousands of bottles in the cast or
+%  the best possible output is wanted then the CPLEX solver is required. 
+%  This programme will determine if a slover is available to the user, if 
+%  there is more than one it will use first in the following order Tomlab,
+%  IBM, then Matlab.
 %
 %  Note that this 75-term equation has been fitted in a restricted range of
 %  parameter space, and is most accurate inside the "oceanographic funnel"
@@ -58,11 +61,11 @@ function [SA_out, wiggliness] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.06.3 (20th July, 2017)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2016: Stabilisation of hydrographic 
-%    profiles.  J. Atmosph. Ocean. Tech., submitted.
+%  Barker, P.M., and T.J. McDougall, 2017: Stabilisation of hydrographic 
+%    profiles.  J. Atmosph. Ocean. Tech.
 %
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
@@ -88,22 +91,29 @@ function [SA_out, wiggliness] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 % Check if necessary software exists
 %--------------------------------------------------------------------------
 
+[matlab_version, matlab_release_date] = version();
 if exist('tomlabVersion') == 2
     [TomV,os,TV] = tomlabVersion;
     if TV(9)
-        software_solver = 1; 
+        software_solver = 1;
     else
         fprintf('gsw_stabilise_SA_const_t: No valid license for the CPLEX solver\n');
-        if license('checkout', 'Optimization_Toolbox')
-            software_solver = 2; 
+        if exist('cplexqp.p') == 6 %IBM CLPEX
+            software_solver = 3;
+        elseif license('checkout', 'Optimization_Toolbox') & datenum(matlab_release_date) < 736574
+            software_solver = 2;
+            warning off
         else
-            error('gsw_stabilise_SA_const_t: No valid license for Tomlab or MATLAB-Optimization')
+            error('gsw_stabilise_SA_const_t: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
         end
     end
-elseif license('checkout', 'Optimization_Toolbox')
-    software_solver = 2; 
+elseif exist('cplexqp.p') == 6 %IBM CLPEX
+    software_solver = 3;
+elseif license('checkout', 'Optimization_Toolbox')  & datenum(matlab_release_date) < 736574
+    software_solver = 2;
+    warning off
 else
-    error('gsw_stabilise_SA_const_t: No valid license for Tomlab or MATLAB-Optimization')
+    error('gsw_stabilise_SA_const_t: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
 end
 
 %--------------------------------------------------------------------------
@@ -357,6 +367,28 @@ for Iprofile = 1:number_profiles
                       
                         SA_tmp = SA_tmp + x;
                         
+                 %--------------------------------------------------------------------------
+                        
+                    case 3 % IBM CPLEX solver
+                        
+                        if set_bounds == 1
+                            H = speye(pl);
+                            e = ones(pl,1);
+                            A = spdiags([e,-e],0:1,pl,pl);
+                            A(pl,:) = [];
+                            f = zeros(pl,1);
+                            b_L = -inf*ones(pl-1,1);
+                            x_U = inf*ones(pl,1);
+                            x_0 = zeros(pl,1);
+                            set_bounds = 0;
+                        end
+                        
+                        x_L = -SA_tmp;
+                                                    
+                        x = cplexqp(H, f, A, b_U, [], [], x_L, x_U, x_0);
+                        
+                        SA_tmp = SA_tmp + x;                        
+
                 %--------------------------------------------------------------------------
                 end
                 %--------------------------------------------------------------------------

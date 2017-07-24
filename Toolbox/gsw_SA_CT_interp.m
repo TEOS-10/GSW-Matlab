@@ -50,7 +50,7 @@ function [SA_i, CT_i] = gsw_SA_CT_interp(SA,CT,p,p_i)
 % AUTHOR:
 %  Paul Barker, Trevor McDougall and Simon Wotherspoon [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.6 (13th December, 2016)
+% VERSION NUMBER: 3.06.1 (22nd June, 2017)
 %
 % References
 %  Barker, P.M., T.J. McDougall and S.J. Wotherspoon, 2017: An 
@@ -178,9 +178,15 @@ for Iprofile = 1:number_of_profiles
     [N2, pmid] = gsw_Nsquared(SA_tmp,CT_tmp,p_tmp);
 
     if any(N2 <= 0)
-        if exist('tomlabVersion') == 2 | license('checkout', 'Optimization_Toolbox') == 1
-            [SA_tmp, CT_tmp] = gsw_stabilise_SA_CT(SA_tmp,CT_tmp,p_tmp);      
-        [N2, pmid] = gsw_Nsquared(SA_tmp,CT_tmp,p_tmp);
+        [matlab_version, matlab_release_date] = version();
+        if exist('tomlabVersion') == 2 | ...
+                (license('checkout', 'Optimization_Toolbox') == 1 & datenum(matlab_release_date) < 736574) | ...
+                exist('cplexqp.p') == 6  
+            if license('checkout', 'Optimization_Toolbox') == 1
+                warning off  
+            end
+            [SA_tmp, CT_tmp] = gsw_stabilise_SA_CT(SA_tmp,CT_tmp,p_tmp);
+            [N2, pmid] = gsw_Nsquared(SA_tmp,CT_tmp,p_tmp);
         end
     end
 
@@ -306,7 +312,9 @@ for Iprofile = 1:number_of_profiles
             CT_i_all(p_i_tmp < min_p_tmp) = CT_i_all(I3(Iminp));
         end
                 
-        if exist('tomlabVersion') == 2 | license('checkout', 'Optimization_Toolbox') == 1
+        if exist('tomlabVersion') == 2 | ...
+                (license('checkout', 'Optimization_Toolbox') == 1 & length(I1) < 2000) | ...
+                exist('cplexqp.p') == 6  
             [SA_out, CT_out] = gsw_stabilise_SA_CT(SA_i_all(I1),CT_i_all(I1),p_all(I1));
             SA_i(Iout,Iprofile) = SA_out(:);
             CT_i(Iout,Iprofile) = CT_out(:);

@@ -1,4 +1,4 @@
-function [SA_out, wiggliness] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
+function [SA_out] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 
 % gsw_stabilise_SA_const_t             adjusts salinities (SA) to produce a
 %                             water column stablised to be neutral, in-situ
@@ -64,8 +64,9 @@ function [SA_out, wiggliness] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 % VERSION NUMBER: 3.06.3 (20th July, 2017)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2017: Stabilisation of hydrographic 
-%    profiles.  J. Atmosph. Ocean. Tech.
+%  Barker, P.M., and T.J. McDougall, 2017: Stabilising hydrographic 
+%   profiles with minimal change to the water masses. 
+%   J. Atmosph. Ocean. Tech.
 %
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
@@ -254,7 +255,6 @@ t(p < -1.5 | p > 12000) = NaN;
 %--------------------------------------------------------------------------
 
 SA_out = NaN(mp,number_profiles);
-wiggliness = NaN(number_profiles,1);
 
 for Iprofile = 1:number_profiles
        
@@ -428,7 +428,6 @@ for Iprofile = 1:number_profiles
                 
                 [Iunstable] = find(N2_tmp - Nsquared_lowerlimit < 0);
                 if isempty(Iunstable) | Number_of_iterations > 10 | length(Inn) < 2
-                    wiggliness(Iprofile) = gsw_wiggliness(SA_tmp,t_tmp,p_tmp); 
                     unstable = 1;
                 end
             end
@@ -506,7 +505,7 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp, N2_beta_ratio] 
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (6th June, 2016)
+% VERSION NUMBER: 3.06.4 (28th July, 2017)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 

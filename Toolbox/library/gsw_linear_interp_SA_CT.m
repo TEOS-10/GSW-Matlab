@@ -5,9 +5,9 @@ function [SA_i, CT_i] = gsw_linear_interp_SA_CT(SA,CT,p,p_i)
 % This function interpolates the cast with respect to the interpolating 
 % variable p. This function finds the values of SA, CT at p_i on this cast.
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06 (24th May 2019)
 %
-% This fuction was adapted from Matlab's interp1q.
+% This function was adapted from Matlab's interp1q.
 %==========================================================================
 
 p = p(:);
@@ -15,7 +15,13 @@ SA = SA(:);
 CT = CT(:);
 p_i = p_i(:);
 
+if sum(~isnan(SA+CT+p)) < 2
+    error('gsw_linear_interp_SA_CT:  Requires at least 2 values in the cast data')
+end
+
 [min_p,Imin_p] = min(p);
+SA_i = NaN(size(p_i));
+CT_i = SA_i;
 
 SA_i(p_i <= min_p) = SA(Imin_p);% Set equal to the shallowest bottle.
 CT_i(p_i <= min_p) = CT(Imin_p);

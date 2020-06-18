@@ -43,7 +43,7 @@ function distance = gsw_distance(long,lat,p)
 % MODIFIED:
 %  4th April, 2011 by Paul Barker and Trevor McDougall. 
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCE:
 %  http://www.eos.ubc.ca/~rich/map.html
@@ -119,13 +119,13 @@ end %if
 pi180 = pi/180;
 earth_radius = 6371000;                         % Earth's radius in metres.
 
-dlong = pi180*(long(:,2:nla)-long(:,1:nla-1));
-dlat = pi180*(lat(:,2:nla)-lat(:,1:nla-1));
+dlong = pi180*(long(:,2:nla) - long(:,1:nla-1));
+dlat = pi180*(lat(:,2:nla) - lat(:,1:nla-1));
 
 a = (sin(0.5*dlat)).^2 + cos(lat(:,1:nla-1)*pi180).*cos(lat(:,2:nla)*pi180).*(sin(0.5*dlong)).^2;
 angles = 2 * atan2(sqrt(a),sqrt(1-a));
 
-p_mid = 0.5*(p(:,1:nla-1) + p(:,1:nla-1));
+p_mid = 0.5*(p(:,1:nla-1) + p(:,2:nla));
 lat_mid = 0.5*(lat(:,1:nla-1) + lat(:,2:nla));
 z = gsw_z_from_p(p_mid,lat_mid);        % Note. z is height and is negative
                                                             % in the ocean.

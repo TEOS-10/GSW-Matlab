@@ -66,12 +66,13 @@ function [SA_i, CT_i] = gsw_SA_CT_interp(SA,CT,p,p_i)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.1 (11th September, 2019)
+% VERSION NUMBER: 3.06.12 (15th June, 2020)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2019: Two interpolation methods using
-%   Multiply-Rotated Piecewise Cubic Hermite Interpolating Polynomials. 
-%   J. Atmosph. Ocean. Tech. (Submitted).
+%  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+%   multiply-rotated piecewise cubic hermite interpolating polynomials. 
+%   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+%   doi: 10.1175/JTECH-D-19-0211.1. 
 %
 %  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003:
 %   Accurate and computationally efficient algorithms for potential
@@ -201,7 +202,7 @@ for Iprofile = 1:number_of_profiles
         CT_obs = accumarray(Iunique,CT_sort,[],@mean);
         pl = length(p_obs);
     end
-    
+        
     p_all = unique(sort([p_obs; p_i_tmp]));
     [Iobs_plus_interp] = find(p_all >= min(p_obs) & p_all <= max(p_obs));
     [Isurf_and_obs_plus_interp] = find(p_all <= max(p_obs));

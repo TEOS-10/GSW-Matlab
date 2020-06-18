@@ -59,12 +59,13 @@ function tracer_i = gsw_tracer_interp(tracer,p,p_i,scale_factor)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.1 (11th September, 2019)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2019: Two interpolation methods using
-%   Multiply-Rotated Piecewise Cubic Hermite Interpolating Polynomials. 
-%   J. Atmosph. Ocean. Tech. (Submitted).
+%  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+%   multiply-rotated piecewise cubic hermite interpolating polynomials. 
+%   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+%   doi: 10.1175/JTECH-D-19-0211.1. 
 %
 %  The software is available from http://www.TEOS-10.org
 %

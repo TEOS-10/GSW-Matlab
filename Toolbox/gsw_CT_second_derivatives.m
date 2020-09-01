@@ -44,7 +44,7 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (1st September, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -63,11 +63,11 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 
 if ~(nargin == 2)
    error('gsw_CT_second_derivatives:  Requires two inputs')
-end %if
+end
 
 if ~(nargout == 3)
    error('gsw_CT_second_derivatives:  Requires three outputs')
-end %if
+end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(pt);
@@ -109,8 +109,8 @@ pt_u = pt + dpt;
 [CT_SA_l, CT_pt_l] = gsw_CT_first_derivatives(SA,pt_l);
 [CT_SA_u, CT_pt_u] = gsw_CT_first_derivatives(SA,pt_u);
 
-CT_SA_pt = (CT_SA_u - CT_SA_l)./(pt_u - pt_l);
-CT_pt_pt = (CT_pt_u - CT_pt_l)./(pt_u - pt_l);
+CT_SA_pt = (CT_SA_u - CT_SA_l)./(2.*dpt);
+CT_pt_pt = (CT_pt_u - CT_pt_l)./(2.*dpt);
 
 if transposed
     CT_SA_SA = CT_SA_SA.';

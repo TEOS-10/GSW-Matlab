@@ -51,14 +51,14 @@ function [v_SA_SA, v_SA_CT, v_CT_CT, v_SA_P, v_CT_P] = gsw_specvol_second_deriva
 %  v_CT_CT  =  The second derivative of specific volume with respect to 
 %              CT at constant SA and p.                  [ (m^3/kg) K^-2) ]
 %  v_SA_P  =  The second derivative of specific volume with respect to 
-%              SA and P at constant CT.                  [ (m^3/kg) Pa^-1 ]
+%              SA and P at constant CT.        [ (m^3/kg)(g/kg)^-1 Pa^-1  ]
 %  v_CT_P  =  The second derivative of specific volume with respect to 
 %              CT and P at constant SA.             [ (m^3/kg) K^-1 Pa^-1 ]
 %
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.15 (26th May, 2022)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -68,7 +68,7 @@ function [v_SA_SA, v_SA_CT, v_CT_CT, v_SA_P, v_CT_P] = gsw_specvol_second_deriva
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %   
 %  This software is available from http://www.TEOS-10.org
 %
@@ -319,7 +319,7 @@ v_SA_P_part = b001 + xs.*(b101 + xs.*(b201 + xs.*(b301 + b401*xs))) + ys.*(b011 
     + b302*xs)) + ys.*(b012 + xs.*(b112 + b212*xs) + ys.*(b022 + b122*xs ...
     + b032*ys))) + z.*(3*(b003 + b103*xs + b013*ys) + 4*b004*z));
 
-v_SA_P = 1e-8.*0.5.*sfac.*v_SA_P_part;
+v_SA_P = 1e-8.*0.5.*sfac.*v_SA_P_part./xs;
 
 v_CT_P_part =  a001 + xs.*(a101 + xs.*(a201 + xs.*(a301 + a401*xs))) + ys.*(a011 ...
       + xs.*(a111 + xs.*(a211 + a311*xs)) + ys.*(a021 + xs.*(a121 + a221*xs) ...

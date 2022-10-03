@@ -43,7 +43,7 @@ function [SAAR, in_ocean] = gsw_SAAR(p,long,lat)
 %  Paul Barker and Trevor McDougall 
 %  Acknowledgment. Matlab programming assisance from Sunke Schmidtko.
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -261,7 +261,7 @@ function SAAR = gsw_saar_add_mean(saar)
 %  Paul Barker and Trevor McDougall
 %  Aknowlegments. Matlab programming assisance from Sjoerd Groeskamp.
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -335,7 +335,7 @@ function SAAR = gsw_saar_add_barrier(saar,long,lat,longs_ref,lats_ref,dlongs_ref
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

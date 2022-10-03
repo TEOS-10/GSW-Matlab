@@ -34,7 +34,7 @@ function [t,t_multiple] = gsw_t_from_rho_exact(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -42,7 +42,7 @@ function [t,t_multiple] = gsw_t_from_rho_exact(rho,SA,p)
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2014: A simple modification of 
+%  McDougall, T.J., and S.J. Wotherspoon, 2014: A simple modification of 
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %
@@ -56,7 +56,7 @@ function [t,t_multiple] = gsw_t_from_rho_exact(rho,SA,p)
 
 if ~(nargin==3)
     error('gsw_t_from_rho_exact:  Requires three inputs')
-end %if
+end 
 
 [md,nd] = size(rho);
 [ms,ns] = size(SA);
@@ -79,7 +79,7 @@ elseif (md == mp) & (nd == np)
     % ok
 else
     error('gsw_t_from_rho_exact: Inputs array dimensions arguments do not agree')
-end %if
+end
 
 if md == 1
     rho = rho.';
@@ -94,125 +94,70 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% alpha_limit is the positive value of the thermal expansion coefficient
-% which is used at the freezing temperature to distinguish between
-% I_salty and I_fresh.
-alpha_limit = 1e-5;
-
-% rec_half_rho_TT is a constant representing the reciprocal of half the
-% second derivative of density with respect to temperature near the
-% temperature of maximum density.
-rec_half_rho_TT = -110.0;
-
-t = nan(size(SA));
-t_multiple = t;
-
-% This line ensures that SA is non-negative.
-SA(SA < 0) = 0;
-SA(SA > 120 | t < -12 | t > 80 | p > 12000) = NaN;
+SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;   % SA out of range, set to NaN
 
 rho_40 = gsw_rho_t_exact(SA,40*ones(size(SA)),p);
-    
-SA((rho - rho_40) < 0) = NaN;
+SA((rho - rho_40) < 0) = NaN;                   % rho too light, set to NaN
 
+if any(isnan(SA(:) + p(:) + rho(:)))
+    [I_bad] = find(isnan(SA + p + rho));
+    SA(I_bad) = NaN;
+end
 t_max_rho = gsw_t_maxdensity_exact(SA,p);
-rho_max = gsw_rho_t_exact(SA,t_max_rho,p);
-rho_extreme = rho_max;
-t_freezing = gsw_t_freezing(SA,p); % this assumes that the seawater is always saturated with air
-rho_freezing = gsw_rho_t_exact(SA,t_freezing,p);
+max_rho = gsw_rho_t_exact(SA,t_max_rho,p);
+v_t_t = gsw_gibbs(0,2,1,SA,t_max_rho,p);
+rho_t_t = - v_t_t.*rho.*rho;                          % This is approximate 
+deriv_lin = (rho_40 - max_rho)./(40 - t_max_rho);
+discrim = deriv_lin.*deriv_lin - 4.*0.5.*rho_t_t.*(max_rho - rho);
+discrim(discrim < 0) = 0;
+t = t_max_rho + 2.*(max_rho - rho)./(-deriv_lin + sqrt(discrim));
 
-%set rhos greater than those at the freexing point to be equal to the freezing point.
-rho_extreme((t_freezing - t_max_rho) > 0) = rho_freezing((t_freezing - t_max_rho) > 0);
-% set rho that are greater than the extreme limits to NaN.
-SA(rho > rho_extreme) = NaN;
-
-SA(isnan(SA + p + rho)) = NaN;
-
-alpha_freezing = gsw_alpha_wrt_t_exact(SA,t_freezing,p);
-
-if any(alpha_freezing(:) > alpha_limit)
-    [I_salty] = find(alpha_freezing > alpha_limit);
-
-    t_diff = 40*ones(size(I_salty)) - t_freezing(I_salty);
-    top = rho_40(I_salty) - rho_freezing(I_salty) ...
-           + rho_freezing(I_salty).*alpha_freezing(I_salty).*t_diff;
-    a = top./(t_diff.*t_diff);
-    b = - rho_freezing(I_salty).*alpha_freezing(I_salty);
-    c = rho_freezing(I_salty) - rho(I_salty);
-    sqrt_disc = sqrt(b.*b - 4*a.*c);
-    % the value of t(I_salty) here is the initial guess at t in the range of
-    % I_salty.
-    t(I_salty) = t_freezing(I_salty) + 0.5*(-b - sqrt_disc)./a;
-end
-
-if any(alpha_freezing(:) <= alpha_limit)
-    [I_fresh] = find(alpha_freezing <= alpha_limit);
-
-    t_diff = 40*ones(size(I_fresh)) - t_max_rho(I_fresh);
-    factor = (rho_max(I_fresh) - rho(I_fresh))./ ...
-               (rho_max(I_fresh) - rho_40(I_fresh));
-    delta_t = t_diff.*sqrt(factor);
-    
-    if any(delta_t > 5)
-        [I_fresh_NR] = find(delta_t > 5);
-        t(I_fresh(I_fresh_NR)) = t_max_rho(I_fresh(I_fresh_NR)) + delta_t(I_fresh_NR);
-    end
-    
-    if any(delta_t <= 5)
-       [I_quad] = find(delta_t <= 5);
-        
-        t_a = nan(size(SA));
-        % set the initial value of the quadratic solution roots.
-        t_a(I_fresh(I_quad)) = t_max_rho(I_fresh(I_quad)) + ...
-            sqrt(rec_half_rho_TT*(rho(I_fresh(I_quad)) - rho_max(I_fresh(I_quad))));       
-        for Number_of_iterations = 1:7
-            t_old = t_a;
-            rho_old = gsw_rho_t_exact(SA,t_old,p);
-            factorqa = (rho_max - rho)./(rho_max - rho_old);
-            t_a = t_max_rho + (t_old - t_max_rho).*sqrt(factorqa);
-        end        
-% set temperatures that are less than the freezing point to NaN 
-        t_a(t_freezing - t_a < 0) = NaN;
-        
-        t_b = nan(size(SA));
-        % set the initial value of the quadratic solution routes.
-        t_b(I_fresh(I_quad)) = t_max_rho(I_fresh(I_quad)) - ...
-            sqrt(rec_half_rho_TT*(rho(I_fresh(I_quad)) - rho_max(I_fresh(I_quad))));    
-        for Number_of_iterations = 1:7
-            t_old = t_b;
-            rho_old = gsw_rho_t_exact(SA,t_old,p);
-            factorqb = (rho_max - rho)./(rho_max - rho_old);
-            t_b = t_max_rho + (t_old - t_max_rho).*sqrt(factorqb);
-        end
-% After seven iterations of this quadratic iterative procedure,
-% the error in rho is no larger than 4.6x10^-13 kg/m^3.
-% set temperatures that are less than the freezing point to NaN 
-        t_b(t_freezing - t_b < 0) = NaN;
-    end
-end
-
-% begin the modified Newton-Raphson iterative method (McDougall and 
-% Wotherspoon, 2014), which will only operate on non-NaN t data.
-
-v_lab = ones(size(rho))./rho;
-v_t = gsw_gibbs(0,1,1,SA,t,p);
-for Number_of_iterations = 1:4
+%  Having found this initial value of t, begin the iterative solution
+%  for the t_upper part, the solution warmer than the TMD
+for Number_of_iterations = 1:3
+    v_t = gsw_gibbs(0,1,1,SA,t,p);
+    rho_t = -v_t.*rho.*rho;                           % This is approximate
+    v_t_t = gsw_gibbs(0,2,1,SA,t,p);
+    rho_t_t = -v_t_t.*rho.*rho;                       % This is approximate
+       b = rho_t;
+       a = 0.5.*rho_t_t;
+       c = gsw_rho_t_exact(SA,t,p) - rho;    
+       discrim = b.*b - 4.*a.*c;
+       discrim(discrim < 0) = 0;
     t_old = t;
-    delta_v = gsw_gibbs(0,0,1,SA,t_old,p) - v_lab;
-    t = t_old - delta_v./v_t ; % this is half way through the modified N-R method
-    t_mean = 0.5*(t + t_old);
-    v_t = gsw_gibbs(0,1,1,SA,t_mean,p);
-    t = t_old - delta_v./v_t ;
+    t = t_old + (2.*c)./(-b + sqrt(discrim));
+    
 end
+t_upper = t;
+   
+%  Now start the t_multiple part, the solution cooler than the TMD
+t = 2.*t_max_rho - t_upper;
+for Number_of_iterations = 1:6
+    v_t = gsw_gibbs(0,1,1,SA,t,p);
+    rho_t = -v_t.*rho.*rho;                           % This is approximate
+    v_t_t = gsw_gibbs(0,2,1,SA,t,p);
+    rho_t_t = -v_t_t.*rho.*rho;                       % This is approximate
+       b = rho_t;
+       a = 0.5.*rho_t_t;
+       c = gsw_rho_t_exact(SA,t,p) - rho;
+       discrim = b.*b - 4.*a.*c;
+       discrim(discrim < 0) = 0;
+    t_old = t;
+    t = t_old + (2.*c)./(-b - sqrt(discrim));
+                                    % Note the sign change of the sqrt term
+end
+t_multiple = t;
+    
+% Set values outside the relevant bounds to NaNs 
+t_freezing = gsw_t_freezing(SA,p,0);    % This assumes that the seawater is 
+                                        % always unsaturated with air
+                                       
+t_upper(t_upper < t_freezing) = NaN;
+t_upper(t_upper < t_max_rho) = NaN;
+t_multiple(t_multiple < t_freezing) = NaN;
+t_multiple(t_multiple > t_max_rho) = NaN;
 
-if exist('t_a','var')
-    t(~isnan(t_a)) = t_a(~isnan(t_a));
-end
-if exist('t_b','var')
-    t_multiple(~isnan(t_b)) = t_b(~isnan(t_b));
-end
-% After three iterations of this modified Newton-Raphson iteration,
-% the error in rho is no larger than 4.6x10^-13 kg/m^3.
+   t = t_upper;
 
 if transposed
     t = t.';

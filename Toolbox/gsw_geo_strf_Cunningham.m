@@ -47,7 +47,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06 (15th May 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  Cunningham, S.A., 2000: Circulation and volume flux of the North 
@@ -67,7 +67,7 @@ function geo_strf_Cunningham = gsw_geo_strf_Cunningham(SA,CT,p,p_ref)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  The software is available from http://www.TEOS-10.org
 %

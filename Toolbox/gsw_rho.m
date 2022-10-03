@@ -36,7 +36,7 @@ function rho = gsw_rho(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th November, 2015)
+% VERSION NUMBER: 3.06.13 (1st June, 2021)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -64,7 +64,7 @@ function rho = gsw_rho(SA,CT,p)
 
 if ~(nargin == 3)
    error('gsw_rho:  Requires three inputs')
-end 
+end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -74,28 +74,19 @@ if (mt ~= ms | nt ~= ns)
     error('gsw_rho: SA and CT must have same dimensions')
 end
 
-if (mp == 1) & (np == 1)                    % p scalar - fill to size of SA
+if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
     p = p*ones(size(SA));
-elseif (ns == np) & (mp == 1)               % p is row vector,
-    p = p(ones(1,ms), :);                   % copy down each column.
-elseif (ms == mp) & (np == 1)               % p is column vector,
-    p = p(:,ones(1,ns));                    % copy across each row.
-elseif (ns == mp) & (np == 1)               % p is a transposed row vector,
-    p = p.';                                 % transposed then
-    p = p(ones(1,ms), :);                   % copy down each column.
+elseif (ns == np) & (mp == 1)         % p is row vector,
+    p = p(ones(1,ms), :);              % copy down each column.
+elseif (ms == mp) & (np == 1)         % p is column vector,
+    p = p(:,ones(1,ns));               % copy across each row.
+elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+    p = p.';                              % transposed then
+    p = p(ones(1,ms), :);                % copy down each column.
 elseif (ms == mp) & (ns == np)
     % ok
 else
-    error('gsw_rho: Inputs array dimensions arguments do not agree')
-end 
-
-if ms == 1
-    SA = SA.';
-    CT = CT.';
-    p = p.';
-    transposed = 1;
-else
-    transposed = 0;
+    error('gsw_rho: The dimensions of p do not agree')
 end
 
 %--------------------------------------------------------------------------
@@ -225,9 +216,6 @@ rho = 1./v;
 %
 %-----------------This is the end of the alternative code------------------
 
-if transposed
-    rho = rho.';
-end
 
 end
 

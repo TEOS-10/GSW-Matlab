@@ -33,7 +33,7 @@ function spiciness2 = gsw_spiciness2(SA,CT)
 % AUTHOR: 
 %  Oliver Krzysik and Trevor McDougall                 [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (5th December, 2014)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,12 +46,12 @@ function spiciness2 = gsw_spiciness2(SA,CT)
 %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
 %   pp. 730-741.
 %
-%  McDougall, T.J., and O.A. Krzysik, 2015: Spiciness. To be submitted to
-%   the Journal of Marine Research.  
+%  McDougall, T.J., and O.A. Krzysik, 2015: Spiciness. Journal of Marine 
+%   Research, 73, 141-152.
 %
-%  Roquet, F., G. Madec, T.J. McDougall and P.M. Barker, 2015: Accurate
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %   
 %  The software is available from http://www.TEOS-10.org
 %

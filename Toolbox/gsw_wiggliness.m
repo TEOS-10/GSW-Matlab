@@ -35,7 +35,7 @@ function wiggliness = gsw_wiggliness(SA,CT,p)
 % AUTHOR:  
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06 (12th May, 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

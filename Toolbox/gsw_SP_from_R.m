@@ -30,7 +30,7 @@ function SP = gsw_SP_from_R(R,t,p)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall and Rich Pawlowicz    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  Hill, K.D., T.M. Dauphinee & D.J. Woods, 1986: The extension of the 

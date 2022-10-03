@@ -30,7 +30,7 @@ function data_i = gsw_pchip_interp(data,p,p_i)
 % MODIFIED:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.6 (10th September 2019)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % References:
 %  Forsythe, G.E., D. Kahaner, C.B. Moler and S.G. Nash, 1988: Numerical 

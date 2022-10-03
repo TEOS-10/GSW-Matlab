@@ -5,7 +5,7 @@ function [SA_i, CT_i] = gsw_linear_interp_SA_CT(SA,CT,p,p_i)
 % This function interpolates the cast with respect to the interpolating 
 % variable p. This function finds the values of SA, CT at p_i on this cast.
 %
-% VERSION NUMBER: 3.06 (24th May 2019)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % This function was adapted from Matlab's interp1q.
 %==========================================================================

@@ -33,7 +33,7 @@ function specvol = gsw_specvol(SA,CT,p)
 %  Fabien Roquet, Gurvan Madec, Trevor McDougall & Paul Barker
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (2nd February, 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 % 
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -48,7 +48,7 @@ function specvol = gsw_specvol(SA,CT,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  This software is available from http://www.TEOS-10.org
 % 
@@ -101,9 +101,9 @@ end
 % This line ensures that SA is non-negative.
 SA(SA < 0) = 0;
 
-%deltaS = 24;
-sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
-offset = 5.971840214030754e-1;                      % offset = deltaS*sfac.
+sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35))
+                                             % deltaSA = 24 g/kg
+offset = 5.971840214030754e-1;               % offset = deltaSA*sfac
 
 x2 = sfac.*SA;
 xs = sqrt(x2 + offset);

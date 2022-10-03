@@ -16,11 +16,10 @@ function geo_strf_PISH = gsw_geo_strf_PISH(SA,CT,p,p_ref)
 %  (see page 46 of Griffies, 2004).  
 %
 %  This function evaluates the pressure integral of specific volume using 
-%  SA and CT interpolated with respect to the intergral of bouyancy 
-%  frequency N2 using the method of Barker et al. (2017).  This "curve 
-%  fitting" method uses a Piecewise Cubic Hermite Interpolating Polynomial 
-%  to produce a smooth curve with minimal artificial watermasses  between
-%  the observed data points.  
+%  SA and CT interpolated using the MRST-PCHIP method of Barker and 
+%  McDougall (2020).  This "curve fitting" method uses a Piecewise Cubic 
+%  Hermite Interpolating Polynomial to produce a smooth curve with minimal
+%  artificial watermasses between the observed data points.  
 %
 %  The reference values used for the specific volume anomaly are 
 %  SSO = 35.16504 g/kg and CT = 0 deg C.  This function calculates 
@@ -59,12 +58,13 @@ function geo_strf_PISH = gsw_geo_strf_PISH(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker, Trevor McDougall and Tom Haine         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06 (15th May 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
-%  Barker, P.M., T.J. McDougall and S.J. Wotherspoon, 2017: An 
-%   interpolation method for oceanographic data. J. Atmosph. Ocean. Tech.
-%   (To be submitted).
+%  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+%   multiply-rotated piecewise cubic hermite interpolating polynomials. 
+%   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+%   doi: 10.1175/JTECH-D-19-0211.1. 
 %
 %  Griffies, S.M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
 %   NJ: Princeton University Press, 518 pp + xxxiv.

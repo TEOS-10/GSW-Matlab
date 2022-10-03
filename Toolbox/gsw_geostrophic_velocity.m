@@ -16,11 +16,11 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 % INPUT:
 %  geo_strf = geostrophic streamfunction.  This geostrophic streamfunction
 %             can be any of, for example,
-%             (1) geo_strf_dyn_height_CT (in an isobaric surface)
-%             (2) geo_strf_Montgomery_CT (in a specific volume anomaly surface)
-%             (3) geo_strf_Cunninhgam_CT (in an approximately neutral surface
+%             (1) geo_strf_dyn_height (in an isobaric surface)
+%             (2) geo_strf_Montgomery (in a specific volume anomaly surface)
+%             (3) geo_strf_Cunninhgam (in an approximately neutral surface
 %                 e.g. a potential denisty surface).
-%             (4) geo_strf_isopycnal_CT (in an approximately neutral surface
+%             (4) geo_strf_isopycnal (in an approximately neutral surface
 %                 e.g. a potential denisty surface, a Neutral Density
 %                 surface or an omega surface (Klocker et al., 2009)).
 %
@@ -62,7 +62,7 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 % AUTHOR: 
 %  Paul Barker, Trevor McDougall and Phil Morgan       [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06 (15th May 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  Cunningham, S. A., 2000: Circulation and volume flux of the North 
@@ -100,7 +100,7 @@ function [geostrophic_velocity, mid_lat, mid_long] = gsw_geostrophic_velocity(ge
 
 if ~(nargin == 3 | nargin == 4)
    error('gsw_geostrophic_velocity:  Requires three or four inputs')
-end %if
+end 
 
 [mg,ng] = size(geo_strf);
 [mlo,nlo] = size(long);
@@ -117,7 +117,7 @@ elseif (mg == mlo) & (ng == nlo)
     % ok
 else
     error('gsw_geostrophic_velocity: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 long(long < 0) = long(long < 0) + 360;
 
@@ -132,7 +132,7 @@ elseif (mg == mla) & (ng == nla)
     % ok
 else
     error('gsw_geostrophic_velocity: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 if exist('p','var')
     [mp,np] = size(p);
@@ -149,7 +149,7 @@ if exist('p','var')
         % ok
     else
         error('gsw_geostrophic_velocity: Inputs array dimensions arguments do not agree')
-    end %if
+    end 
 else
     p = zeros(size(geo_strf));
 end
@@ -165,6 +165,7 @@ mid_lat = 0.5*(lat(:,1:ng-1) + lat(:,2:ng));
 f = gsw_f(mid_lat);                      % This gets the Coriolis parameter
 
 geostrophic_velocity = (geo_strf(:,2:ng) - geo_strf(:,1:ng-1))./(dist.*f);
+
 
 mid_long = 0.5*(long(:,1:ng-1) + long(:,2:ng));
 diff_long = (long(1,1:ng-1) - long(1,2:ng));

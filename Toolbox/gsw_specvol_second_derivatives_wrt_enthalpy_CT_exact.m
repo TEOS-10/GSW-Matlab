@@ -44,7 +44,7 @@ function [v_SA_SA, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_enthalpy_
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.13 (31th May, 2021)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -54,7 +54,7 @@ function [v_SA_SA, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_enthalpy_
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -66,11 +66,11 @@ function [v_SA_SA, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_enthalpy_
 
 if ~(nargin == 3)
    error('gsw_specvol_second_derivatives_wrt_enthalpy_CT_exact:  Requires three inputs')
-end %if
+end
 
 if ~(nargout == 3)
    error('gsw_specvol_second_derivatives_wrt_enthalpy_CT_exact:  Requires three outputs')
-end %if
+end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -78,7 +78,7 @@ end %if
 
 if (ms ~= mt | ns ~= nt )
    error('gsw_specvol_second_derivatives_wrt_enthalpy_CT_exact: SA and CT do not have the same dimensions')
-end %if
+end
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -93,7 +93,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_specvol_second_derivatives_wrt_enthalpy_CT_exact: The dimensions of p do not agree')
-end %if
+end
 
 if ms == 1
     SA = SA.';
@@ -123,8 +123,8 @@ v_h_h = (vCT_CT_CT.*h_CT - h_CT_CT.*v_CT).*(rec_h_CT2.*rec_h_CT);
 
 v_SA_h = (vCT_SA_CT.*h_CT - v_CT.*h_SA_CT).*rec_h_CT2 - h_SA.*v_h_h;
 
-v_SA_SA = vCT_SA_SA - (h_CT.*(vCT_SA_CT.*h_SA - v_CT.*h_SA_SA) ...
-              + v_CT.*h_SA.*h_SA_CT).*rec_h_CT2 - h_SA.*v_SA_h;
+v_SA_SA = vCT_SA_SA - (h_CT.*(vCT_SA_CT.*h_SA + v_CT.*h_SA_SA) ...
+              - v_CT.*h_SA.*h_SA_CT).*rec_h_CT2 - h_SA.*v_SA_h;
 
 if transposed
     v_SA_SA = v_SA_SA.';

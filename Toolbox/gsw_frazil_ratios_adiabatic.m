@@ -44,7 +44,7 @@ function [dSA_dCT_frazil, dSA_dP_frazil, dCT_dP_frazil] = gsw_frazil_ratios_adia
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

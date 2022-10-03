@@ -19,7 +19,7 @@ function [SA_i, CT_i] = gsw_SA_CT_interp(SA,CT,p,p_i)
 %  independent variable.  A final seventeenth PCHIP is used to relate the
 %  interpolated data back to pressure space (rather than "botttle number" 
 %  space).  The interpolation method is described as method MRST-PCHIP in 
-%  McDougall and Barker (2019). 
+%  Barker and McDougall (2020). 
 %
 %  This function requires scaling the temperature and salinity data so that
 %  the SA-CT diagram reflects the relative variation of temperature and 
@@ -37,14 +37,6 @@ function [SA_i, CT_i] = gsw_SA_CT_interp(SA,CT,p,p_i)
 %
 %  Note that this interpolation scheme requires at least four observed
 %  bottles on the cast.
-%
-%  This programme uses the computationally-efficient TEOS-10 expression 
-%  for specific volume in terms of SA, CT and p (Roquet et al., 2015).
-%  Note that this 75-term equation has been fitted in a restricted range of
-%  parameter space, and is most accurate inside the "oceanographic funnel"
-%  described in McDougall et al. (2003).  The GSW library function
-%  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if
-%  some of one's data lies outside this "funnel".
 %
 % INPUT:
 %  SA   =  Absolute Salinity                                       [ g/kg ]
@@ -66,18 +58,13 @@ function [SA_i, CT_i] = gsw_SA_CT_interp(SA,CT,p,p_i)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.12 (15th June, 2020)
+% VERSION NUMBER: 3.06.12 (25th June, 2020)
 %
 % REFERENCES:
 %  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
 %   multiply-rotated piecewise cubic hermite interpolating polynomials. 
 %   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
 %   doi: 10.1175/JTECH-D-19-0211.1. 
-%
-%  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003:
-%   Accurate and computationally efficient algorithms for potential
-%   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
-%   pp. 730-741.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -122,15 +109,15 @@ end
 if interp_profile_length == 1 & np_i > 1
     p_i = p_i.';
     dp_i = diff(p_i);
-    if any(dp_i) < 0
+    if any(dp_i < 0)
         warning('gsw_SA_CT_interp: interpolating pressure must be monotonic')
         return
     end
     [interp_profile_length,np_i] = size(p_i);
-elseif interp_profile_length == number_of_profiles & np_i~= number_of_profiles & all(diff(p_i,1,2)) >= 0
+elseif interp_profile_length == number_of_profiles & np_i~= number_of_profiles & all(diff(p_i,1,2) >= 0)
     p_i = p_i.';
     [interp_profile_length,np_i] = size(p_i);
-elseif any(diff(p_i,1,1)) < 0
+elseif any(diff(p_i,1,1) < 0)
     warning('gsw_SA_CT_interp: interpolating pressure must be monotonic')
     return
 else

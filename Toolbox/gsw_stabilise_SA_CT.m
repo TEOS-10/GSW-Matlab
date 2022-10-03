@@ -14,19 +14,17 @@ function [SA_out, CT_out] = gsw_stabilise_SA_CT(SA_in,CT_in,p,opt_1,opt_2)
 %  values such that the minimum stability is adjusted to be atleast
 %  1/5th of the square of earth's rotation rate.
 %
-%  When running versions of Matlab earlier than 2016b, this programme 
-%  requires either Tomlab CPLEX or IBM CPLEX or the Optimization toolbox.  
-%  For newer versions of Matlab, including 2016b, it requires either Tomlab
-%  CPLEX or IBM CPLEX. Note that if there are a up to several hundred data
-%  points in the cast then Matlab's Optimization toolbox produces 
+%  This programme requires either Tomlab CPLEX or IBM CPLEX or the 
+%  Optimization toolbox.  Note that if there are a up to several hundred 
+%  data points in the cast then Matlab's Optimization toolbox produces
 %  reasonable results, but if there are thousands of bottles in the cast or
-%  the best possible output is wanted then the CPLEX solver is required. 
+%  the best possible output is wanted then the CPLEX solver is required.  
 %  This programme will determine if a slover is available to the user, if 
-%  there is more than one it will use first in the following order Tomlab,
+%  there is more than one it will use first in the following order Tomlab, 
 %  IBM, then Matlab.
 %
 %  To conserve either heat or salt when stabilising a profile change lines
-%  511 or 512 if using Tomlab, 618 or 619 if using IBM, or lines 566 or 567
+%  512 or 513 if using Tomlab, 619 or 620 if using IBM, or lines 567 or 568
 %  if using Matlab's Optimization toolbox.
 %
 %  Note that this 75-term equation has been fitted in a restricted range of
@@ -66,12 +64,12 @@ function [SA_out, CT_out] = gsw_stabilise_SA_CT(SA_in,CT_in,p,opt_1,opt_2)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.4 (28th July, 2017)
+% VERSION NUMBER: 3.06.12 (18th June, 2020)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2017: Stabilising hydrographic 
-%   profiles with minimal change to the water masses. 
-%   J. Atmosph. Ocean. Tech.
+%  Barker, P.M., and T.J. McDougall, 2017: Stabilizing hydrographic 
+%   profiles with minimal change to the water masses. J. Atmosph. Ocean. 
+%   Tech., 34, pp. 1935-1945. http://dx.doi.org/10.1175/JTECH-D-16-0111.1
 %
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
@@ -96,29 +94,33 @@ function [SA_out, CT_out] = gsw_stabilise_SA_CT(SA_in,CT_in,p,opt_1,opt_2)
 %--------------------------------------------------------------------------
 % Check if necessary software exists
 %--------------------------------------------------------------------------
-[matlab_version, matlab_release_date] = version();
-if exist('tomlabVersion') == 2
-    [TomV,os,TV] = tomlabVersion;
-    if TV(9)
-        software_solver = 1;
-    else
-        fprintf('gsw_stabilise_SA_CT: No valid license for the CPLEX solver\n');
-        if exist('cplexqp.p') == 6 %IBM CLPEX
-            software_solver = 3;
-        elseif license('checkout', 'Optimization_Toolbox') & datenum(matlab_release_date) < 736574
-            software_solver = 2;
-            warning off
+
+try
+    if exist('tomlabVersion') == 2
+        [TomV,os,TV] = tomlabVersion;
+        if TV(9)
+            software_solver = 1;
         else
-            error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
+            fprintf('gsw_stabilise_SA_CT: No valid license for the CPLEX solver\n');
+            if exist('cplexqp.p') == 6 %IBM CLPEX
+                software_solver = 3;
+            elseif license('checkout', 'Optimization_Toolbox') 
+                software_solver = 2;
+                warning off
+            else
+                error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
+            end
         end
+    elseif exist('cplexqp.p') == 6 %IBM CLPEX
+        software_solver = 3;
+    elseif license('checkout', 'Optimization_Toolbox')  
+        software_solver = 2;
+        warning off
+    else
+        error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
     end
-elseif exist('cplexqp.p') == 6 %IBM CLPEX
-    software_solver = 3;
-elseif license('checkout', 'Optimization_Toolbox')  & datenum(matlab_release_date) < 736574
-    software_solver = 2;
-    warning off
-else
-    error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization')
+catch
+    error('gsw_stabilise_SA_CT: No valid license for Tomlab or IBM CPLEX or MATLAB-Optimization') % if the license call produces an error
 end
 
 %--------------------------------------------------------------------------
@@ -190,6 +192,8 @@ if nargin == 4
     elseif (mp == (mN2+1)) & (number_profiles == nN2)
         Nsquared_lowerlimit_tmp = NaN(mp,number_profiles);
         Nsquared_lowerlimit_tmp(2:end,:) = Nsquared_lowerlimit;
+    elseif (mp == mN2) & (number_profiles == nN2)
+        Nsquared_lowerlimit_tmp = Nsquared_lowerlimit;
     else
         error('gsw_stabilise_SA_CT: Inputs array dimensions arguments do not agree')
     end
@@ -592,8 +596,8 @@ for Iprofile = 1:number_profiles
                             if Number_of_iterations == 1
                                 opts = optimset('Algorithm','active-set','Display','off');
                             end
-                                                      
-                            x = quadprog(H, f, A, b_U, Aeq, beq, x_L, x_U, x_0, opts);
+                            
+                            x = gsw_quadprog(H, f, A, b_U, Aeq, beq, x_L, x_U, x_0, opts);
                             
                             SA_bottle = SA_bottle + x(1:2:two_pl-1);
                             CT_bottle = CT_bottle + x(2:2:two_pl);
@@ -650,10 +654,14 @@ for Iprofile = 1:number_profiles
                             
                             x = cplexqp(H, f, A, b_U, [], [], x_L, x_U, x_0);
                             
-                            SA_bottle = SA_bottle +  x(1:2:two_pl-1);
-                            CT_bottle = CT_bottle + x(2:2:two_pl);
-
-                            
+                            if ~isempty(x)
+                                SA_bottle = SA_bottle +  x(1:2:two_pl-1);
+                                CT_bottle = CT_bottle + x(2:2:two_pl);                               
+                            else
+                                [Inn] = find(~isnan(SA_in(:,Iprofile) + CT_in(:,Iprofile) + p(:,Iprofile)));
+                                [SA_bottle, CT_bottle] = gsw_stabilise_unconstrained_SA_CT(SA_in(Inn,Iprofile),CT_in(Inn,Iprofile),p(Inn,Iprofile),Nsquared_lowerlimit,software_solver);
+                                unstable = 1;
+                            end
                     %--------------------------------------------------------------------------
                     end
                     %--------------------------------------------------------------------------
@@ -673,7 +681,7 @@ for Iprofile = 1:number_profiles
                             [Inan] = find(isnan(SA_bottle + CT_bottle));
                             [Inn2] = find(~isnan(SA_bottle + CT_bottle));
                             if ~isempty(Inn2) & length(Inn2) > 1
-                                [SA_bottle(Inan),CT_bottle(Inan)] = gsw_pchip_interp_SA_CT(SA_bottle(Inn2),CT_bottle(Inn2),p_bottle(Inn2),p_bottle(Inan));
+                                [SA_bottle(Inan),CT_bottle(Inan)] = gsw_interp_SA_CT(SA_bottle(Inn2),CT_bottle(Inn2),p_bottle(Inn2),p_bottle(Inan));
                                 if any(isnan(SA_bottle + CT_bottle))
                                     [Inan] = find(isnan(SA_bottle + CT_bottle));
                                     [Inn2] = find(~isnan(SA_bottle + CT_bottle));
@@ -716,7 +724,7 @@ for Iprofile = 1:number_profiles
                     [Iunstable] = find(N2 - Nsquared_lowerlimit < 0);
                     if Number_of_iterations > 10 & ~isempty(Iunstable)  % Cannot correct when applying constraints, thus will return an unconstrained solution.
                         [Inn] = find(~isnan(SA_in(:,Iprofile) + CT_in(:,Iprofile) + p(:,Iprofile)));
-                        [SA_bottle, CT_bottle] = gsw_stabilise_unconstrained_SA_CT(SA_in(Inn,Iprofile),CT_in(Inn,Iprofile),p(Inn,Iprofile),Nsquared_lowerlimit,software_solver);
+                        [SA_bottle, CT_bottle] = gsw_stabilise_unconstrained_SA_CT(SA_in(Inn,Iprofile),CT_in(Inn,Iprofile),p(Inn,Iprofile),Nsquared_lowerlimit,software_solver);                     
                         %unstable = 1;
                         break
                     end
@@ -734,15 +742,11 @@ for Iprofile = 1:number_profiles
                         unstable = 1;
                     end
                     
-                end
-                
+                end                
                 SA_out(Inn,Iprofile) = SA_bottle;
                 CT_out(Inn,Iprofile) = CT_bottle;
-                
-            end
-            
+            end            
         else
-            
             SA_out(Inn,Iprofile) = SA_in(Inn,Iprofile);
             CT_out(Inn,Iprofile) = CT_in(Inn,Iprofile);
         end
@@ -818,7 +822,7 @@ function [SA_unconstrained, CT_unconstrained] = gsw_stabilise_unconstrained_SA_C
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (1st September, 2016)
+% VERSION NUMBER: 3.06.12 (12th June, 2020)
 %
 % REFERENCES:
 %  Barker, P.M., and T.J. McDougall, 2016: Stabilisation of hydrographic 
@@ -860,6 +864,9 @@ super_cooling = 0.1;
 % the Nsquared lower limit
 if any(N2 - Nsquared_lowerlimit < 0)
     
+    SA_orig = SA;
+    CT_orig = CT;
+    
     Name = 'stabilise the water column, adjusting SA and CT without constraints';
     Number_of_iterations = 0;
     unstable = 0;
@@ -868,9 +875,12 @@ if any(N2 - Nsquared_lowerlimit < 0)
     while unstable < 1
         
         Number_of_iterations = Number_of_iterations + 1;
-        
-        alpha_on_beta_bottle = gsw_alpha_on_beta(SA,CT,p);
+
+        alpha_on_beta_bottle_obs = gsw_alpha_on_beta(SA,CT,p);
+        alpha_on_beta_bottle_obs_sqrd = alpha_on_beta_bottle_obs.*alpha_on_beta_bottle_obs;
                 
+        alpha_on_beta_bottle_sqrd = max(alpha_on_beta_bottle_obs_sqrd,0.01); % A limit is set on the magnitude of alpha/beta to account for alpha going to zero  
+        
         b_U = beta_mid.*dSA_mid - alpha_mid.*dCT_mid - c*(Nsquared_lowerlimit.*dp_mid).*specvol_mid;
         % Note that c = 1.2*db2Pa./(grav.^2);
 
@@ -899,7 +909,7 @@ if any(N2 - Nsquared_lowerlimit < 0)
                     set_bounds = 0;
                 end
                 
-                H_dummy(2:2:(two_pl)) = alpha_on_beta_bottle.*alpha_on_beta_bottle;
+                H_dummy(2:2:(two_pl)) = alpha_on_beta_bottle_sqrd;
                 H = sparse(1:two_pl,1:two_pl, H_dummy);
                 
                 A([1:A_i:(A_e+1)]) = beta_mid;
@@ -922,11 +932,11 @@ if any(N2 - Nsquared_lowerlimit < 0)
 
                 Prob = qpAssign(H, f, A, b_L, b_U, x_L, x_U, x_0, Name,[], [], [], [], []);
                 Result = tomRun('cplex', Prob, 0);
-                
+
                 SA = SA + Result.x_k(1:2:two_pl-1);
                 CT = CT + Result.x_k(2:2:two_pl);
-                
-        %--------------------------------------------------------------------------
+
+           %--------------------------------------------------------------------------
                 
             case 2 % Matlab solver
                 
@@ -946,7 +956,7 @@ if any(N2 - Nsquared_lowerlimit < 0)
                     set_bounds = 0;
                 end
                 
-                H([(two_pl+2):2*(two_pl+1):(4*pl*pl)]) = alpha_on_beta_bottle.*alpha_on_beta_bottle;
+                H([(two_pl+2):2*(two_pl+1):(4*pl*pl)]) = alpha_on_beta_bottle_sqrd;
                 
                 A([1:A_i:(A_e+1)]) = beta_mid;
                 A([A_s+1:A_i:(A_e+A_s+1)]) = -alpha_mid;
@@ -966,7 +976,7 @@ if any(N2 - Nsquared_lowerlimit < 0)
                     opts = optimset('Algorithm','active-set','Display','off');
                 end
                 
-                x = quadprog(H, f, A, b_U, [], [], x_L, x_U, x_0, opts);
+                x = gsw_quadprog(H, f, A, b_U, [], [], x_L, x_U, x_0, opts);
                 
                 SA = SA + x(1:2:two_pl-1);
                 CT = CT + x(2:2:two_pl);
@@ -992,7 +1002,7 @@ if any(N2 - Nsquared_lowerlimit < 0)
                     set_bounds = 0;
                 end
                 
-                H_dummy(2:2:(two_pl)) = alpha_on_beta_bottle.*alpha_on_beta_bottle;
+                H_dummy(2:2:(two_pl)) = alpha_on_beta_bottle_sqrd;
                 H = sparse(1:two_pl,1:two_pl, H_dummy);
                 
                 A([1:A_i:(A_e+1)]) = beta_mid;
@@ -1035,7 +1045,7 @@ if any(N2 - Nsquared_lowerlimit < 0)
             [Inan] = find(isnan(SA + CT));
             [Inn2] = find(~isnan(SA + CT));
             if ~isempty(Inn2)
-                [SA(Inan),CT(Inan)] = gsw_pchip_interp_SA_CT(SA(Inn2),CT(Inn2),p(Inn2),p(Inan));
+                [SA(Inan),CT(Inan)] = gsw_interp_SA_CT(SA(Inn2),CT(Inn2),p(Inn2),p(Inan));
                 if any(isnan(SA + CT))
                     [Inan] = find(isnan(SA + CT));
                     [Inn2] = find(~isnan(SA + CT ));
@@ -1060,6 +1070,14 @@ if any(N2 - Nsquared_lowerlimit < 0)
         [Iunstable] = find(N2 - Nsquared_lowerlimit < 0);
         if isempty(Iunstable) | Number_of_iterations > 10
             unstable = 1;
+        elseif ~isempty(Iunstable) & Number_of_iterations == 10 % 10 attempts to correct the profile have not succeeded, so now will try by adjusting SA only.
+            SA = gsw_stabilise_SA_const_CT(SA_orig,CT_orig,p,software_solver);
+            CT = CT_orig;
+            [N2,dummy,specvol_mid,alpha_mid,beta_mid,dSA_mid,dCT_mid,dp_mid] = gsw_Nsquared_min(SA,CT,p);
+            [Iunstable] = find(N2 - Nsquared_lowerlimit < 0);
+            if isempty(Iunstable)
+                unstable = 1;
+            end
         end
         
     end
@@ -1126,7 +1144,7 @@ function [dSA_bottle, dCT_bottle] = gsw_stabilsation_constraints(SA_neutral,CT_n
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (1st September, 2016)
+% VERSION NUMBER: 3.06.12 (12th June, 2020)
 %
 % REFERENCES:
 %  Barker, P.M., and T.J. McDougall, 2016: Stabilisation of hydrographic 
@@ -1187,10 +1205,10 @@ if pl > N
     Iupper(Iupper == pl) = pl - 1;
     Ilower = pl;
     
-    SA_fit = polyfit(p(Iupper:Ilower),SA_neutral(Iupper:Ilower),1);
-    CT_fit = polyfit(p(Iupper:Ilower),CT_neutral(Iupper:Ilower),1);
-    SA_smooth(I) = polyval(SA_fit,p(Ilower));
-    CT_smooth(I) = polyval(CT_fit,p(Ilower));
+    [SA_fit,dummy,SA_mu] = polyfit(p(Iupper:Ilower),SA_neutral(Iupper:Ilower),1);
+    [CT_fit,dummy,CT_mu] = polyfit(p(Iupper:Ilower),CT_neutral(Iupper:Ilower),1);
+    SA_smooth(I) = polyval(SA_fit,p(Ilower),[],SA_mu);
+    CT_smooth(I) = polyval(CT_fit,p(Ilower),[],CT_mu);
     p_smooth(I) = p(Ilower);
     Nsquared_lowlimit_smooth(I-1) = max(Nsquared_lowlimit(Iupper:Ilower-1));
         
@@ -1288,7 +1306,7 @@ else % not so many bottles
     dSA_bottle(I:Imlp) = (SA_stable(Imlp+1) - SA_stable(Imlp));
     dCT_bottle(I:Imlp) = (CT_stable(Imlp+1) - CT_stable(Imlp));
     
-    for I = Imlp+1:pl-1;
+    for I = Imlp+1:pl-1
         dSA_bottle(I) = (SA_stable(I+1) - SA_stable(I-1));
         dCT_bottle(I) = (CT_stable(I+1) - CT_stable(I-1));
     end
@@ -1347,7 +1365,7 @@ function SA_out = gsw_stabilise_SA_const_CT(SA_in,CT,p,software_solver)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (1st September, 2016)
+% VERSION NUMBER: 3.06.12 (12th June, 2020)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton,
@@ -1433,7 +1451,7 @@ while unstable < 1
             x_U = 45 - SA_bottle;
 
             opts = optimset('Algorithm','active-set','Display','off');
-            x = quadprog(H,f,A,b_U,[],[],x_L,x_U,x_0,opts);
+            x = gsw_quadprog(H,f,A,b_U,[],[],x_L,x_U,x_0,opts);
             
             SA_bottle = SA_bottle + x;
             
@@ -1468,4 +1486,168 @@ end
 SA_out = SA_bottle;
 
 end
+
+%##########################################################################
+
+% function CT_out = gsw_stabilise_CT_const_SA(SA,CT_in,p,software_solver)
+% 
+% % gsw_stabilise_CT_const_SA         adjusts CT to produce a stablised water
+% %                            column, SA remains constant (75-term equation)
+% %==========================================================================
+% %
+% % USAGE:
+% %  CT_out = gsw_stabilise_CT_const_SA(SA,CT_in,p,software_solver)
+% %
+% % DESCRIPTION:
+% %  This function stabilises a water column. This is achieved by minimally
+% %  adjusting only the CT values such that the minimum
+% %  stability is made to be at least 1 x 10^-9 s^-2, which is about 1/5th
+% %  of the square of earth's rotation rate. There are no changes made to
+% %  either SA or pressure.
+% %
+% %  This programme requires either the Optimization toolbox or Tomlab CPLEX.
+% %  if there are a up to several hundred data points in the cast then
+% %  Matlab's Optimization toolbox produces reasonable results, but if there
+% %  are thousands of bottles in the cast or the best possible output is
+% %  wanted then the CPLEX solver is required. This programme will determine
+% %  if Tomlab or the Optimization toolbox is available to the user, if both
+% %  are available it will use Tomlab.
+% %
+% %  Note that this 75-term equation has been fitted in a restricted range of
+% %  parameter space, and is most accurate inside the "oceanographic funnel"
+% %  described in McDougall et al. (2003).  The GSW library function
+% %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if
+% %  some of one's data lies outside this "funnel".
+% %
+% % INPUT:
+% %  SA     =  Absolute Salinity                                     [ g/kg ]
+% %  CT_in  =  uncorrected Conservative Temperature (ITS-90)        [ deg C ]
+% %  p      =  sea pressure                                          [ dbar ]
+% %         ( i.e. absolute pressure - 10.1325 dbar )
+% %
+% %  SA & CT_in and p need to have the same dimensions.
+% %
+% % OUTPUT:
+% %  CT_out  =  adjusted CT to achieve minimum stability            [ deg C ]
+% %
+% % AUTHOR:
+% %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
+% %
+% % VERSION NUMBER: 3.06.12 (12th June, 2020)
+% %
+% % REFERENCES:
+% %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton,
+% %   NJ: Princeton University Press, 518 pp + xxxiv.
+% %
+% %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+% %   seawater - 2010: Calculation and use of thermodynamic properties.
+% %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+% %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
+% %
+% %  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003:
+% %   Accurate and computationally efficient algorithms for potential
+% %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+% %   pp. 730-741.
+% %
+% %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+% %   polynomial expressions for the density and specifc volume of seawater
+% %   using the TEOS-10 standard. Ocean Modelling, 90, pp. 29-43.
+% %
+% %  The software is available from http://www.TEOS-10.org
+% %
+% %  The Tomlab software is available from http://www.tomopt.com
+% %
+% %==========================================================================
+% 
+% %--------------------------------------------------------------------------
+% % Start of the calculation
+% %--------------------------------------------------------------------------
+% 
+% Nsquared_lowerlimit = 1e-9;
+% % db2Pa = 1e4;
+% % grav = 9.7963 (Griffies, 2004) 
+% c = 1.250423402612047e2; % c = 1.2*db2Pa./(grav.^2);
+% 
+% CT_bottle = CT_in;
+% 
+% [N2,N2_p_mid,N2_specvol_mid,N2_alpha_mid,N2_beta_mid,dSA_mid,dCT_mid,dp_mid] = gsw_Nsquared_min(SA,CT_bottle,p);
+% 
+% pl = length(p);
+% 
+% f = zeros(pl,1);
+% b_L = -inf*ones(pl-1,1);
+% CTf = gsw_CT_freezing_poly(SA,p) - 0.5;
+% x_0 = zeros(pl,1);
+% Name = 'stabilise the water column by adjusting CT while keeping SA constant';
+% 
+% Number_of_iterations = 0;
+% unstable = 0;
+% while unstable < 1
+%     
+%     Number_of_iterations = Number_of_iterations + 1;
+%     
+%     alpha_on_beta_bottle = gsw_alpha_on_beta(SA,CT_bottle,p);
+% 
+%     b_U = dSA_mid - (N2_alpha_mid./N2_beta_mid).*dCT_mid - (c.*dp_mid.*Nsquared_lowerlimit.*N2_specvol_mid)./N2_beta_mid;
+%     
+%     switch software_solver
+%         case 1 % Tomlab CPLEX solver
+%             
+%             H_dummy(1:pl) = alpha_on_beta_bottle;
+%             H = sparse(1:pl,1:pl, H_dummy);
+%             
+%             if Number_of_iterations < 2
+%                 A = zeros(pl-1,pl);
+%                 A_s = pl-1;
+%                 A_i = A_s + 1;
+%                 A_e = A_i*(pl-1);
+%             end
+%             
+%             A([1:A_i:(A_e)]) = -N2_alpha_mid./N2_beta_mid;
+%             A([A_s+1:A_i:(A_e+A_s)]) = N2_alpha_mid./N2_beta_mid;
+%                
+%             x_L = CTf - CT_bottle;
+%             x_U = 40 - CT_bottle;
+%                         
+%             Prob = qpAssign(H, f, A, b_L, b_U, x_L, x_U, x_0, Name,...
+%                 [], [], [], [], []);
+%             Result = tomRun('cplex', Prob, 0);
+%             
+%             CT_bottle = CT_bottle + Result.x_k;
+%             
+%         case 2 % Matlab solver
+%             if Number_of_iterations < 2
+%                 A = zeros(pl-1,pl);
+%                 A_s = pl-1;
+%                 A_i = A_s + 1;
+%                 A_e = A_i*(pl-1);
+%             end
+%                        
+%             A([1:A_i:(A_e)]) = -N2_alpha_mid./N2_beta_mid;
+%             A([A_s+1:A_i:(A_e+A_s)]) = N2_alpha_mid./N2_beta_mid;
+% 
+%             H = diag(alpha_on_beta_bottle);
+%             
+%             x_L = CTf - CT_bottle; 
+%             x_U = 40 - CT_bottle;
+% 
+%             opts = optimset('Algorithm','active-set','Display','off');
+%             x = gsw_quadprog(H,f,A,b_U,[],[], x_L, x_U, x_0,opts);
+% 
+%             CT_bottle = CT_bottle + x;
+%     end
+%     
+%     [N2,N2_p_mid,N2_specvol_mid,N2_alpha_mid,N2_beta_mid,dSA_mid,dCT_mid,dp_mid] = gsw_Nsquared_min(SA,CT_bottle,p);
+%     
+%     [Iunstable] = find(N2 - Nsquared_lowerlimit < 0);
+%     
+%     if isempty(Iunstable) | Number_of_iterations > 10
+%         unstable = 1;
+%     end
+%     
+% end
+% 
+% CT_out = CT_bottle;
+% 
+% end
 

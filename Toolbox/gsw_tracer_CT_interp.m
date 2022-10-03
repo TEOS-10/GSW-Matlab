@@ -19,7 +19,7 @@ function [tracer_i, CT_i] = gsw_tracer_CT_interp(tracer,CT,p,p_i,factor)
 %  "bottle number" as the independent variable.  A final seventeenth PCHIP
 %  is used to relate the interpolated data back to pressure space (rather 
 %  than "botttle number" space).  The interpolation method is is the 
-%  MRST-PCHIP method described in McDougall and Barker (2019), with the
+%  MRST-PCHIP method described in Barker and McDougall (2020), with the
 %  tracer data being used in place of Absoluate Salinity data.  
 %
 %  This function requires scaling the tracer and temperature data so that
@@ -76,7 +76,7 @@ function [tracer_i, CT_i] = gsw_tracer_CT_interp(tracer,CT,p,p_i,factor)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.12 (25th May, 2020)
+% VERSION NUMBER: 3.06.12 (25th June, 2020)
 %
 % REFERENCES:
 %  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 

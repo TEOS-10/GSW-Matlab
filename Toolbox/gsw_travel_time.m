@@ -20,12 +20,11 @@ function travel_time = gsw_travel_time(SA,CT,p,lat)
 %  nonlinear dependence of sound speed and specific volume on their input
 %  parameters, the vertical data is interpolated so that the data is no
 %  more than max_dp_i apart (this is a presure interval). 
-%
-%  SA and CT are interpolated with respect to pressure using the method of 
-%  Reiniger and Ross (1968).  It uses a weighted mean of (i) values 
-%  obtained from linear interpolation of the two nearest data points, and
-%  (ii) a linear extrapolation of the pairs of data above and below.  This
-%  "curve fitting" method resembles the use of cubic splines.
+% 
+%  SA and CT are interpolated using the MRST-PCHIP method of Barker and 
+%  McDougall (2020).  This "curve fitting" method uses a Piecewise Cubic 
+%  Hermite Interpolating Polynomial to produce a smooth curve with minimal
+%  artificial watermasses between the observed data points.  
 %
 %  The sound speed and specific volume calculations are based on the
 %  75-term equations for specific volume (Roquet et al., 2015), as opposed
@@ -40,7 +39,7 @@ function travel_time = gsw_travel_time(SA,CT,p,lat)
 %
 % INPUT:
 %  SA    =  Absolute Salinity                                      [ g/kg ]
-%  CT     =  in-situ temperature (ITS-90)                          [ deg C ]
+%  CT    =  in-situ temperature (ITS-90)                          [ deg C ]
 %  p     =  sea pressure                                           [ dbar ]
 %           ( i.e. absolute pressure - 10.1325 dbar )
 %  lat  =  latitude in decimal degress north                [ -90 ... +90 ]
@@ -55,9 +54,14 @@ function travel_time = gsw_travel_time(SA,CT,p,lat)
 %  Paul Barker, Trevor McDougall and Randy Watts
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
+%  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+%   multiply-rotated piecewise cubic hermite interpolating polynomials. 
+%   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+%   doi: 10.1175/JTECH-D-19-0211.1. 
+% 
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
@@ -68,12 +72,9 @@ function travel_time = gsw_travel_time(SA,CT,p,lat)
 %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
 %   pp. 730-741.
 %
-%  Reiniger, R.F. and C.K. Ross, 1968: A method of interpolation with
-%   application to oceanographic data. Deep-Sea Res. 15, 185-193.
-% 
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  The software is available from http://www.TEOS-10.org
 %

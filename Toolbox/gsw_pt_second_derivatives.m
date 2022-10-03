@@ -40,7 +40,7 @@ function [pt_SA_SA, pt_SA_CT, pt_CT_CT] = gsw_pt_second_derivatives(SA,CT)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.13 (7th September, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -99,14 +99,15 @@ pt_SA_SA = (pt_SA_u - pt_SA_l)./(SA_u - SA_l);
 % pt_SA_CT = (pt_CT_u - pt_CT_l)./(SA_u - SA_l); % can calculate this either way;
 
 dCT  = 1e-2;     % increment of Conservative Temperature is 0.01 degrees C;
+rec_2dCT = 50;   % rec_2dCT = 1./(2.*dCT);
 CT_l = CT - dCT;
 CT_u = CT + dCT;
 
 [pt_SA_l, pt_CT_l] = gsw_pt_first_derivatives(SA,CT_l);
 [pt_SA_u, pt_CT_u] = gsw_pt_first_derivatives(SA,CT_u);
 
-pt_SA_CT = (pt_SA_u - pt_SA_l)./(CT_u - CT_l);
-pt_CT_CT = (pt_CT_u - pt_CT_l)./(CT_u - CT_l);
+pt_SA_CT = (pt_SA_u - pt_SA_l).*rec_2dCT;
+pt_CT_CT = (pt_CT_u - pt_CT_l).*rec_2dCT;
 
 if transposed   
     pt_SA_CT = pt_SA_CT.';

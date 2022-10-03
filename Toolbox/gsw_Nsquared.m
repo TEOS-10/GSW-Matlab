@@ -44,13 +44,18 @@ function [N2, p_mid] = gsw_Nsquared(SA,CT,p,lat)
 %  where SA & CT are MxN.
 %
 % OUTPUT:
-%  N2     =  Brunt-Vaisala Frequency squared  (M-1xN)             [ 1/s^2 ]
+%  N2     =  Brunt-Vaisala Frequency squared  (M-1xN)         [ rad^2/s^2 ]
 %  p_mid  =  Mid pressure between p grid      (M-1xN)              [ dbar ]
+%
+%  The units of N2 are radians^2 s^-2 however in may textbooks this is
+%  abreviated to s^-2 as radians does not have a unit.  To convert the
+%  frequency to hertz, cycles sec^-1, divide the frequency by pi, 
+%  i.e. N/(2 x pi).
 %
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.6 (8th August, 2016)
+% VERSION NUMBER: 3.06.13 (4th August, 2021)
 %
 % REFERENCES:
 %  Griffies, S.M., 2004: Fundamentals of Ocean Climate Models. Princeton, 
@@ -86,6 +91,8 @@ end
 if ~(nargout == 2)
    error('gsw_Nsquared:  Requires two outputs')
 end 
+
+p = gsw_resize(p,size(SA));
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -126,22 +133,7 @@ end
 [mp,np] = size(p);
 
 if exist('lat','var')
-    if transposed
-        lat = lat.';
-    end
-    [mL,nL] = size(lat);
-    [ms,ns] = size(SA);
-    if (mL == 1) & (nL == 1)              % lat scalar - fill to size of SA
-        lat = lat*ones(size(SA));
-    elseif (ns == nL) & (mL == 1)         % lat is row vector,
-        lat = lat(ones(1,ms), :);          % copy down each column.
-    elseif (ms == mL) & (nL == 1)         % lat is column vector,
-        lat = lat(:,ones(1,ns));           % copy across each row.
-    elseif (ms == mL) & (ns == nL)
-        % ok
-    else
-        error('gsw_Nsquared: Inputs array dimensions arguments do not agree')
-    end 
+%    lat = gsw_resize(lat,size(SA));
     grav = gsw_grav(lat,p);
 else
     grav = 9.7963*ones(size(p));             % (Griffies, 2004)
@@ -155,14 +147,14 @@ db2Pa = 1e4;
 Ishallow = 1:(mp-1);
 Ideep = 2:mp;
 
-grav_local = 0.5*(grav(Ishallow,:) + grav(Ideep,:));
+grav_local = 0.5*(grav(Ishallow,:,:) + grav(Ideep,:,:));
 
-dSA = (SA(Ideep,:) - SA(Ishallow,:));
-SA_mid = 0.5*(SA(Ishallow,:) + SA(Ideep,:));
-dCT = (CT(Ideep,:) - CT(Ishallow,:));
-CT_mid = 0.5*(CT(Ishallow,:) + CT(Ideep,:));
-dp = (p(Ideep,:) - p(Ishallow,:));
-p_mid = 0.5*(p(Ishallow,:) + p(Ideep,:));
+dSA = (SA(Ideep,:,:) - SA(Ishallow,:,:));
+SA_mid = 0.5*(SA(Ishallow,:,:) + SA(Ideep,:,:));
+dCT = (CT(Ideep,:,:) - CT(Ishallow,:,:));
+CT_mid = 0.5*(CT(Ishallow,:,:) + CT(Ideep,:,:));
+dp = (p(Ideep,:,:) - p(Ishallow,:,:));
+p_mid = 0.5*(p(Ishallow,:,:) + p(Ideep,:,:));
 
 [specvol_mid, alpha_mid, beta_mid] = gsw_specvol_alpha_beta(SA_mid,CT_mid,p_mid);
 

@@ -41,7 +41,7 @@ function [rho_SA_SA, rho_SA_h, rho_h_h] = gsw_rho_second_derivatives_wrt_enthalp
 %
 % OUTPUT:
 %  rho_SA_SA = The second-order derivative of rho with respect to 
-%              Absolute Salinity at constant h & p.     [ J/(kg (g/kg)^2) ]
+%              Absolute Salinity at constant h & p.   [ (kg/m^3)(g/kg)^-2 ]
 %  rho_SA_h  = The second-order derivative of rho with respect to 
 %              SA and h at constant p.                   [ J/(kg K(g/kg)) ]
 %  rho_h_h   = The second-order derivative of rho with respect to h at 
@@ -50,7 +50,7 @@ function [rho_SA_SA, rho_SA_h, rho_h_h] = gsw_rho_second_derivatives_wrt_enthalp
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.15 (26th May, 2022)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -65,7 +65,7 @@ function [rho_SA_SA, rho_SA_h, rho_h_h] = gsw_rho_second_derivatives_wrt_enthalp
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  This software is available from http://www.TEOS-10.org
 %

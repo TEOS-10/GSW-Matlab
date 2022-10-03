@@ -1,7 +1,7 @@
 function Nsquared_lowerlimit = gsw_Nsquared_lowerlimit(p,long,lat)
 
-% gsw_Nsquared_lowerlimit        minimum buoyancy (Brunt-Vaisala) frequency
-%                                    squared (N^2), for a cast to be stable
+% gsw_Nsquared_lowerlimit             specified profile of minimum buoyancy
+%                                                         frequency squared
 %==========================================================================
 %
 % USAGE:
@@ -20,14 +20,24 @@ function Nsquared_lowerlimit = gsw_Nsquared_lowerlimit(p,long,lat)
 %  lat & long may have dimensions 1x1 or Mx1 or 1xN or MxN, where p is MxN.
 %
 % OUTPUT:
-%  Nsquared_lowerlimit  = Minimum Brunt-Vaisala Frequency squared [ 1/s^2 ]
+%  Nsquared_lowerlimit = Minimum Brunt-Vaisala                [ rad^2/s^2 ]
+%                         Frequency squared  
+%
+%  The units of N2 are radians^2 s^-2 however in may textbooks this is
+%  abreviated to s^-2 as radians does not have a unit.  To convert the
+%  frequency to hertz, cycles sec^-1, divide the frequency by pi, 
+%  i.e. N/(2 x pi).
 %
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.06.13 (4th August, 2021)
 %
 % REFERENCES:
+%  Barker, P.M., and T.J. McDougall, 2017: Stabilizing hydrographic 
+%   profiles with minimal change to the water masses. J. Atmosph. Ocean. 
+%   Tech., pp. 1935 - 1945, http://dx.doi.org/10.1175/JTECH-D-16-0111.1
+%
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
 %   seawater - 2010: Calculation and use of thermodynamic properties.
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,

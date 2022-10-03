@@ -39,7 +39,7 @@ function [SA_i, CT_i] = gsw_spline_interp_SA_CT(SA,CT,p,p_i,tension,scaling_fact
 % MODIFIED:
 %  21st July, 2016 by Paul Barker and Trevor McDougall. 
 %
-% VERSION NUMBER: 3.05.5 (17th January, 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % References
 %  Wessel, P., and D. Bercovici, 1998: Gridding with Splines in Tension: A
@@ -72,47 +72,49 @@ end
 if (tension > 0 & tension < 1)
     tension_scaled = length_scale*sqrt(tension/(1 - tension));
 end
-  
+
 SA_i = NaN(length(p_i),1);
+
 SA_i(Inn) = 0;
 CT_i = SA_i;
 
 A = zeros(pl,pl);
-for I = 1:pl		
-	ar = abs(p(I) - p);
-	if (tension == 0)
-		A(I,:) = (ar.^3)';
-	elseif (tension == 1)
-		A(I,:) = ar';
-	else
-		A(I,:) = (exp(-tension_scaled*ar) + tension_scaled*ar)';
-	end
+for I = 1:pl
+    ar = abs(p(I) - p);
+    if (tension == 0)
+        A(I,:) = (ar.^3)';
+    elseif (tension == 1)
+        A(I,:) = ar';
+    else
+        A(I,:) = (exp(-tension_scaled*ar) + tension_scaled*ar)';
+    end
 end
 
 f_SA = pinv(A)*SA;
 f_CT = pinv(A)*CT;
 
 for I = 1:pl
-	ar = abs(p(I) - p_i(Inn));
-	if (tension == 0)
-		SA_i(Inn) = SA_i(Inn) + (ar.^3) * f_SA(I,:);
+    ar = abs(p(I) - p_i(Inn));
+    if (tension == 0)
+        SA_i(Inn) = SA_i(Inn) + (ar.^3) * f_SA(I,:);
         CT_i(Inn) = CT_i(Inn) + (ar.^3) * f_CT(I,:);
-	elseif (tension == 1)
-		SA_i(Inn) = SA_i(Inn) + ar * f_SA(I,:);
+    elseif (tension == 1)
+        SA_i(Inn) = SA_i(Inn) + ar * f_SA(I,:);
         CT_i(Inn) = CT_i(Inn) + ar * f_CT(I,:);
     else
         part = (exp(-tension_scaled * ar) + tension_scaled * ar);
         SA_i(Inn) = SA_i(Inn) + part* f_SA(I,:);
-		CT_i(Inn) = CT_i(Inn) + part* f_CT(I,:);
-	end
+        CT_i(Inn) = CT_i(Inn) + part* f_CT(I,:);
+    end
 end
-% plot(SA,CT,'o',SA_i,CT_i),title(num2str(tension))
-% pause(1)
-
 
 if any(p_i < p_min)
-    SA_i(p_i<p_min) = SA_i(Inn(1));
-    CT_i(p_i<p_min) = CT_i(Inn(1));
+    if ~isempty(Inn)
+        try
+        SA_i(p_i<p_min) = SA_i(Inn(1));
+        CT_i(p_i<p_min) = CT_i(Inn(1));
+        end
+    end
 end
 
 end

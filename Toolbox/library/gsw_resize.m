@@ -23,7 +23,7 @@ function data = gsw_resize(data,sz_SA)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.9 (1st March, 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -39,7 +39,7 @@ sz_data = size(data);
 
 dims_SA = length(sz_SA);
 dims_data = length(sz_data);
-%keyboard
+
 if dims_SA == dims_data & sum(abs(sz_SA - sz_data)) == 0
     if sum(abs(sz_SA - sz_data)) == 0
         % ok

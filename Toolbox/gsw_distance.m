@@ -118,7 +118,6 @@ end %if
 
 pi180 = pi/180;
 earth_radius = 6371000;                         % Earth's radius in metres.
-
 dlong = pi180*(long(:,2:nla) - long(:,1:nla-1));
 dlat = pi180*(lat(:,2:nla) - lat(:,1:nla-1));
 

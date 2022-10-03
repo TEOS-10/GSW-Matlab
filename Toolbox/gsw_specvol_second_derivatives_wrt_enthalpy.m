@@ -43,7 +43,7 @@ function [v_SA_SA_wrt_h, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_ent
 % OUTPUT:
 %  v_SA_SA_wrt_h = The second-order derivative of specific volume with
 %                  respect to Absolute Salinity at constant h & p.
-%                                           [ (m^3/kg)(g/kg)^-2 (J/kg)^-1 ]
+%                                                    [ (m^3/kg)(g/kg)^-2  ]
 %  v_SA_h  = The second-order derivative of specific volume with respect to 
 %            SA and h at constant p.        [ (m^3/kg)(g/kg)^-1 (J/kg)^-1 ]
 %  v_h_h   = The second-order derivative with respect to h at 
@@ -52,7 +52,7 @@ function [v_SA_SA_wrt_h, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_ent
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.06.15 (26th May, 2022)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -67,7 +67,7 @@ function [v_SA_SA_wrt_h, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_ent
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -79,11 +79,11 @@ function [v_SA_SA_wrt_h, v_SA_h, v_h_h] = gsw_specvol_second_derivatives_wrt_ent
 
 if ~(nargin == 3)
    error('gsw_specvol_second_derivatives_wrt_enthalpy:  Requires three inputs')
-end %if
+end
 
 if ~(nargout == 3)
    error('gsw_specvol_second_derivatives_wrt_enthalpy:  Requires three outputs')
-end %if
+end
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -135,9 +135,9 @@ rec_h_CT2 = rec_h_CT.^2;
 v_h_h = (vCT_CT_CT.*h_CT - h_CT_CT.*v_CT).*(rec_h_CT2.*rec_h_CT);
 
 v_SA_h = (vCT_SA_CT.*h_CT - v_CT.*h_SA_CT).*rec_h_CT2 - h_SA.*v_h_h;
-
-v_SA_SA_wrt_h = vCT_SA_SA - (h_CT.*(vCT_SA_CT.*h_SA - v_CT.*h_SA_SA) ...
-              + v_CT.*h_SA.*h_SA_CT).*rec_h_CT2 - h_SA.*v_SA_h;
+          
+v_SA_SA_wrt_h = vCT_SA_SA - (h_CT.*(vCT_SA_CT.*h_SA + v_CT.*h_SA_SA) ...
+              - v_CT.*h_SA.*h_SA_CT).*rec_h_CT2 - h_SA.*v_SA_h;
 
 if transposed
     v_SA_SA_wrt_h = v_SA_SA_wrt_h.';

@@ -47,7 +47,7 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 % MODIFIED:
 %  Paul Barker & Trevor McDougall
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (7th July, 2020)
 %
 % REFERENCES:
 %  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
@@ -55,19 +55,19 @@ function gsw_SA_CT_plot(SA,CT,p_ref,isopycs,title_string)
 %   temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
 %   pp. 730-741.
 %
-%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2014: Accurate
+%  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  The software is available from http://www.TEOS-10.org
 %
 %==========================================================================
 
-if (nargin < 2),
+if (nargin < 2)
     error('gsw_SA_CT_plot: You need to supply both Absolute Salinity and Conservative Temperature');
 end
 
-if ~exist('p_ref','var'),
+if ~exist('p_ref','var')
     p_ref = 0;
     isopycs = 5;
 end
@@ -84,7 +84,7 @@ else
     p_ref = unique(p_ref);
 end
 
-if ~exist('isopycs','var'),
+if ~exist('isopycs','var')
     isopycs = 5;
 end
 
@@ -133,10 +133,10 @@ if ~isempty(isopycs)
 end
 hold on;
 
-[c2] = plot(SA,CT,'-.','linewidth',2*sz);
+[c2] = plot(SA,CT,'o','linewidth',2*sz);
 
 set(c2,'Marker','o','MarkerSize',5*sz,'MarkerEdgeColor','none', ...
-  'MarkerFaceColor','b');
+  'MarkerFaceColor','k');
 
 if exist('c1','var')
     clabel(c1,h,'labelspacing',360,'fontsize',8*sz,'color',[.5 .5 .5]);
@@ -153,7 +153,7 @@ else
 end
 set(gca,'tickdir','out');
 
-line(SA_axis,CT_freezing,'LineStyle','--');
+line(SA_axis,CT_freezing,'LineStyle','--','color',[0 0 1]);
 
 txt = text(0.01,0.99,[' p_r_e_f = ' int2str(p_ref) ' dbar'], ...
     'horiz','left','Vert','top','units','normalized','color',[.3 .3 .3]);

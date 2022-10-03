@@ -43,7 +43,7 @@ function [rho, alpha, beta] = gsw_rho_alpha_beta(SA,CT,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -54,7 +54,7 @@ function [rho, alpha, beta] = gsw_rho_alpha_beta(SA,CT,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -66,11 +66,13 @@ function [rho, alpha, beta] = gsw_rho_alpha_beta(SA,CT,p)
 
 if ~(nargin == 3)
    error('gsw_rho_alpha_beta:  Requires three inputs')
-end %if
+end 
 
 if ~(nargout == 3)
    error('gsw_rho_alpha_beta:  Requires three outputs')
-end %if
+end 
+
+p = gsw_resize(p,size(SA));
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -79,30 +81,30 @@ end %if
 if (mt ~= ms | nt ~= ns)
     error('gsw_rho_alpha_beta: SA and CT must have same dimensions')
 end
+% 
+% if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
+%     p = p*ones(size(SA));
+% elseif (ns == np) & (mp == 1)         % p is row vector,
+%     p = p(ones(1,ms), :);              % copy down each column.
+% elseif (ms == mp) & (np == 1)         % p is column vector,
+%     p = p(:,ones(1,ns));               % copy across each row.
+% elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
+%     p = p.';                              % transposed then
+%     p = p(ones(1,ms), :);                % copy down each column.
+% elseif (ms == mp) & (ns == np)
+%     % ok
+% else
+%     error('gsw_rho_alpha_beta: Inputs array dimensions arguments do not agree')
+% end %if
 
-if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
-    p = p*ones(size(SA));
-elseif (ns == np) & (mp == 1)         % p is row vector,
-    p = p(ones(1,ms), :);              % copy down each column.
-elseif (ms == mp) & (np == 1)         % p is column vector,
-    p = p(:,ones(1,ns));               % copy across each row.
-elseif (ns == mp) & (np == 1)          % p is a transposed row vector,
-    p = p.';                              % transposed then
-    p = p(ones(1,ms), :);                % copy down each column.
-elseif (ms == mp) & (ns == np)
-    % ok
-else
-    error('gsw_rho_alpha_beta: Inputs array dimensions arguments do not agree')
-end %if
-
-if ms == 1
-    SA = SA.';
-    CT = CT.';
-    p = p.';
-    transposed = 1;
-else
-    transposed = 0;
-end
+% if ms == 1
+%     SA = SA.';
+%     CT = CT.';
+%     p = p.';
+%     transposed = 1;
+% else
+%     transposed = 0;
+% end
 
 %--------------------------------------------------------------------------
 % Start of the calculation
@@ -116,9 +118,12 @@ sfac = 0.0248826675584615;                   % sfac = 1/(40*(35.16504/35)).
 offset = 5.971840214030754e-1;                      % offset = deltaS*sfac.
 
 x2 = sfac.*SA;
+clear SA
 xs = sqrt(x2 + offset);
 ys = CT.*0.025;
+clear CT
 z = p.*1e-4;
+clear p
 
 a000 = -1.5649734675e-5; 
 a001 =  1.8505765429e-5; 
@@ -326,6 +331,7 @@ v_CT = a000 + xs.*(a100 + xs.*(a200 + xs.*(a300 + xs.*(a400 + a500.*xs)))) ...
     + z.*(a003 + a103.*xs + a013.*ys + a004.*z))) ;
 
 alpha = 0.025.*v_CT./v;
+clear v_CT
 
 v_SA_part = b000 + xs.*(b100 + xs.*(b200 + xs.*(b300 + xs.*(b400 + b500.*xs)))) ...
     + ys.*(b010 + xs.*(b110 + xs.*(b210 + xs.*(b310 + b410.*xs))) ...
@@ -338,6 +344,8 @@ v_SA_part = b000 + xs.*(b100 + xs.*(b200 + xs.*(b300 + xs.*(b400 + b500.*xs)))) 
     + xs.*(b112 + b212.*xs) + ys.*(b022 + b122.*xs + b032.*ys)) ...
     + z.*(b003 +  b103.*xs + b013.*ys + b004.*z)));
  
+clear ys z
+
 beta = -v_SA_part.*0.5.*sfac./(v.*xs);
 
 %--------------------------------------------------------------------------
@@ -358,10 +366,10 @@ beta = -v_SA_part.*0.5.*sfac./(v.*xs);
 %
 %--------------This is the end of the alternative code---------------------
 
-if transposed
-    rho = rho.';
-    alpha = alpha.';
-    beta = beta.';
-end
+% if transposed
+%     rho = rho.';
+%     alpha = alpha.';
+%     beta = beta.';
+% end
 
 end

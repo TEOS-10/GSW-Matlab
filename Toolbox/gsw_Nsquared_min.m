@@ -19,6 +19,10 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp] = gsw_Nsquared_
 %  The pressure increment, dP, in the above formula is in Pa, so that it is
 %  10^4 times the pressure increment dp in dbar. 
 %
+%  Note. This routine uses specvol from "gsw_specvol", which is based on 
+%  the computationally efficient expression for specific volume in terms of 
+%  SA, CT and p (Roquet et al., 2015).
+%
 %  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
 %  described in McDougall et al. (2003).  The GSW library function 
@@ -41,7 +45,7 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp] = gsw_Nsquared_
 %  where SA & CT are MxN.
 %
 % OUTPUT:
-%  N2         =  minimum Brunt-Vaisala Frequency squared          [ 1/s^2 ]
+%  N2         =  minimum Brunt-Vaisala Frequency squared      [ rad^2/s^2 ]
 %  N2_p       =  pressure of minimum N2                            [ dbar ]
 %  N2_specvol =  specific volume at the minimum N2                [ kg/m3 ]
 %  N2_alpha   =  thermal expansion coefficient with respect         [ 1/K ]
@@ -53,10 +57,15 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp] = gsw_Nsquared_
 %                bottles
 %  dp         =  difference in pressure between bottles            [ dbar ]
 %
+%  The units of N2 are radians^2 s^-2 however in may textbooks this is
+%  abreviated to s^-2 as radians does not have a unit.  To convert the
+%  frequency to hertz, cycles sec^-1, divide the frequency by pi, 
+%  i.e. N/(2 x pi).
+%
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06 (27th May, 2016)
+% VERSION NUMBER: 3.06.13 (4th August, 2021)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 

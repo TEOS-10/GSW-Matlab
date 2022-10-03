@@ -7,7 +7,7 @@ function cp_ice = gsw_cp_ice(t,p)
 %  cp_ice = gsw_cp_ice(t,p)
 %
 % DESCRIPTION:
-%  Calculates the isobaric heat capacity of seawater.
+%  Calculates the isobaric heat capacity of ice.
 %
 % INPUT:
 %  t   =  in-situ temperature (ITS-90)                            [ deg C ]
@@ -22,7 +22,7 @@ function cp_ice = gsw_cp_ice(t,p)
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.13 (1st June, 2021)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -48,7 +48,7 @@ end
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
     p = p*ones(size(t));
 elseif (nt == np) & (mp == 1)         % p is row vector,
-    p = p(ones(1,ms), :);              % copy down each column.
+    p = p(ones(1,mt), :);              % copy down each column.
 elseif (mt == mp) & (np == 1)         % p is column vector,
     p = p(:,ones(1,nt));               % copy across each row.
 elseif (nt == mp) & (np == 1)          % p is a transposed row vector,

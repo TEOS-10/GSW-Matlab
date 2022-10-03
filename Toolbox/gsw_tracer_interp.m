@@ -17,7 +17,7 @@ function tracer_i = gsw_tracer_interp(tracer,p,p_i,scale_factor)
 %  "bottle number" as the independent variable.  A final seventeenth 
 %  PCHIP is used to relate the interpolated data back to pressure space 
 %  (rather than "botttle number" space).  The interpolation method is 
-%  described as the MR-PCHIP method in McDougall and Barker (2019) 
+%  described as the MR-PCHIP method in Barker and McDougall (2020). 
 %
 %  When the tracer is in situ temperature we have found a suitable value 
 %  for the scale_factor is 0.33, so that the final scaling factor is 0.33
@@ -51,7 +51,7 @@ function tracer_i = gsw_tracer_interp(tracer,p,p_i,scale_factor)
 %  p may have dimensions Mx1 or 1xN or MxN, where tracer is MxN.
 %  p_i needs to be either a vector or a matrix and have dimensions M_ix1
 %  or M_ixN.
-%  scale_factor, is provided, must be a scalar.
+%  scale_factor, if provided, must be a scalar.
 %
 % OUTPUT:
 %  tracer_i = interpolated tracer values at pressures p_i             [ ? ]
@@ -59,7 +59,7 @@ function tracer_i = gsw_tracer_interp(tracer,p,p_i,scale_factor)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.12 (25th May, 2020)
+% VERSION NUMBER: 3.06.12 (25th June, 2020)
 %
 % REFERENCES:
 %  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 

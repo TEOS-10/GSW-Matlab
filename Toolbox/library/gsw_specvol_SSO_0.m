@@ -1,11 +1,11 @@
 function specvol_SSO_0 = gsw_specvol_SSO_0(p)
     
 %gsw_specvol_SSO_0                          specific volume at (SSO,CT=0,p)
-%                                                        (76-term equation)
+%                                                        (75-term equation)
 %==========================================================================
 %  This function calculates specifc volume at the Standard Ocean Salinity,
 %  SSO, and at a Conservative Temperature of zero degrees C, as a function 
-%  of pressure, p, in dbar, using a streamlined version of the 76-term CT
+%  of pressure, p, in dbar, using a streamlined version of the 75-term CT
 %  version of specific volume, that is, a streamlined version of the code
 %  "gsw_specvol(SA,CT,p)".
 %

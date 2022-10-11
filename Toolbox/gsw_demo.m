@@ -165,7 +165,7 @@ else
 end
 fprintf(1,' \n');
 pause(2)
-fprintf(1,'The bouyancy (Brunt Vasaila) frequency squared (N^2) at the mid point \n');
+fprintf(1,'The buoyancy (Brunt Vasaila) frequency squared (N^2) at the mid point \n');
 fprintf(1,'pressure (p_mid) between the "bottles" can be obtained by using the \n');
 fprintf(1,'function "gsw_Nsquared" \n');
 fprintf(1,'[N2, p_mid] = gsw_Nsquared(SA,CT,p) \n');

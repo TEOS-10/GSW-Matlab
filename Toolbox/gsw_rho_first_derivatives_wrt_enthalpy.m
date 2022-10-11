@@ -1,29 +1,28 @@
-function [rho_SA, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
+function [rho_SA_wrt_h, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
 
 % gsw_rho_first_derivatives_wrt_enthalpy                  first derivatives
-%                                  specific volume with respect to enthalpy
+%                                           of rho with respect to enthalpy
 % =========================================================================
 %
 % USAGE:
-%  [rho_SA, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
+%  [rho_SA_wrt_h, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
 %
 % DESCRIPTION:
-%  Calculates the following two first-order derivatives of specific
-%  volume (v),
-%   (1) rho_SA, first-order derivative with respect to Absolute Salinity 
-%       at constant CT & p.
-%   (2) rho_h, first-order derivative with respect to SA & CT at 
-%       constant p. 
+%  Calculates the following two first-order derivatives of rho,
+%   (1) rho_SA_wrt_h, first-order derivative with respect to Absolute 
+%       Salinity at constant h & p.
+%   (2) rho_h, first-order derivative with respect to h at 
+%       constant SA & p. 
 %
 %  Note that this function uses the using the computationally-efficient
-%  expression for specific volume (Roquet et al., 2015).  There is an 
-%  alternative to calling this function, namely 
-%  gsw_rho_first_derivatives_wrt_enthalpy_CT_exact(SA,CT,p) which uses 
+%  75 term expression for specific volume (Roquet et al., 2015).  There is 
+%  an alternative to calling this function, namely 
+%  gsw_specvol_first_derivatives_wrt_enthalpy_CT_exact(SA,CT,p) which uses 
 %  the full Gibbs function (IOC et al., 2010).   
 %
-%  Note that this 75-term equation has been fitted in a restricted range of 
-%  parameter space, and is most accurate inside the "oceanographic funnel" 
-%  described in McDougall et al. (2003).  The GSW library function 
+%  This 75-term equation has been fitted in a restricted range of parameter
+%  space, and is most accurate inside the "oceanographic funnel" described 
+%  in McDougall et al. (2010).  The GSW library function 
 %  "gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
 %  some of one's data lies outside this "funnel".  
 %
@@ -37,15 +36,16 @@ function [rho_SA, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
 %  p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA & CT are MxN.
 %
 % OUTPUT:
-%  rho_SA =  The first derivative of rho with respect to 
-%              Absolute Salinity at constant CT & p.    [ J/(kg (g/kg)^2) ]
+%  rho_SA_wrt_h  =  The first derivative of rho with respect to 
+%              Absolute Salinity at constant CT & p.   
+%                                                    [ ((kg/m^3)(g/kg)^-1 ]
 %  rho_h  =  The first derivative of rho with respect to 
-%              SA and CT at constant p.                  [ J/(kg K(g/kg)) ]
+%              SA and CT at constant p.               [ (m^3/kg)(J/kg)^-1 ]
 %
 % AUTHOR:   
 %  Trevor McDougall and Paul Barker.                   [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.15 (26th May, 2022)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -60,7 +60,7 @@ function [rho_SA, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  This software is available from http://www.TEOS-10.org
 %
@@ -72,11 +72,11 @@ function [rho_SA, rho_h] = gsw_rho_first_derivatives_wrt_enthalpy(SA,CT,p)
 
 if ~(nargin == 3)
    error('gsw_rho_first_derivatives_wrt_enthalpy:  Requires three inputs')
-end %if
+end 
 
 if ~(nargout == 2)
    error('gsw_rho_first_derivatives_wrt_enthalpy:  Requires two outputs')
-end %if
+end 
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -84,7 +84,7 @@ end %if
 
 if (ms ~= mt | ns ~= nt )
    error('gsw_rho_first_derivatives_wrt_enthalpy: SA and CT do not have the same dimensions')
-end %if
+end 
 
 if (mp == 1) & (np == 1)              % p scalar - fill to size of SA
     p = p*ones(size(SA));
@@ -99,7 +99,7 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_rho_first_derivatives_wrt_enthalpy: The dimensions of p do not agree')
-end %if
+end 
 
 if ms == 1
     SA = SA.';
@@ -118,16 +118,16 @@ end
 SA(SA < 0) = 0;
 
 rec_v = 1./gsw_specvol(SA,CT,p);
-[v_SA, v_h] = gsw_specvol_first_derivatives_wrt_enthalpy(SA,CT,p);
+[v_SA_wrt_h, v_h] = gsw_specvol_first_derivatives_wrt_enthalpy(SA,CT,p);
 
 rec_v2 = rec_v.^2;
 
 rho_h = -v_h.*rec_v2;
 
-rho_SA = -v_SA.*rec_v2;
+rho_SA_wrt_h = -v_SA_wrt_h.*rec_v2;
 
 if transposed
-    rho_SA = rho_SA.';
+    rho_SA_wrt_h = rho_SA_wrt_h.';
     rho_h = rho_h.';
 end
 

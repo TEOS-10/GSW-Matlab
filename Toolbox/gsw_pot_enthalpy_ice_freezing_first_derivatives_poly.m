@@ -12,7 +12,7 @@ function [pot_enthalpy_ice_freezing_SA, pot_enthalpy_ice_freezing_P] = gsw_pot_e
 % DESCRIPTION:
 %  Calculates the first derivatives of the potential enthalpy of ice Ih at
 %  which ice melts into seawater with Absolute Salinity SA and at pressure 
-%  p.  This code uses the comptationally efficient polynomial fit of the
+%  p.  This code uses the computationally efficient polynomial fit of the
 %  freezing potential enthalpy of ice Ih (McDougall et al., 2015).
 %
 % INPUT:
@@ -34,7 +34,7 @@ function [pot_enthalpy_ice_freezing_SA, pot_enthalpy_ice_freezing_P] = gsw_pot_e
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (17th March 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

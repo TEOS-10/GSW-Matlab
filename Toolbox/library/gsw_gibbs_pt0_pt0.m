@@ -5,11 +5,9 @@ function gibbs_pt0_pt0 = gsw_gibbs_pt0_pt0(SA,pt0)
 % This function calculates the second derivative of the specific Gibbs 
 % function with respect to temperature at zero sea pressure.  The inputs 
 % are Absolute Salinity and potential temperature with reference sea 
-% pressure of zero dbar.  This library function is called by both 
-% "gsw_pt_from_CT(SA,CT)" ,"gsw_pt0_from_t(SA,t,p)" and
-% "gsw_pt_from_entropy(SA,entropy)".
+% pressure of zero dbar.  
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.13 (7th September, 2020)
 %
 %==========================================================================
 

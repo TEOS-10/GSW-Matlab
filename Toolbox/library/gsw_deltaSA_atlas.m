@@ -41,7 +41,7 @@ function [deltaSA_atlas, in_ocean] = gsw_deltaSA_atlas(p,long,lat)
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -166,9 +166,9 @@ for k = 1:nz-1
         inds_di = find(data_inds == k);             % level k interpolation
         
         dsa = dsa_nan;
-        
+       
         dsa(:,inds_k) = deltaSA_ref([(indsXYZ-(nz+nyz))'; (indsXYZ - nz)'; (indsXYZ)'; (indsXYZ -nyz)']);
-        
+
         inds_pan = find(abs(long(inds_k)-277.6085)<=17.6085 & ...
             abs(lat(inds_k)-9.775) <= 9.775);
         
@@ -206,7 +206,7 @@ for k = 1:nz-1
             r1(inds_di).*(dsa(2,inds_k)'-dsa(1,inds_k)')) + ...
             s1(inds_di).*(dsa(4,inds_k)' + ...
             r1(inds_di).*(dsa(3,inds_k)'-dsa(4,inds_k)'));
-        
+
         if any(isfinite(sa_upper(inds_di)) & isnan(sa_lower(inds_di)))
             inds_different = find(isfinite(sa_upper(inds_di)) & isnan(sa_lower(inds_di)));
             sa_lower(inds_di(inds_different)) = sa_upper(inds_di(inds_different));
@@ -249,7 +249,7 @@ function deltaSA_atlas = gsw_dsa_add_mean(dsa)
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -323,7 +323,7 @@ function deltaSA_atlas = gsw_dsa_add_barrier(dsa,long,lat,longs_ref,lats_ref,dlo
 % MODIFIED:
 %  Paul Barker and Trevor McDougall
 %
-% VERSION NUMBER: 3.03 (29th April, 2013)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

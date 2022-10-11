@@ -22,7 +22,7 @@ function CT = gsw_CT_from_pt(SA,pt)
 % AUTHOR: 
 %  David Jackett, Trevor McDougall and Paul Barker     [ help@teos-10.org ]
 %  
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.13 (28th June, 2021)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -103,7 +103,7 @@ pot_enthalpy =  61.01362420681071 + y.*(168776.46138048015 + ...
 %
 %-----------------This is the end of the alternative code------------------
 
-CT = pot_enthalpy./gsw_cp0;
+CT = 2.505092880681252e-4*pot_enthalpy; %Note that 1./gsw_cp0 = 2.505092880681252e-4
 
 if transposed
     CT = CT.';

@@ -17,7 +17,7 @@ function data_i = gsw_data_interp(data,p,p_i,scale_factor)
 %  as the independent variable.  A final seventeenth PCHIP is used to 
 %  relate the interpolated data back to p space (rather than "botttle 
 %  number" space).  The interpolation method is described as the MR-PCHIP 
-%  method in McDougall and Barker (2019). 
+%  method in Barker and McDougall (2020). 
 %
 %  The scaling factor that we use for the independent variable is 0.33
 %  times the maximum magnitude (over all data pairs) of the slope on the 
@@ -55,12 +55,13 @@ function data_i = gsw_data_interp(data,p,p_i,scale_factor)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.1 (11th September, 2019)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % References
-%  Barker, P.M., and T.J. McDougall, 2019: Two interpolation methods using
-%   Multiply-Rotated Piecewise Cubic Hermite Interpolating Polynomials. 
-%   J. Atmosph. Ocean. Tech. (Submitted).
+%  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+%   multiply-rotated piecewise cubic hermite interpolating polynomials. 
+%   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+%   doi: 10.1175/JTECH-D-19-0211.1. 
 %
 %  The software is available from http://www.TEOS-10.org
 %

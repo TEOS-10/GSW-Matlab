@@ -34,7 +34,7 @@ function N2Osol = gsw_N2Osol(SA,CT,p,long,lat)
 % AUTHOR:  Rich Pawlowicz, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.9 (20th Febuary 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

@@ -26,7 +26,7 @@ function chem_potential_water_t_exact = gsw_chem_potential_water_t_exact(SA,t,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -134,10 +134,10 @@ g_SA_part = 8645.36753595126 + ...
     y.*(-30.0682112585625 - 1380.9597954037708.*z + y.*(2.626801985426835 + 703.695562834065.*z))))) + ...
     y.*(1187.3715515697959);
 
-kg2g = 1e-3;
+g2kg = 1e-3;
 
-chem_potential_water_t_exact =  kg2g*(g03_g + g08_g - 0.5.*sfac.*SA.*g_SA_part);
-% Note. The kg2g, a factor of 1e-3, is needed to convert the output of this function into units of J/g. 
+chem_potential_water_t_exact =  g2kg*(g03_g + g08_g - 0.5.*sfac.*SA.*g_SA_part);
+% Note. The g2kg, a factor of 1e-3, is needed to convert the output of this function into units of J/g. 
 % See section (2.9) of the TEOS-10 Manual.
 
 if transposed

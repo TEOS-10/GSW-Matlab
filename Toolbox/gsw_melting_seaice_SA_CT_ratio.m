@@ -54,7 +54,7 @@ function melting_seaice_SA_CT_ratio = gsw_melting_seaice_SA_CT_ratio(SA,CT,p,SA_
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -62,9 +62,9 @@ function melting_seaice_SA_CT_ratio = gsw_melting_seaice_SA_CT_ratio(SA,CT,p,SA_
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %
-%  McDougall, T.J., P.M. Barker and R. Feistel, 2013: Melting of ice and 
-%   sea ice into seawater and frazil ice formation. Journal of Physical 
-%   Oceanography, (Submitted).
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
 %    See Eqn. (28) of this manuscript.  
 %
 %  The software is available from http://www.TEOS-10.org

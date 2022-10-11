@@ -7,12 +7,13 @@ function mlp = gsw_mlp(SA,CT,p)
 %  mlp = gsw_mlp(SA,CT,p)
 %
 % DESCRIPTION:
-%  Calculates the mixed-layer pressure as described in de Boyer Montégut 
-%  et al. (2004).  The mlp is always deeper than 20 dbar, if the initial
-%  estimate of the mlp is less than 20 dbar, the temperature and salinity  
-%  of the bottles in the top 5 dbar are set to that of the bottle closest 
-%  to 5 dbar.  This removes the effect if a thin layer of fresh water, 
-%  such as that from a river outflow or from rain.
+%  Calculates the mixed-layer pressure based on de Boyer Montégut 
+%  et al. (2004), however this programme calculates the mlp as 0.3 g/kg 
+%  greater than the surface density.  The mlp is always deeper than 20 
+%  dbar, if the initial estimate of the mlp is less than 20 dbar, the 
+%  temperature and salinity of the bottles in the top 5 dbar are set to 
+%  that of the bottle closest to 5 dbar.  This removes the effect if a thin
+%  layer of fresh water, such as that from a river outflow or from rain.
 %
 %  Note that this 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
@@ -35,7 +36,7 @@ function mlp = gsw_mlp(SA,CT,p)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05.5 (3rd June, 2016)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  de Boyer Montégut, C., G. Madec, A.S. Fischer, A. Lazar and D. Iudicone 
@@ -69,33 +70,21 @@ if ~(nargin == 3)
     error('gsw_mlp: requires 3 input arguments')
 end
 
+p = gsw_resize(p,size(SA));
+
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
-[mp,np] = size(p);
 
 if (mt ~= ms | nt ~= ns)
     error('gsw_mlp: SA and CT must have same dimensions')
 end
 
-if (mp == 1) & (np == 1)
-    p = p*ones(size(SA));
-elseif (ns == np) & (mp == 1)
-    p = p(ones(1,ms), :);     
-elseif (ms == mp) & (np == 1)  
-    p = p(:,ones(1,ns));   
-elseif (ns == mp) & (np == 1)  
-    p = p.';    
-    p = p(ones(1,ms),:); 
-elseif (ms == mp) & (ns == np)
-    % ok
-else
-    error('gsw_mlp: Inputs array dimensions arguments do not agree')
-end
+sz_SA = size(SA);
+dims_SA = length(sz_SA);
 
-[ms,ns] = size(SA);
 mlp = nan(ns,1);
 
-rho0 = gsw_rho(SA,CT,zeros(ms,ns));
+rho0 = gsw_rho(SA,CT,zeros(size(SA)));
 
 %--------------------------------------------------------------------------
 % This function calculates density using the computationally-efficient 
@@ -147,7 +136,7 @@ for Iprofile = 1:ns
             SA_tmp(1:I4-1) = SA_tmp(I4);
             CT_tmp(1:I4-1) = CT_tmp(I4);
             
-            rho0_tmp(1:I4-1) = gsw_rho(SA_tmp(1:I4-1),CT_tmp(1:I4-1),zeros(length(1:I4-1),1));
+            rho0_tmp(1:I4-1) = gsw_rho(SA_tmp(1:I4-1),CT_tmp(1:I4-1),0);
             
             min_rho0_tmp = min(rho0_tmp);
             
@@ -165,6 +154,10 @@ for Iprofile = 1:ns
     else
         mlp(Iprofile) = NaN;
     end
+end
+
+if dims_SA == 3
+    mlp = reshape(mlp,[sz_SA(2) sz_SA(3)]);
 end
 
 end

@@ -1,6 +1,6 @@
 function in_funnel = gsw_infunnel(SA,CT,p)
 
-% gsw_infunnel        "oceanographic funnel" check for the 76-term equation
+% gsw_infunnel        "oceanographic funnel" check for the 75-term equation
 %==========================================================================
 % 
 % USAGE:  
@@ -20,13 +20,13 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %             =  1, if SA, CT and p are inside the "funnel"
 %  Note. The term "funnel" (McDougall et al., 2003) describes the range of
 %    SA, CT and p over which the error in the fit of the computationally
-%    efficient 76-term expression for specific volume in terms of SA, CT 
+%    efficient 75-term expression for specific volume in terms of SA, CT 
 %    and p was calculated (Roquet et al., 2015).
 %
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.13 (23rd May, 2021)
 %
 %  McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
 %   Accurate and computationally efficient algorithms for potential 
@@ -35,7 +35,7 @@ function in_funnel = gsw_infunnel(SA,CT,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -82,10 +82,11 @@ in_funnel(p > 8000 |...
     SA < 0 |...
     SA > 42 |...
     (p < 500 & CT < gsw_CT_freezing(SA,p)) |...
-    (p > 500 & p < 6500 & SA < p*5e-3 - 2.5) |...
+    (p >= 500 & p < 6500 & SA < p*5e-3 - 2.5) |...
     (p > 500 & p < 6500 & CT > (31.66666666666667 - p*3.333333333333334e-3)) | ...
-    (p > 6500 & SA < 30) |...
-    (p > 6500 & CT > 10.0)) = 0;
+    (p >= 500 & CT < gsw_CT_freezing(SA,500)) |...
+    (p >= 6500 & SA < 30) |...
+    (p >= 6500 & CT > 10.0)) = 0;
 
 in_funnel(isnan(SA) | isnan(CT) | isnan(p)) = NaN;
 

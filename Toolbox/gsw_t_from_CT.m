@@ -25,7 +25,7 @@ function t = gsw_t_from_CT(SA,CT,p)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %  This function is unchanged from version 2.0 (24th September, 2010).
 %
 % REFERENCES:

@@ -32,12 +32,12 @@ function alpha_on_beta = gsw_alpha_on_beta(SA,CT,p)
 %  alpha_on_beta  =  thermal expansion coefficient with respect to                          
 %                    Conservative Temperature divided by the saline 
 %                    contraction coefficient at constant Conservative
-%                    Temperature                           [ kg g^-1 K^-1 ]
+%                    Temperature                           [ g kg^-1 K^-1 ]
 %
 % AUTHOR: 
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.15 (1st June, 2022)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

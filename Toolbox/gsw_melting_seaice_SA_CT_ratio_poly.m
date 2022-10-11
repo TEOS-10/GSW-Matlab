@@ -1,7 +1,7 @@
 function melting_seaice_SA_CT_ratio = gsw_melting_seaice_SA_CT_ratio_poly(SA,CT,p,SA_seaice,t_seaice)
 
 % gsw_melting_seaice_SA_CT_ratio_poly        ratio of SA to CT changes when
-%                                       sea ice melts into seawater  (poly)
+%                                        sea ice melts into seawater (poly)
 %==========================================================================
 %
 % USAGE:
@@ -60,7 +60,7 @@ function melting_seaice_SA_CT_ratio = gsw_melting_seaice_SA_CT_ratio_poly(SA,CT,
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -68,14 +68,14 @@ function melting_seaice_SA_CT_ratio = gsw_melting_seaice_SA_CT_ratio_poly(SA,CT,
 %   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.
 %
-%  McDougall, T.J., P.M. Barker and R. Feistel, 2013: Melting of ice and 
-%   sea ice into seawater and frazil ice formation. Journal of Physical 
-%   Oceanography, (Submitted).
+%  McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+%   Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+%   Journal of Physical Oceanography, 44, 1751-1775.
 %    See Eqn. (31) of this manuscript.  
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %  The software is available from http://www.TEOS-10.org
 %

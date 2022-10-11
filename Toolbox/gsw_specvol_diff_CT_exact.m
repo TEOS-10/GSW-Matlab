@@ -1,6 +1,6 @@
 function specvol_diff_CT_exact = gsw_specvol_diff_CT_exact(SA,CT,p_shallow,p_deep)
 
-% gsw_specvol_CT_exact                                      specific volume
+% specvol_diff_CT_exact    specific volume difference between two pressures
 %==========================================================================
 % 
 % USAGE:  
@@ -35,7 +35,7 @@ function specvol_diff_CT_exact = gsw_specvol_diff_CT_exact(SA,CT,p_shallow,p_dee
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (29th January, 2015)
+% VERSION NUMBER: 3.06.13 (1st June, 2021)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -46,7 +46,7 @@ function specvol_diff_CT_exact = gsw_specvol_diff_CT_exact(SA,CT,p_shallow,p_dee
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 % The software is available from http://www.TEOS-10.org
 %
@@ -114,8 +114,8 @@ end
 t_shallow = gsw_t_from_CT(SA,CT,p_shallow);
 t_deep = gsw_t_from_CT(SA,CT,p_deep);
 
-specvol_diff_CT_exact = gsw_specvol_t_exact(SA,t_deep,p) ...
-    - gsw_specvol_t_exact(SA,t_shallow,p);
+specvol_diff_CT_exact = gsw_specvol_t_exact(SA,t_deep,p_deep) ...
+    - gsw_specvol_t_exact(SA,t_shallow,p_shallow);
 
 if transposed
     specvol_diff_CT_exact = specvol_CT_diff_exact.';

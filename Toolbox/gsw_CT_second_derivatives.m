@@ -44,7 +44,7 @@ function [CT_SA_SA, CT_SA_pt, CT_pt_pt] = gsw_CT_second_derivatives(SA,pt)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.12 (1st September, 2020)
+% VERSION NUMBER: 3.06.13 (7th September, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -103,14 +103,15 @@ CT_SA_SA(SA_u ~= SA_l) = (CT_SA_u(SA_u ~= SA_l) - CT_SA_l(SA_u ~= SA_l))./ ...
                          (SA_u(SA_u ~= SA_l) - SA_l(SA_u ~= SA_l));
 
 dpt  = 1e-2;        % increment of potential temperature is 0.01 degrees C.
+rec_2dpt = 50;      % rec_2dpt = 1./(2.*dpt);
 pt_l = pt - dpt;
 pt_u = pt + dpt;
 
 [CT_SA_l, CT_pt_l] = gsw_CT_first_derivatives(SA,pt_l);
 [CT_SA_u, CT_pt_u] = gsw_CT_first_derivatives(SA,pt_u);
 
-CT_SA_pt = (CT_SA_u - CT_SA_l)./(2.*dpt);
-CT_pt_pt = (CT_pt_u - CT_pt_l)./(2.*dpt);
+CT_SA_pt = (CT_SA_u - CT_SA_l).*rec_2dpt;
+CT_pt_pt = (CT_pt_u - CT_pt_l).*rec_2dpt;
 
 if transposed
     CT_SA_SA = CT_SA_SA.';

@@ -1,6 +1,6 @@
 function t_i = gsw_t_interp(t,p,p_i)
 
-% gsw_t_interp                         interpolation of in situ temperature
+% gsw_t_interp                         interpolation of in-situ temperature
 %                                                          to p_i on a cast
 %==========================================================================
 %
@@ -18,7 +18,7 @@ function t_i = gsw_t_interp(t,p,p_i)
 %  of the "bottle number" as the independent variable.  A final seventeenth 
 %  PCHIP is used to relate the interpolated data back to pressure space 
 %  (rather than "botttle number" space).  The interpolation method is 
-%  described as the MR-PCHIP method in McDougall and Barker (2019) 
+%  described as the MR-PCHIP method in Barker and McDougall (2020). 
 %
 %  The scaling factor that we use for the independent variable is 0.33
 %  times the maximum magnitude (over all data pairs) of the slope on the 
@@ -29,10 +29,13 @@ function t_i = gsw_t_interp(t,p,p_i)
 %
 %  The code uses Conservative Temperature (of TEOS-10) as the temperature 
 %  variable in the interpolation procedure.  The output of the code is 
-%  converted back to in situ temperature.  The conversions between in situ 
+%  converted back to in-situ temperature.  The conversions between in-situ 
 %  and Conservative Temperatures are done using the constant value of 
 %  Absolute Salinity equal to the Standard Ocean Reference Salinity 
-%  (35.16504 g/kg) which is found by calling gsw_SSO. 
+%  (35.16504 g/kg) which is found by calling gsw_SSO.  We have found that
+%  the use of this salinity rather than the estimate salinity from 
+%  MRST-PCHIP method in Barker and McDougall (2020) results in an 
+%  temperature error less than 1 mK.
 %
 %  Any interpolated bottles that have pressures shallower than the 
 %  shallowest observed bottle are set equal to the shallowest observed 
@@ -58,7 +61,7 @@ function t_i = gsw_t_interp(t,p,p_i)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.12 (25th May, 2020)
+% VERSION NUMBER: 3.06.12 (15th July, 2020)
 %
 % REFERENCES:
 %  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
@@ -141,10 +144,8 @@ for Iprofile = 1:number_of_profiles
     else
         p_i_tmp = p_i;
     end
-    
-    SA_obs = gsw_SSO*ones(size(t_obs));
- 
-    CT_obs = gsw_CT_from_t(SA_obs,t_obs,p_obs);
+     
+    CT_obs = gsw_CT_from_t(gsw_SSO*ones(size(t_obs)),t_obs,p_obs);
     
     CT_i = gsw_data_interp(CT_obs,p_obs,p_i_tmp,scale_factor);
     

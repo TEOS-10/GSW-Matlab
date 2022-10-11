@@ -28,7 +28,7 @@ function t_maxdensity_exact = gsw_t_maxdensity_exact(SA,p)
 % AUTHOR: 
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -37,7 +37,7 @@ function t_maxdensity_exact = gsw_t_maxdensity_exact(SA,p)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.42 of this TEOS-10 Manual.  
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%  McDougall, T.J., and S.J. Wotherspoon, 2013: A simple modification of 
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %

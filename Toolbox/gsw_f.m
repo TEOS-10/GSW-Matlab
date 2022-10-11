@@ -24,7 +24,7 @@ function f = gsw_f(lat)
 % MODIFIED:
 %  28th July, 2010 by Paul Barker  
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCE:
 %  Groten, E., 2004: Fundamental Parameters and Current (2004) Best 

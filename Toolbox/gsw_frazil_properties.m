@@ -61,7 +61,7 @@ function [SA_final, CT_final, w_Ih_final] = gsw_frazil_properties(SA_bulk,h_bulk
 % AUTHOR:
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (29th May 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of

@@ -24,7 +24,7 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -33,7 +33,7 @@ function osmotic_pressure_t_exact = gsw_osmotic_pressure_t_exact(SA,t,pw)
 %   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org
 %    See section 3.41 of this TEOS-10 Manual.
 %
-%  McDougall T. J. and S. J. Wotherspoon, 2013: A simple modification of 
+%  McDougall T.J. and S.J. Wotherspoon, 2013: A simple modification of 
 %   Newton's method to achieve convergence of order 1 + sqrt(2).  Applied 
 %   Mathematics Letters, 29, 20-25.  
 %
@@ -89,6 +89,7 @@ end
 SA(SA < 0) = 0;
 
 db2Pa = 1e4; % conversion factor from dbar to Pa
+rec_g2kg = 1e3;% conversion factor from g to kg
 
 gibbs_pure_water = gsw_gibbs(0,0,0,0,t,pw);
 
@@ -98,7 +99,7 @@ df_dp = -db2Pa*(gsw_gibbs(0,0,1,SA,t,p) - SA.*gsw_gibbs(1,0,1,SA,t,p)); % Inital
 
 for Number_of_iterations = 1:2
     p_old = p;
-    f = gibbs_pure_water - gsw_chem_potential_water_t_exact(SA,t,p_old);
+    f = gibbs_pure_water - rec_g2kg.*gsw_chem_potential_water_t_exact(SA,t,p_old);
     p = p_old - f./df_dp; % this is half way through the modified N-R method
     p_mean = 0.5*(p + p_old);
     df_dp = -db2Pa*(gsw_gibbs(0,0,1,SA,t,p_mean) - SA.*gsw_gibbs(1,0,1,SA,t,p_mean)) ;

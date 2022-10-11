@@ -41,7 +41,7 @@ function [tfreezing_SA, tfreezing_P] = gsw_t_freezing_first_derivatives(SA,p,sat
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (20th March 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

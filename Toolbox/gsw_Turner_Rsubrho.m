@@ -47,7 +47,7 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 % AUTHOR:  
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.04 (10th December, 2013)
+% VERSION NUMBER: 3.06.13 (30th July, 2021)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -63,7 +63,7 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling., 90, pp. 29-43.
 %
 %   The software is available from http://www.TEOS-10.org
 %
@@ -75,11 +75,11 @@ function [Tu, Rsubrho, p_mid] = gsw_Turner_Rsubrho(SA,CT,p)
 
 if ~(nargin == 3)
    error('gsw_Turner_Rsubrho:  Requires three inputs')
-end %if
+end 
 
 if ~(nargout == 3 )
    error('gsw_Turner_Rsubrho:  Requires three outputs')
-end %if
+end 
 
 [ms,ns] = size(SA);
 [mt,nt] = size(CT);
@@ -106,18 +106,9 @@ elseif (ms == mp) & (ns == np)
     % ok
 else
     error('gsw_Turner_Rsubrho: Inputs array dimensions arguments do not agree')
-end %if
+end 
 
 [mp,np] = size(p);
-
-if ms == 1
-    SA = SA.';
-    CT = CT.';
-    p = p.';
-    transposed = 1;
-else
-    transposed = 0;
-end
 
 %--------------------------------------------------------------------------
 % Start of the calculation
@@ -154,11 +145,5 @@ Tu = Tu.*(180/pi);
 
 Rsubrho = nan(size(dSA));
 Rsubrho(dSA ~= 0) = (alpha(dSA ~= 0).*dCT(dSA ~= 0))./(beta(dSA ~= 0).*dSA(dSA ~= 0));
-
-if transposed
-    Tu      = Tu.';
-    Rsubrho = Rsubrho.';
-    p_mid   = p_mid.';
-end
 
 end

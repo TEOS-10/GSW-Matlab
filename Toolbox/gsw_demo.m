@@ -67,6 +67,7 @@ fprintf(1,' \n');
 pause(2)
 fprintf(1,'An example. We have set p_ref to be 2000 dbar, thus we have the potential \n');
 fprintf(1,'density referenced to 2000 dbars. \n');
+fprintf(1,'p_ref = 2000 \n');
 fprintf(1,'pot_rho_2 = gsw_rho(SA,CT,p_ref) \n');
 gsw_demo_data.pot_rho_2 = gsw_rho(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p_ref);
 fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'pot_rho_2 = [',gsw_demo_data.pot_rho_2([1,22,29:4:45],1)',']');
@@ -114,11 +115,18 @@ fprintf(1,'with user definied potential density contours and the Conservative Te
 fprintf(1,'freezing line at p of 0 dbar.  The potential density anomaly contours are \n');
 fprintf(1,'referenced to user supplied depth are also included.  In this example we have \n');
 fprintf(1,'set the reference pressure to be 2000 dbar. \n');
-fprintf(1,'note that this plotting function relies on the functions \n');
+fprintf(1,'We have interpolated the raw observations to a 1 dbar regular spaced data using the \n');
+fprintf(1,'function "gsw_SA_CT_interp". \n');
+fprintf(1,'The raw data are the black dots and the interpolated data is the blue line \n');
+fprintf(1,'Note that this plotting function relies on the functions \n');
 fprintf(1,'"gsw_rho" and "gsw_CT_freezing_poly" \n');
 fprintf(1,' \n');
+fprintf(1,'p_i = [min(p):max(p)]; \n');
+fprintf(1,'[SA_i, CT_i] = gsw_SA_CT_interp(SA,CT,p,p_i); \n');
 fprintf(1,'p_ref = 2000 \n');
 fprintf(1,'gsw_SA_CT_plot(SA,CT,p_ref,''\\itS\\rm_A - \\Theta plot'') \n');
+fprintf(1,'hold on \n');
+fprintf(1,'plot(SA_i,CT_i,''b-'') \n');
 pause(6)
 if JavaVirtMach == 1
     try
@@ -137,7 +145,11 @@ if JavaVirtMach == 1
         clf(fig1)
         set(fig1,'pos','default','menubar','none','numbertitle','off', ...
             'name','GSW demo - An example SA_CT diagram')
+        gsw_demo_data.p_i = [min(gsw_demo_data.p):max(gsw_demo_data.p)];
+        [gsw_demo_data.SA_i,gsw_demo_data.CT_i] = gsw_SA_CT_interp(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p,gsw_demo_data.p_i);
         gsw_SA_CT_plot(gsw_demo_data.SA(:,1),gsw_demo_data.CT(:,1),gsw_demo_data.p_ref,[32.5:0.5:38],'\itS\rm_A - \Theta  diagram');
+        hold on
+        plot(gsw_demo_data.SA_i(:,1),gsw_demo_data.CT_i(:,1),'b-')
         fprintf(1,' \n');
         fprintf(1,'When you have finished studying the plot press enter to continue\n');
         pause
@@ -168,6 +180,7 @@ fprintf(1,'calculated with the function "gsw_geo_strf_dyn_height".  In this func
 fprintf(1,'the user defines the the reference pressure that they want the dymanic height \n');
 fprintf(1,'relative to. In this example we set p_ref to be 2000 dbar. \n');
 gsw_demo_data.geo_strf_dyn_height = gsw_geo_strf_dyn_height(gsw_demo_data.SA,gsw_demo_data.CT,gsw_demo_data.p,gsw_demo_data.p_ref);
+fprintf(1,'p_ref = 2000 \n');
 fprintf(1,'geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref) \n');
 fprintf(1,'%s %7.4f  %7.4f  %7.4f  %7.4f  %7.4f  %7.4f %7.4f %s \n' ,'geo_strf_dyn_height  = [',gsw_demo_data.geo_strf_dyn_height([1,22,29:4:45],1)',']');
 pause(4)

@@ -648,7 +648,7 @@ if ~isempty(gsw_cf.ICT_maxdensity)
     gsw_cf.gsw_chks = 0;
 end
 
-%% vertical stability
+%% vertical stability and interpolation
 
 [gsw_cf.Tu, gsw_cf.Rsubrho, gsw_cf.p_mid_TuRsr] = gsw_Turner_Rsubrho(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast);
 [gsw_cf.ITurner] = find(abs(gsw_cv.Tu - gsw_cf.Tu) >= gsw_cv.Tu_ca | abs(gsw_cv.Rsubrho - gsw_cf.Rsubrho) >= gsw_cv.Rsubrho_ca | ...
@@ -689,6 +689,47 @@ if ~isempty(gsw_cf.INsquared_lowerlimit)
     gsw_cf.gsw_chks = 0;
 end
 
+[gsw_cf.SAi_SACTinterp, gsw_cf.CTi_SACTinterp] = gsw_SA_CT_interp(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.p_i);
+[gsw_cf.SACTinterp] = find(abs(gsw_cv.SAi_SACTinterp - gsw_cf.SAi_SACTinterp) >= gsw_cv.SAi_SACTinterp_ca | ...
+    abs(gsw_cv.CTi_SACTinterp - gsw_cf.CTi_SACTinterp) >= gsw_cv.CTi_SACTinterp_ca);
+if ~isempty(gsw_cf.SACTinterp)
+    fprintf(2,'gsw_SA_CT_interp:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.ti_tinterp = gsw_t_interp(gsw_cv.t_chck_cast,gsw_cv.p_chck_cast,gsw_cv.p_i);
+[gsw_cf.tinterp] = find(abs(gsw_cv.ti_tinterp - gsw_cf.ti_tinterp) >= gsw_cv.ti_tinterp_ca);
+if ~isempty(gsw_cf.tinterp)
+    fprintf(2,'gsw_t_interp:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+[gsw_cf.traceri_tracerCTinterp, gsw_cf.CTi_tracerCTinterp] = gsw_tracer_CT_interp(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.p_i);
+[gsw_cf.tracerCTinterp] = find(abs(gsw_cv.traceri_tracerCTinterp - gsw_cf.traceri_tracerCTinterp) >= gsw_cv.traceri_tracerCTinterp_ca | ...
+    abs(gsw_cv.CTi_tracerCTinterp - gsw_cf.CTi_tracerCTinterp) >= gsw_cv.CTi_tracerCTinterp_ca);
+if ~isempty(gsw_cf.tracerCTinterp)
+    fprintf(2,'gsw_tracer_CT_interp:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.traceri_tracerinterp = gsw_tracer_interp(gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.p_i);
+[gsw_cf.tracerinterp] = find(abs(gsw_cv.traceri_tracerinterp - gsw_cf.traceri_tracerinterp) >= gsw_cv.traceri_tracerinterp_ca);
+if ~isempty(gsw_cf.tracerinterp)
+    fprintf(2,'gsw_tracer_interp:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+
+
+[gsw_cf.IPVfN2, gsw_cf.p_mid_IPVfN2] = gsw_IPV_vs_fNsquared_ratio(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
+[gsw_cf.IIPVfN2] = find(abs(gsw_cv.IPVfN2 - gsw_cf.IPVfN2) >= gsw_cv.IPVfN2_ca | ...
+    abs(gsw_cv.p_mid_IPVfN2 - gsw_cf.p_mid_IPVfN2) >= gsw_cv.p_mid_IPVfN2_ca);
+if ~isempty(gsw_cf.IIPVfN2)
+    fprintf(2,'gsw_IPV_vs_fNsquared_ratio:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+
 [gsw_cf.IPVfN2, gsw_cf.p_mid_IPVfN2] = gsw_IPV_vs_fNsquared_ratio(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
 [gsw_cf.IIPVfN2] = find(abs(gsw_cv.IPVfN2 - gsw_cf.IPVfN2) >= gsw_cv.IPVfN2_ca | ...
     abs(gsw_cv.p_mid_IPVfN2 - gsw_cf.p_mid_IPVfN2) >= gsw_cv.p_mid_IPVfN2_ca);
@@ -702,215 +743,70 @@ if gsw_cf.gsw_chks == 1 ;
 end
 
 %% geostrophic streamfunctions and acoustic travel time
-[matlab_version, matlab_release_date] = version();
-if exist('tomlabVersion') == 2 | ...
-        (license('checkout', 'Optimization_Toolbox') == 1 & datenum(matlab_release_date) < 736574 & exist('cplexqp.p') ~= 6)
-    
-    gsw_cf.geo_strf_dyn_height = gsw_geo_strf_dyn_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_dyn_height] = find(abs(gsw_cv.geo_strf_dyn_height - gsw_cf.geo_strf_dyn_height) >= gsw_cv.geo_strf_dyn_height_ca);
-    if ~isempty(gsw_cf.Igeo_strf_dyn_height)
-        fprintf(2,'gsw_geo_strf_dyn_height:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    [gsw_cf.geo_strf_dyn_height_pc, gsw_cf.geo_strf_dyn_height_pc_p_mid] = gsw_geo_strf_dyn_height_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast);
-    [gsw_cf.Igeo_strf_dyn_height_pc] = find(abs(gsw_cv.geo_strf_dyn_height_pc - gsw_cf.geo_strf_dyn_height_pc) >= gsw_cv.geo_strf_dyn_height_pc_ca | ...
-        abs(gsw_cv.geo_strf_dyn_height_pc_p_mid - gsw_cf.geo_strf_dyn_height_pc_p_mid) >= gsw_cv.geo_strf_dyn_height_pc_p_mid_ca);
-    if ~isempty(gsw_cf.Igeo_strf_dyn_height_pc)
-        fprintf(2,'gsw_geo_strf_dyn_height_pc:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_isopycnal = gsw_geo_strf_isopycnal(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr,gsw_cv.Neutral_Density,gsw_cv.p_Neutral_Density);
-    [gsw_cf.Igeo_strf_isopycnal] = find(abs(gsw_cv.geo_strf_isopycnal - gsw_cf.geo_strf_isopycnal) >= gsw_cv.geo_strf_isopycnal_ca);
-    if ~isempty(gsw_cf.Igeo_strf_isopycnal)
-        fprintf(2,'gsw_geo_strf_isopycnal:   Failed\n');
-        gsw_chks = 0;
-    end
-    
-    [gsw_cf.geo_strf_isopycnal_pc, gsw_cf.geo_strf_isopycnal_pc_p_mid] = gsw_geo_strf_isopycnal_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast,gsw_cv.Neutral_Density(1),3);
-    [gsw_cf.Igeo_strf_isopycnal_pc] = find(abs(gsw_cv.geo_strf_isopycnal_pc - gsw_cf.geo_strf_isopycnal_pc) >= gsw_cv.geo_strf_isopycnal_pc_ca |...
-        abs(gsw_cv.geo_strf_isopycnal_pc_p_mid - gsw_cf.geo_strf_isopycnal_pc_p_mid) >= gsw_cv.geo_strf_isopycnal_pc_p_mid_ca);
-    if ~isempty(gsw_cf.Igeo_strf_isopycnal_pc)
-        fprintf(2,'gsw_geo_strf_isopycnal_pc:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_Montgomery = gsw_geo_strf_Montgomery(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_Montgomery] = find(abs(gsw_cv.geo_strf_Montgomery - gsw_cf.geo_strf_Montgomery) >= gsw_cv.geo_strf_Montgomery_ca);
-    if ~isempty(gsw_cf.Igeo_strf_Montgomery)
-        fprintf(2,'gsw_geo_strf_Montgomery:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_Cunningham = gsw_geo_strf_Cunningham(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_Cunningham] = find(abs(gsw_cv.geo_strf_Cunningham - gsw_cf.geo_strf_Cunningham) >= gsw_cv.geo_strf_Cunningham_ca);
-    if ~isempty(gsw_cf.Igeo_strf_Cunningham)
-        fprintf(2,'gsw_geo_strf_Cunningham:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_steric_height = gsw_geo_strf_steric_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_steric_height] = find(abs(gsw_cv.geo_strf_steric_height - gsw_cf.geo_strf_steric_height) >= gsw_cv.geo_strf_steric_height_ca);
-    if ~isempty(gsw_cf.Igeo_strf_steric_height)
-        fprintf(2,'gsw_geo_strf_steric_height:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_PISH = gsw_geo_strf_PISH(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr_05);
-    [gsw_cf.Igeo_strf_PISH] = find(abs(gsw_cv.geo_strf_PISH - gsw_cf.geo_strf_PISH) >= gsw_cv.geo_strf_PISH_ca);
-    if ~isempty(gsw_cf.Igeo_strf_PISH)
-        fprintf(2,'gsw_geo_strf_PISH:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.travel_time = gsw_travel_time(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast(1));
-    [gsw_cf.Itravel_time] = find(abs(gsw_cv.travel_time - gsw_cf.travel_time) >= gsw_cv.travel_time_ca);
-    if ~isempty(gsw_cf.Itravel_time)
-        fprintf(2,'gsw_travel_time:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-elseif exist('cplexqp.p') == 6 
-    
-    gsw_cf.geo_strf_dyn_height = gsw_geo_strf_dyn_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_dyn_height] = find(abs(gsw_cv.geo_strf_dyn_height_IBMoptim - gsw_cf.geo_strf_dyn_height) >= gsw_cv.geo_strf_dyn_height_ca);
-    if ~isempty(gsw_cf.Igeo_strf_dyn_height)
-        fprintf(2,'gsw_geo_strf_dyn_height:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    [gsw_cf.geo_strf_dyn_height_pc, gsw_cf.geo_strf_dyn_height_pc_p_mid] = gsw_geo_strf_dyn_height_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast);
-    [gsw_cf.Igeo_strf_dyn_height_pc] = find(abs(gsw_cv.geo_strf_dyn_height_pc - gsw_cf.geo_strf_dyn_height_pc) >= gsw_cv.geo_strf_dyn_height_pc_ca | ...
-        abs(gsw_cv.geo_strf_dyn_height_pc_p_mid - gsw_cf.geo_strf_dyn_height_pc_p_mid) >= gsw_cv.geo_strf_dyn_height_pc_p_mid_ca);
-    if ~isempty(gsw_cf.Igeo_strf_dyn_height_pc)
-        fprintf(2,'gsw_geo_strf_dyn_height_pc:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_isopycnal = gsw_geo_strf_isopycnal(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr,gsw_cv.Neutral_Density,gsw_cv.p_Neutral_Density);
-    [gsw_cf.Igeo_strf_isopycnal] = find(abs(gsw_cv.geo_strf_isopycnal_IBMoptim - gsw_cf.geo_strf_isopycnal) >= gsw_cv.geo_strf_isopycnal_ca);
-    if ~isempty(gsw_cf.Igeo_strf_isopycnal)
-        fprintf(2,'gsw_geo_strf_isopycnal:   Failed\n');
-        gsw_chks = 0;
-    end
-    
-    [gsw_cf.geo_strf_isopycnal_pc, gsw_cf.geo_strf_isopycnal_pc_p_mid] = gsw_geo_strf_isopycnal_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast,gsw_cv.Neutral_Density(1),3);
-    [gsw_cf.Igeo_strf_isopycnal_pc] = find(abs(gsw_cv.geo_strf_isopycnal_pc - gsw_cf.geo_strf_isopycnal_pc) >= gsw_cv.geo_strf_isopycnal_pc_ca |...
-        abs(gsw_cv.geo_strf_isopycnal_pc_p_mid - gsw_cf.geo_strf_isopycnal_pc_p_mid) >= gsw_cv.geo_strf_isopycnal_pc_p_mid_ca);
-    if ~isempty(gsw_cf.Igeo_strf_isopycnal_pc)
-        fprintf(2,'gsw_geo_strf_isopycnal_pc:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_Montgomery = gsw_geo_strf_Montgomery(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_Montgomery] = find(abs(gsw_cv.geo_strf_Montgomery_IBMoptim - gsw_cf.geo_strf_Montgomery) >= gsw_cv.geo_strf_Montgomery_ca);
-    if ~isempty(gsw_cf.Igeo_strf_Montgomery)
-        fprintf(2,'gsw_geo_strf_Montgomery:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_Cunningham = gsw_geo_strf_Cunningham(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_Cunningham] = find(abs(gsw_cv.geo_strf_Cunningham_IBMoptim - gsw_cf.geo_strf_Cunningham) >= gsw_cv.geo_strf_Cunningham_ca);
-    if ~isempty(gsw_cf.Igeo_strf_Cunningham)
-        fprintf(2,'gsw_geo_strf_Cunningham:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_steric_height = gsw_geo_strf_steric_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_steric_height] = find(abs(gsw_cv.geo_strf_steric_height_IBMoptim - gsw_cf.geo_strf_steric_height) >= gsw_cv.geo_strf_steric_height_ca);
-    if ~isempty(gsw_cf.Igeo_strf_steric_height)
-        fprintf(2,'gsw_geo_strf_steric_height:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_PISH = gsw_geo_strf_PISH(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr_05);
-    [gsw_cf.Igeo_strf_PISH] = find(abs(gsw_cv.geo_strf_PISH_IBMoptim - gsw_cf.geo_strf_PISH) >= gsw_cv.geo_strf_PISH_ca);
-    if ~isempty(gsw_cf.Igeo_strf_PISH)
-        fprintf(2,'gsw_geo_strf_PISH:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.travel_time = gsw_travel_time(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast(1));
-    [gsw_cf.Itravel_time] = find(abs(gsw_cv.travel_time_IBMoptim - gsw_cf.travel_time) >= gsw_cv.travel_time_ca);
-    if ~isempty(gsw_cf.Itravel_time)
-        fprintf(2,'gsw_travel_time:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
 
-else
-    
-    fprintf(1,' \n');
-    fprintf(1,'It appears that you do not have an suitable optimisation solver installed.  We recommend TOMLAB CPLEX, \n');
-    fprintf(1,'however, IBM CPLEX is a suitable alternative for your version of Matlab. \n');
-    fprintf(1,' \n');
-    
-    gsw_cf.geo_strf_dyn_height = gsw_geo_strf_dyn_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_dyn_height] = find(abs(gsw_cv.geo_strf_dyn_height_nooptim - gsw_cf.geo_strf_dyn_height) >= gsw_cv.geo_strf_dyn_height_ca);
-    if ~isempty(gsw_cf.Igeo_strf_dyn_height)
-        fprintf(2,'gsw_geo_strf_dyn_height:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    [gsw_cf.geo_strf_dyn_height_pc, gsw_cf.geo_strf_dyn_height_pc_p_mid] = gsw_geo_strf_dyn_height_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast);
-    [gsw_cf.Igeo_strf_dyn_height_pc] = find(abs(gsw_cv.geo_strf_dyn_height_pc - gsw_cf.geo_strf_dyn_height_pc) >= gsw_cv.geo_strf_dyn_height_pc_ca | ...
-        abs(gsw_cv.geo_strf_dyn_height_pc_p_mid - gsw_cf.geo_strf_dyn_height_pc_p_mid) >= gsw_cv.geo_strf_dyn_height_pc_p_mid_ca);
-    if ~isempty(gsw_cf.Igeo_strf_dyn_height_pc)
-        fprintf(2,'gsw_geo_strf_dyn_height_pc:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_isopycnal = gsw_geo_strf_isopycnal(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr,gsw_cv.Neutral_Density,gsw_cv.p_Neutral_Density);
-    [gsw_cf.Igeo_strf_isopycnal] = find(abs(gsw_cv.geo_strf_isopycnal_nooptim - gsw_cf.geo_strf_isopycnal) >= gsw_cv.geo_strf_isopycnal_ca);
-    if ~isempty(gsw_cf.Igeo_strf_isopycnal)
-        fprintf(2,'gsw_geo_strf_isopycnal:   Failed\n');
-        gsw_chks = 0;
-    end
-    
-    [gsw_cf.geo_strf_isopycnal_pc, gsw_cf.geo_strf_isopycnal_pc_p_mid] = gsw_geo_strf_isopycnal_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast,gsw_cv.Neutral_Density(1),3);
-    [gsw_cf.Igeo_strf_isopycnal_pc] = find(abs(gsw_cv.geo_strf_isopycnal_pc - gsw_cf.geo_strf_isopycnal_pc) >= gsw_cv.geo_strf_isopycnal_pc_ca |...
-        abs(gsw_cv.geo_strf_isopycnal_pc_p_mid - gsw_cf.geo_strf_isopycnal_pc_p_mid) >= gsw_cv.geo_strf_isopycnal_pc_p_mid_ca);
-    if ~isempty(gsw_cf.Igeo_strf_isopycnal_pc)
-        fprintf(2,'gsw_geo_strf_isopycnal_pc:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_Montgomery = gsw_geo_strf_Montgomery(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_Montgomery] = find(abs(gsw_cv.geo_strf_Montgomery_nooptim - gsw_cf.geo_strf_Montgomery) >= gsw_cv.geo_strf_Montgomery_ca);
-    if ~isempty(gsw_cf.Igeo_strf_Montgomery)
-        fprintf(2,'gsw_geo_strf_Montgomery:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_Cunningham = gsw_geo_strf_Cunningham(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_Cunningham] = find(abs(gsw_cv.geo_strf_Cunningham_nooptim - gsw_cf.geo_strf_Cunningham) >= gsw_cv.geo_strf_Cunningham_ca);
-    if ~isempty(gsw_cf.Igeo_strf_Cunningham)
-        fprintf(2,'gsw_geo_strf_Cunningham:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_steric_height = gsw_geo_strf_steric_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
-    [gsw_cf.Igeo_strf_steric_height] = find(abs(gsw_cv.geo_strf_steric_height_nooptim - gsw_cf.geo_strf_steric_height) >= gsw_cv.geo_strf_steric_height_ca);
-    if ~isempty(gsw_cf.Igeo_strf_steric_height)
-        fprintf(2,'gsw_geo_strf_steric_height:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.geo_strf_PISH = gsw_geo_strf_PISH(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr_05);
-    [gsw_cf.Igeo_strf_PISH] = find(abs(gsw_cv.geo_strf_PISH_nooptim - gsw_cf.geo_strf_PISH) >= gsw_cv.geo_strf_PISH_ca);
-    if ~isempty(gsw_cf.Igeo_strf_PISH)
-        fprintf(2,'gsw_geo_strf_PISH:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    
-    gsw_cf.travel_time = gsw_travel_time(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast(1));
-    [gsw_cf.Itravel_time] = find(abs(gsw_cv.travel_time_nooptim - gsw_cf.travel_time) >= gsw_cv.travel_time_ca);
-    if ~isempty(gsw_cf.Itravel_time)
-        fprintf(2,'gsw_travel_time:   Failed\n');
-        gsw_cf.gsw_chks = 0;
-    end
-    gsw_cf = 'no optimisation';
+gsw_cf.geo_strf_dyn_height = gsw_geo_strf_dyn_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
+[gsw_cf.Igeo_strf_dyn_height] = find(abs(gsw_cv.geo_strf_dyn_height - gsw_cf.geo_strf_dyn_height) >= gsw_cv.geo_strf_dyn_height_ca);
+if ~isempty(gsw_cf.Igeo_strf_dyn_height)
+    fprintf(2,'gsw_geo_strf_dyn_height:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
 
+[gsw_cf.geo_strf_dyn_height_pc, gsw_cf.geo_strf_dyn_height_pc_p_mid] = gsw_geo_strf_dyn_height_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast);
+[gsw_cf.Igeo_strf_dyn_height_pc] = find(abs(gsw_cv.geo_strf_dyn_height_pc - gsw_cf.geo_strf_dyn_height_pc) >= gsw_cv.geo_strf_dyn_height_pc_ca | ...
+    abs(gsw_cv.geo_strf_dyn_height_pc_p_mid - gsw_cf.geo_strf_dyn_height_pc_p_mid) >= gsw_cv.geo_strf_dyn_height_pc_p_mid_ca);
+if ~isempty(gsw_cf.Igeo_strf_dyn_height_pc)
+    fprintf(2,'gsw_geo_strf_dyn_height_pc:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.geo_strf_isopycnal = gsw_geo_strf_isopycnal(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr,gsw_cv.Neutral_Density,gsw_cv.p_Neutral_Density);
+[gsw_cf.Igeo_strf_isopycnal] = find(abs(gsw_cv.geo_strf_isopycnal - gsw_cf.geo_strf_isopycnal) >= gsw_cv.geo_strf_isopycnal_ca);
+if ~isempty(gsw_cf.Igeo_strf_isopycnal)
+    fprintf(2,'gsw_geo_strf_isopycnal:   Failed\n');
+    gsw_chks = 0;
+end
+
+[gsw_cf.geo_strf_isopycnal_pc, gsw_cf.geo_strf_isopycnal_pc_p_mid] = gsw_geo_strf_isopycnal_pc(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.delta_p_chck_cast,gsw_cv.Neutral_Density(1),3);
+[gsw_cf.Igeo_strf_isopycnal_pc] = find(abs(gsw_cv.geo_strf_isopycnal_pc - gsw_cf.geo_strf_isopycnal_pc) >= gsw_cv.geo_strf_isopycnal_pc_ca |...
+    abs(gsw_cv.geo_strf_isopycnal_pc_p_mid - gsw_cf.geo_strf_isopycnal_pc_p_mid) >= gsw_cv.geo_strf_isopycnal_pc_p_mid_ca);
+if ~isempty(gsw_cf.Igeo_strf_isopycnal_pc)
+    fprintf(2,'gsw_geo_strf_isopycnal_pc:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.geo_strf_Montgomery = gsw_geo_strf_Montgomery(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
+[gsw_cf.Igeo_strf_Montgomery] = find(abs(gsw_cv.geo_strf_Montgomery - gsw_cf.geo_strf_Montgomery) >= gsw_cv.geo_strf_Montgomery_ca);
+if ~isempty(gsw_cf.Igeo_strf_Montgomery)
+    fprintf(2,'gsw_geo_strf_Montgomery:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.geo_strf_Cunningham = gsw_geo_strf_Cunningham(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
+[gsw_cf.Igeo_strf_Cunningham] = find(abs(gsw_cv.geo_strf_Cunningham - gsw_cf.geo_strf_Cunningham) >= gsw_cv.geo_strf_Cunningham_ca);
+if ~isempty(gsw_cf.Igeo_strf_Cunningham)
+    fprintf(2,'gsw_geo_strf_Cunningham:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.geo_strf_steric_height = gsw_geo_strf_steric_height(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr);
+[gsw_cf.Igeo_strf_steric_height] = find(abs(gsw_cv.geo_strf_steric_height - gsw_cf.geo_strf_steric_height) >= gsw_cv.geo_strf_steric_height_ca);
+if ~isempty(gsw_cf.Igeo_strf_steric_height)
+    fprintf(2,'gsw_geo_strf_steric_height:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.geo_strf_PISH = gsw_geo_strf_PISH(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.pr_05);
+[gsw_cf.Igeo_strf_PISH] = find(abs(gsw_cv.geo_strf_PISH - gsw_cf.geo_strf_PISH) >= gsw_cv.geo_strf_PISH_ca);
+if ~isempty(gsw_cf.Igeo_strf_PISH)
+    fprintf(2,'gsw_geo_strf_PISH:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+gsw_cf.travel_time = gsw_travel_time(gsw_cv.SA_chck_cast,gsw_cv.CT_chck_cast,gsw_cv.p_chck_cast,gsw_cv.lat_chck_cast(1));
+[gsw_cf.Itravel_time] = find(abs(gsw_cv.travel_time - gsw_cf.travel_time) >= gsw_cv.travel_time_ca);
+if ~isempty(gsw_cf.Itravel_time)
+    fprintf(2,'gsw_travel_time:   Failed\n');
+    gsw_cf.gsw_chks = 0;
 end
 
 %% Geostrophic velocity
@@ -1504,6 +1400,31 @@ if ~isempty(gsw_cf.Ispiciness2)
     fprintf(2,'gsw_spiciness2:   Failed\n');
     gsw_cf.gsw_chks = 0;
 end
+
+[gsw_cf.SA_spicsig0, gsw_cf.CT_spicsig0] = gsw_SA_CT_from_sigma0_spiciness0(gsw_cv.sigma0,gsw_cv.spiciness0);
+[gsw_cf.Ispicsig0] = find(abs(gsw_cv.SA_spicsig0 - gsw_cf.SA_spicsig0) >= gsw_cv.SA_spicsig0_ca | ...
+    abs(gsw_cv.CT_spicsig0 - gsw_cf.CT_spicsig0) >= gsw_cv.CT_spicsig0_ca);
+if ~isempty(gsw_cf.Ispicsig0)
+    fprintf(2,'gsw_SA_CT_from_sigma0_spiciness0:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+[gsw_cf.SA_spicsig1, gsw_cf.CT_spicsig1] = gsw_SA_CT_from_sigma1_spiciness1(gsw_cv.sigma1,gsw_cv.spiciness1);
+[gsw_cf.Ispicsig1] = find(abs(gsw_cv.SA_spicsig1 - gsw_cf.SA_spicsig1) >= gsw_cv.SA_spicsig1_ca | ...
+    abs(gsw_cv.CT_spicsig1 - gsw_cf.CT_spicsig1) >= gsw_cv.CT_spicsig1_ca);
+if ~isempty(gsw_cf.Ispicsig1)
+    fprintf(2,'gsw_SA_CT_from_sigma1_spiciness1:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
+[gsw_cf.SA_spicsig2, gsw_cf.CT_spicsig2] = gsw_SA_CT_from_sigma2_spiciness2(gsw_cv.sigma2,gsw_cv.spiciness2);
+[gsw_cf.Ispicsig2] = find(abs(gsw_cv.SA_spicsig2 - gsw_cf.SA_spicsig2) >= gsw_cv.SA_spicsig2_ca | ...
+    abs(gsw_cv.CT_spicsig2 - gsw_cf.CT_spicsig2) >= gsw_cv.CT_spicsig2_ca);
+if ~isempty(gsw_cf.Ispicsig2)
+    fprintf(2,'gsw_SA_CT_from_sigma2_spiciness2:   Failed\n');
+    gsw_cf.gsw_chks = 0;
+end
+
 
 %% planet earth properties
 
@@ -2299,16 +2220,15 @@ end
 
 if gsw_cf.gsw_chks == 0
     fprintf(2,'Your installation of the Gibbs SeaWater (GSW) Oceanographic Toolbox has errors !\n');
-    save gsw_error_for_paul.mat
     demo = 0;
 else
-    fprintf(1,'Well done! The gsw_check_fuctions confirms that the \n');
+    fprintf(1,'Well done! The gsw_check_functions confirms that the \n');
     fprintf(1,'Gibbs SeaWater (GSW) Oceanographic Toolbox is installed correctly.\n');
     fprintf(1,'\n');
     fprintf(1,'If you use the GSW Oceanographic Toolbox we ask that you include\n');
     fprintf(1,'a reference to McDougall and Barker (2011), whose full citation is: \n');
     fprintf(1,' \n');
-    fprintf(1,'McDougall, T.J. and P.M. Barker, 2011: Getting started with TEOS-10 \n');
+    fprintf(1,'McDougall, T.J., and P.M. Barker, 2011: Getting started with TEOS-10 \n');
     fprintf(1,'and the Gibbs Seawater (GSW) Oceanographic Toolbox, 28pp., \n');
     fprintf(1,'SCOR/IAPSO WG127, ISBN 978-0-646-55621-5.\n');
     fprintf(1,' \n');

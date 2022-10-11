@@ -14,7 +14,7 @@ function O2sol = gsw_O2sol(SA,CT,p,long,lat)
 %  and Gordon (1992, 1993).
 %
 %  Note that this algorithm has not been approved by IOC and is not work 
-%  from SCOR/IAPSO Working Group 127. It is included in the GSW
+%  from SCOR/IAPSO Working Group 127.  It is included in the GSW
 %  Oceanographic Toolbox as it seems to be oceanographic best practice.
 %
 % INPUT:  
@@ -35,7 +35,7 @@ function O2sol = gsw_O2sol(SA,CT,p,long,lat)
 % AUTHOR:  Roberta Hamme, Paul Barker and Trevor McDougall
 %                                                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

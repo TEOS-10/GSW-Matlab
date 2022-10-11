@@ -23,9 +23,10 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 %  expression for specific volume of Roquet et al. (2015). 
 %
 %  This function evaluates the pressure integral of specific volume using 
-%  SA and CT interpolated with respect to the intergral of bouyancy 
-%  frequency N2 using the method of Barker et al. (2017).  This "curve 
-%  fitting" method resembles the use of cubic splines.  
+%  SA and CT interpolated using the MRST-PCHIP method of Barker and 
+%  McDougall (2020).  This "curve fitting" method uses a Piecewise Cubic 
+%  Hermite Interpolating Polynomial to produce a smooth curve with minimal
+%  artificial watermasses between the observed data points.  
 %
 %  Note that the 75-term equation has been fitted in a restricted range of 
 %  parameter space, and is most accurate inside the "oceanographic funnel" 
@@ -57,11 +58,13 @@ function geo_strf_dyn_height = gsw_geo_strf_dyn_height(SA,CT,p,p_ref)
 % AUTHOR:  
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06 (15th May 2017)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
-%  Barker, P.M., T.J. McDougall and S.J. Wotherspoon, 2017: An 
-%   interpolation method for oceanographic data. JOAT. (To be submitted).
+%  Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+%   multiply-rotated piecewise cubic hermite interpolating polynomials. 
+%   J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+%   doi: 10.1175/JTECH-D-19-0211.1. 
 %
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
@@ -155,7 +158,7 @@ end
 %--------------------------------------------------------------------------
 %  This max_dp_i is the limit we choose for the evaluation of specific
 %  volume in the pressure integration.  That is, the vertical integration
-%  of specific volume with respet to pressure is perfomed with the pressure
+%  of specific volume with respect to pressure is perfomed with the pressure
 %  increment being no more than max_dp_i, with the default value being 1
 %  dbar.
 max_dp_i = 1;
@@ -389,6 +392,7 @@ else
                [SA_i(Intrp), CT_i(Intrp)] =  gsw_SA_CT_interp(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Intrp));
                if any(isnan(SA_i))
                    [Inan] = find(isnan(SA_i));
+                  % [SA_i(Inan), CT_i(Inan)] = gsw_spline_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan),0.8,10000);
                    [SA_i(Inan), CT_i(Inan)] = gsw_linear_interp_SA_CT(SA(:,Iprofile),CT(:,Iprofile),p(:,Iprofile),p_i(Inan));
                end  
                 

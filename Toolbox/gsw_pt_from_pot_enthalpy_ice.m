@@ -1,6 +1,6 @@
 function pt0_ice = gsw_pt_from_pot_enthalpy_ice(pot_enthalpy_ice)
 
-% gsw_pt_from_pot_enthalpy_ice        potential temperature refered to
+% gsw_pt_from_pot_enthalpy_ice      potential temperature of ice refered to
 %                                the surface from potential enthalpy of ice                              
 %==========================================================================
 %
@@ -21,7 +21,7 @@ function pt0_ice = gsw_pt_from_pot_enthalpy_ice(pot_enthalpy_ice)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -162,7 +162,7 @@ function dpt0_ice_dh = gsw_pt_from_pot_enthalpy_ice_poly_dh(pot_enthalpy_ice)
 % AUTHOR: 
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
@@ -214,7 +214,7 @@ function pt0_cold_ice_poly = gsw_pt0_cold_ice_poly(pot_enthalpy_ice)
 % AUTHOR: 
 %  Paul Barker                                         [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 

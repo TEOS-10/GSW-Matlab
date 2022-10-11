@@ -43,7 +43,7 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 % AUTHOR:
 %  Trevor McDougall & Paul Barker                      [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.05 (27th January 2015)
+% VERSION NUMBER: 3.06.12 (25th May, 2020)
 %
 % REFERENCES:
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
@@ -58,7 +58,7 @@ function [CT,CT_multiple] = gsw_CT_from_rho(rho,SA,p)
 %
 %  Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
 %   polynomial expressions for the density and specifc volume of seawater
-%   using the TEOS-10 standard. Ocean Modelling.
+%   using the TEOS-10 standard. Ocean Modelling, 90, pp. 29-43.
 %
 %  The software is available from http://www.TEOS-10.org
 %
@@ -76,23 +76,23 @@ end %if
 [ms,ns] = size(SA);
 [mp,np] = size(p);
 
-if (ms ~= md | ns ~= nd)
+if (ms ~= md || ns ~= nd)
     error('gsw_CT_from_rho: rho and SA must have same dimensions')
 end
 
-if (mp == 1) & (np == 1)                    % p scalar - fill to size of rho
+if (mp == 1) & (np == 1)                   % p scalar - fill to size of rho
     p = p*ones(size(rho));
-elseif (nd == np) & (mp == 1)               % p is row vector,
-    p = p(ones(1,md), :);                   % copy down each column.
-elseif (md == mp) & (np == 1)               % p is column vector,
-    p = p(:,ones(1,nd));                    % copy across each row.
-elseif (nd == mp) & (np == 1)               % p is a transposed row vector,
-    p = p.';                                 % transposed then
-    p = p(ones(1,md), :);                   % copy down each column.
+elseif (nd == np) & (mp == 1)              % p is row vector,
+    p = p(ones(1,md), :);                  % copy down each column.
+elseif (md == mp) & (np == 1)              % p is column vector,
+    p = p(:,ones(1,nd));                   % copy across each row.
+elseif (nd == mp) & (np == 1)              % p is a transposed row vector,
+    p = p.';                               % transposed then
+    p = p(ones(1,md), :);                  % copy down each column.
 elseif (md == mp) & (nd == np)
     % ok
 else
-    error('gsw_CT_from_rho: Inputs array dimensions arguments do not agree')
+   error('gsw_CT_from_rho: Inputs array dimensions arguments do not agree')
 end %if
 
 if md == 1
@@ -108,126 +108,65 @@ end
 % Start of the calculation
 %--------------------------------------------------------------------------
 
-% alpha_limit is the positive value of the thermal expansion coefficient
-% which is used at the freezing temperature to distinguish between
-% I_salty and I_fresh.
-alpha_limit = 1e-5;
-
-% rec_half_rho_TT is a constant representing the reciprocal of half the
-% second derivative of density with respect to temperature near the
-% temperature of maximum density.
-rec_half_rho_TT = -110.0;
-
-CT = nan(size(SA));
-CT_multiple = CT;
-
-% SA out of range, set to NaN.
-SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;
+SA(SA<0 | SA>42 | p <-1.5 | p>12000) = NaN;   % SA out of range, set to NaN
 
 rho_40 = gsw_rho(SA,40*ones(size(SA)),p);
-% rho too light, set to NaN.
-SA((rho - rho_40) < 0) = NaN;
-
-CT_max_rho = gsw_CT_maxdensity(SA,p);
-rho_max = gsw_rho(SA,CT_max_rho,p);
-rho_extreme = rho_max;
-CT_freezing = gsw_CT_freezing(SA,p,0); % this assumes that the seawater is always unsaturated with air
-rho_freezing = gsw_rho(SA,CT_freezing,p);
-% reset the extreme values
-rho_extreme((CT_freezing - CT_max_rho) > 0) = rho_freezing((CT_freezing - CT_max_rho) > 0);
-
-% set SA values to NaN for the rho's that are too dense.
-SA(rho > rho_extreme) = NaN;
+SA((rho - rho_40) < 0) = NaN;                   % rho too light, set to NaN
 
 if any(isnan(SA(:) + p(:) + rho(:)))
     [I_bad] = find(isnan(SA + p + rho));
     SA(I_bad) = NaN;
 end
 
-alpha_freezing = gsw_alpha(SA,CT_freezing,p);
+CT_max_rho = gsw_CT_maxdensity(SA,p);
+max_rho = gsw_rho(SA,CT_max_rho,p);
+[bla,bla,rho_CT_CT,bla,bla] = gsw_rho_second_derivatives(SA,CT_max_rho,p);
+deriv_lin = (rho_40 - max_rho)./(40 - CT_max_rho);
+discrim = deriv_lin.*deriv_lin - 4.*0.5.*rho_CT_CT.*(max_rho - rho);
+discrim(discrim < 0) = 0;
+CT = CT_max_rho + 2.*(max_rho - rho)./(-deriv_lin + sqrt(discrim)); 
 
-if any(alpha_freezing(:) > alpha_limit)
-    [I_salty] = find(alpha_freezing > alpha_limit);
-    CT_diff = 40*ones(size(I_salty)) - CT_freezing(I_salty);
+%    Having found this initial value of CT, begin the iterative solution
+%    for the CT_upper part, the solution warmer than the TMD
+for Number_of_iterations = 1:4 
+ [dummy,rho_CT,dummy] = gsw_rho_first_derivatives(SA,CT,p);
+ [dummy,dummy,rho_CT_CT,dummy,dummy] = gsw_rho_second_derivatives(SA,CT,p);
+      b = rho_CT;
+      a = 0.5.*rho_CT_CT;
+      c = gsw_rho(SA,CT,p) - rho; 
+      discrim = b.*b - 4.*a.*c;
+      discrim(discrim < 0) = 0;
+  CT_old = CT; 
+  CT = CT_old + (2.*c)./(-b + sqrt(discrim));
+end
+  CT_upper = CT; 
+   
+%    Now start the CT_multiple part, the solution cooler than the TMD
+CT = 2.*CT_max_rho - CT_upper;
+for Number_of_iterations = 1:3                     
+ [dummy,rho_CT,dummy] = gsw_rho_first_derivatives(SA,CT,p);
+ [dummy,dummy,rho_CT_CT,dummy,dummy] = gsw_rho_second_derivatives(SA,CT,p); 
+      b = rho_CT;
+      a = 0.5.*rho_CT_CT;
+      c = gsw_rho(SA,CT,p) - rho;  
+      discrim = b.*b - 4.*a.*c;
+      discrim(discrim < 0) = 0;
+  CT_old = CT; 
+  CT = CT_old + (2.*c)./(-b - sqrt(discrim)); 
+                                    % Note the sign change of the sqrt term  
+end
+  CT_multiple = CT; 
     
-    top = rho_40(I_salty) - rho_freezing(I_salty) ...
-           + rho_freezing(I_salty).*alpha_freezing(I_salty).*CT_diff;
-    a = top./(CT_diff.*CT_diff);
-    b = - rho_freezing(I_salty).*alpha_freezing(I_salty);
-    c = rho_freezing(I_salty) - rho(I_salty);
-    sqrt_disc = sqrt(b.*b - 4*a.*c);
-    % the value of t(I_salty) here is the initial guess at CT in the range 
-    % of I_salty.
-    CT(I_salty) = CT_freezing(I_salty) + 0.5*(-b - sqrt_disc)./a;
-end
+% set values outside the relevant bounds to NaNs 
+CT_freezing = gsw_CT_freezing(SA,p,0);  % This assumes that the seawater is 
+                                        % always unsaturated with air
+                                       
+CT_upper(CT_upper < CT_freezing) = NaN;
+CT_upper(CT_upper < CT_max_rho) = NaN;
+CT_multiple(CT_multiple < CT_freezing) = NaN;
+CT_multiple(CT_multiple > CT_max_rho) = NaN;
 
-if any(alpha_freezing(:) <= alpha_limit)
-    [I_fresh] = find(alpha_freezing <= alpha_limit);
-
-    CT_diff = 40*ones(size(I_fresh)) - CT_max_rho(I_fresh);
-    factor = (rho_max(I_fresh) - rho(I_fresh))./ ...
-               (rho_max(I_fresh) - rho_40(I_fresh));
-    delta_CT = CT_diff.*sqrt(factor);
-    
-    if any(delta_CT > 5)
-        [I_fresh_NR] = find(delta_CT > 5);
-        CT(I_fresh(I_fresh_NR)) = CT_max_rho(I_fresh(I_fresh_NR)) + delta_CT(I_fresh_NR);
-    end
-     
-    if any(delta_CT <= 5)
-        [I_quad] = find(delta_CT <= 5);
-        CT_a = nan(size(SA));
-        % set the initial value of the quadratic solution routes.
-        CT_a(I_fresh(I_quad)) = CT_max_rho(I_fresh(I_quad)) + ...
-            sqrt(rec_half_rho_TT*(rho(I_fresh(I_quad)) - rho_max(I_fresh(I_quad))));       
-        for Number_of_iterations = 1:7
-            CT_old = CT_a;
-            rho_old = gsw_rho(SA,CT_old,p);
-            factorqa = (rho_max - rho)./(rho_max - rho_old);
-            CT_a = CT_max_rho + (CT_old - CT_max_rho).*sqrt(factorqa);
-        end
-        
-        CT_a(CT_freezing - CT_a < 0) = NaN;
-        
-        CT_b = nan(size(SA));
-        % set the initial value of the quadratic solution roots.
-        CT_b(I_fresh(I_quad)) = CT_max_rho(I_fresh(I_quad)) - ...
-            sqrt(rec_half_rho_TT*(rho(I_fresh(I_quad)) - rho_max(I_fresh(I_quad))));    
-        for Number_of_iterations = 1:7
-            CT_old = CT_b;
-            rho_old = gsw_rho(SA,CT_old,p);
-            factorqb = (rho_max - rho)./(rho_max - rho_old);
-            CT_b = CT_max_rho + (CT_old - CT_max_rho).*sqrt(factorqb);
-        end
-% After seven iterations of this quadratic iterative procedure,
-% the error in rho is no larger than 4.6x10^-13 kg/m^3.
-        CT_b(CT_freezing - CT_b < 0) = NaN;
-    end
-end
-
-% begin the modified Newton-Raphson iterative method, which will only
-% operate on non-NaN CT data.
-
-v_lab = ones(size(rho))./rho;
-v_CT = gsw_specvol(SA,CT,p).*gsw_alpha(SA,CT,p);
-
-for Number_of_iterations = 1:3
-    CT_old = CT;
-    delta_v = gsw_specvol(SA,CT_old,p) - v_lab;
-    CT = CT_old - delta_v./v_CT ; % this is half way through the modified N-R method
-    CT_mean = 0.5*(CT + CT_old);
-    v_CT = gsw_specvol(SA,CT_mean,p).*gsw_alpha(SA,CT_mean,p);
-    CT = CT_old - delta_v./v_CT ;
-end
-
-if exist('CT_a','var')
-    CT(~isnan(CT_a)) = CT_a(~isnan(CT_a));
-end
-if exist('CT_b','var')
-    CT_multiple(~isnan(CT_b)) = CT_b(~isnan(CT_b));
-end
-% After three iterations of this modified Newton-Raphson iteration,
-% the error in rho is no larger than 1.6x10^-12 kg/m^3.
+   CT = CT_upper;
 
 if transposed
     CT = CT.';

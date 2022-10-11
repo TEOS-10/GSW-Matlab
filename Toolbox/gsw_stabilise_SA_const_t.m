@@ -1,4 +1,4 @@
-function [SA_out] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
+function [SA_out, wiggliness] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 
 % gsw_stabilise_SA_const_t             adjusts salinities (SA) to produce a
 %                             water column stablised to be neutral, in-situ
@@ -16,15 +16,13 @@ function [SA_out] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 %  of the square of earth's rotation rate. There are no changes made to
 %  either in-situ temperature or pressure.
 %
-%  When running versions of Matlab earlier than 2016b, this programme 
-%  requires either Tomlab CPLEX or IBM CPLEX or the Optimization toolbox.  
-%  For newer versions of Matlab, including 2016b, it requires either Tomlab
-%  CPLEX or IBM CPLEX. Note that if there are a up to several hundred data
-%  points in the cast then Matlab's Optimization toolbox produces 
+%  This programme requires either Tomlab CPLEX or IBM CPLEX or the 
+%  Optimization toolbox.  Note that if there are a up to several hundred 
+%  data points in the cast then Matlab's Optimization toolbox produces
 %  reasonable results, but if there are thousands of bottles in the cast or
-%  the best possible output is wanted then the CPLEX solver is required. 
+%  the best possible output is wanted then the CPLEX solver is required.  
 %  This programme will determine if a slover is available to the user, if 
-%  there is more than one it will use first in the following order Tomlab,
+%  there is more than one it will use first in the following order Tomlab, 
 %  IBM, then Matlab.
 %
 %  Note that this 75-term equation has been fitted in a restricted range of
@@ -61,12 +59,12 @@ function [SA_out] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 % AUTHOR:
 %  Paul Barker and Trevor McDougall                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.3 (20th July, 2017)
+% VERSION NUMBER: 3.06.12 (15th June, 2020)
 %
 % REFERENCES:
-%  Barker, P.M., and T.J. McDougall, 2017: Stabilising hydrographic 
-%   profiles with minimal change to the water masses. 
-%   J. Atmosph. Ocean. Tech.
+%  Barker, P.M., and T.J. McDougall, 2017: Stabilizing hydrographic 
+%   profiles with minimal change to the water masses. J. Atmosph. Ocean. 
+%   Tech., 34, pp. 1935 - 1945, http://dx.doi.org/10.1175/JTECH-D-16-0111.1
 %
 %  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of 
 %   seawater - 2010: Calculation and use of thermodynamic properties.  
@@ -92,7 +90,6 @@ function [SA_out] = gsw_stabilise_SA_const_t(SA_in,t,p,opt_1,opt_2)
 % Check if necessary software exists
 %--------------------------------------------------------------------------
 
-[matlab_version, matlab_release_date] = version();
 if exist('tomlabVersion') == 2
     [TomV,os,TV] = tomlabVersion;
     if TV(9)
@@ -101,7 +98,7 @@ if exist('tomlabVersion') == 2
         fprintf('gsw_stabilise_SA_const_t: No valid license for the CPLEX solver\n');
         if exist('cplexqp.p') == 6 %IBM CLPEX
             software_solver = 3;
-        elseif license('checkout', 'Optimization_Toolbox') & datenum(matlab_release_date) < 736574
+        elseif license('checkout', 'Optimization_Toolbox') 
             software_solver = 2;
             warning off
         else
@@ -110,7 +107,7 @@ if exist('tomlabVersion') == 2
     end
 elseif exist('cplexqp.p') == 6 %IBM CLPEX
     software_solver = 3;
-elseif license('checkout', 'Optimization_Toolbox')  & datenum(matlab_release_date) < 736574
+elseif license('checkout', 'Optimization_Toolbox')  
     software_solver = 2;
     warning off
 else
@@ -183,7 +180,9 @@ if nargin == 4
     elseif (mp == (mN2+1)) & (number_profiles == nN2)
         Nsquared_lowerlimit_tmp = NaN(mp,number_profiles);
         Nsquared_lowerlimit_tmp(2:end,:) = Nsquared_lowerlimit;
-    else
+        elseif (mp == mN2) & (number_profiles == nN2)
+        Nsquared_lowerlimit_tmp = Nsquared_lowerlimit;
+else
         error('gsw_stabilise_SA_const_t: Inputs array dimensions arguments do not agree')
     end
 end
@@ -255,6 +254,7 @@ t(p < -1.5 | p > 12000) = NaN;
 %--------------------------------------------------------------------------
 
 SA_out = NaN(mp,number_profiles);
+wiggliness = NaN(number_profiles,1);
 
 for Iprofile = 1:number_profiles
        
@@ -363,7 +363,7 @@ for Iprofile = 1:number_profiles
                             opts = optimset('Algorithm','active-set','Display','off');
                         end
                         
-                        x = quadprog(H, f, A, b_U, [], [], x_L, x_U, x_0, opts);
+                        x = gsw_quadprog(H, f, A, b_U, [], [], x_L, x_U, x_0, opts);
                       
                         SA_tmp = SA_tmp + x;
                         
@@ -428,6 +428,7 @@ for Iprofile = 1:number_profiles
                 
                 [Iunstable] = find(N2_tmp - Nsquared_lowerlimit < 0);
                 if isempty(Iunstable) | Number_of_iterations > 10 | length(Inn) < 2
+                    wiggliness(Iprofile) = gsw_wiggliness(SA_tmp,t_tmp,p_tmp); 
                     unstable = 1;
                 end
             end
@@ -505,7 +506,7 @@ function [N2, N2_p, N2_specvol, N2_alpha, N2_beta, dSA, dCT, dp, N2_beta_ratio] 
 % AUTHOR:  
 %  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]
 %
-% VERSION NUMBER: 3.06.4 (28th July, 2017)
+% VERSION NUMBER: 3.06.12 (12th June, 2020)
 %
 % REFERENCES:
 %  Griffies, S. M., 2004: Fundamentals of Ocean Climate Models. Princeton, 

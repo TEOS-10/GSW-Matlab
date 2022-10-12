@@ -1,0 +1,158 @@
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Getting Started</title>
+    <style type="text/css">
+      body {
+      font: 100%/1.4 Verdana, Arial, Helvetica, sans-serif;
+      background: #42413C;
+      margin: 0;
+      padding: 0;
+      color: #000;
+      background-color: #FFF;
+      }
+
+      /* ~~ Element/tag selectors ~~ */
+      ul, ol, dl { /* Due to variations between browsers, it's best practices to zero padding and margin on lists. For consistency, you can either specify the amounts you want here, or on the list items (LI, DT, DD) they contain. Remember that what you do here will cascade to the .nav list unless you write a more specific selector. */
+      padding: 0;
+      margin: 0;
+      }
+      h2, h3, h4, h5, h6, p {
+      margin-top: 0;	 /* removing the top margin gets around an issue where margins can escape from their containing div. The remaining bottom margin will hold it away from any elements that follow. */
+      padding-right: 15px;
+      padding-left: 15px; /* adding the padding to the sides of the elements within the divs, instead of the divs themselves, gets rid of any box model math. A nested div with side padding can also be used as an alternate method. */
+      }
+      a img { /* this selector removes the default blue border displayed in some browsers around an image when it is surrounded by a link */
+      border: none;
+      }
+      /* ~~ Styling for your site's links must remain in this order - including the group of selectors that create the hover effect. ~~ */
+      a:link {
+      color: #42413C;
+      text-decoration: underline; /* unless you style your links to look extremely unique, it's best to provide underlines for quick visual identification */
+      }
+      a:visited {
+      color: #6E6C64;
+      text-decoration: underline;
+      }
+      a:hover, a:active, a:focus { /* this group of selectors will give a keyboard navigator the same hover experience as the person using a mouse. */
+      text-decoration: none;
+      }
+
+      /* ~~ this fixed width container surrounds all other elements ~~ */
+      .container {
+      width: 700px;
+      background: #FFF;
+      margin: 0 auto; /* the auto value on the sides, coupled with the width, centers the layout */
+      }
+
+      /* ~~ This is the layout information. ~~
+
+      1) Padding is only placed on the top and/or bottom of the div. The elements within this div have padding on their sides. This saves you from any "box model math". Keep in mind, if you add any side padding or border to the div itself, it will be added to the width you define to create the *total* width. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design.
+
+      */
+      .content {
+
+      padding: 10px 0;
+      }
+      .content h1{
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      color: #006;
+      padding-right: 15px;
+      padding-left: 15px;
+      background: url(gsw_title_background_600x113.jpg)
+      }
+      .content li{
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+      color: #006;
+      font-size: 15px;
+      padding-left: 5px;
+      padding-top: 3px;
+      padding-bottom: 3px;
+      }
+      /* ~~ miscellaneous float/clear classes ~~ */
+      .fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
+      float: right;
+      margin-left: 8px;
+      }
+      .fltlft { /* this class can be used to float an element left in your page. The floated element must precede the element it should be next to on the page. */
+      float: left;
+      margin-right: 8px;
+      }
+      .clearfloat { /* this class can be placed on a <br /> or empty div as the final element following the last floated div (within the #container) if the overflow:hidden on the .container is removed */
+      clear:both;
+      height:0;
+      font-size: 1px;
+      line-height: 0px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>Getting Started</h1>
+        <table>
+          <tr>
+            <td>
+            <div>
+              <ul>
+                <li>
+                  <a href="../pdf/Getting_Started_preamble.pdf">Preamble</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Installing_GSW.pdf">Installing the GSW Oceanographic Toolbox in MATLAB</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Absolute_Salinity.pdf">Absolute Salinity (SA)</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Preformed_Salinity.pdf">Preformed Salinity (Sstar)</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Conservative_Temperature.pdf">Conservative Temperature (CT)</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Data_Storage.pdf">Which types of salinty and termperature should be archived</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_75_Term_EOS.pdf">The 75-term expression for specific volume</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Changes_to_Ocean_Practice.pdf">Changes to oceanographic practice under TEOS-10</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Ocean_Modelling.pdf">Ocean modelling using TEOS-10</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Guide_to_Toolbox.pdf">A guide to the GSW Oceanographic Toolbox</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_References.pdf">References</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_Recommended_Nomenclature.pdf">Recommended nomenclature, symbols and units in oceanography</a>
+                </li>
+                <li>
+                  <a href="gsw_contents.html">GSW Toolbox functions</a>
+                </li>
+                <li>
+                  <a href="../pdf/GSW_Toolbox_List.pdf">GSW Toolbox functions (Printable pdf)</a>
+                </li>
+                <li>
+                  <a href="../pdf/Getting_Started_GSW_in_a_nutshell.pdf">GSW in a nutshell</a>
+                </li>
+              </ul>
+            </div>
+            </td>
+            <td>
+              <a href="../pdf/Getting_started.pdf" title="Getting_started with TEOS-10 the GSW toolbox">
+                <img src="Getting_started_front_cover_293x400.png"  width="293" height="400" alt="TEOS-10"></img></a>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+  </body>
+</html>

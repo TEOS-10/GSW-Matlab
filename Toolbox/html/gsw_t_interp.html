@@ -1,0 +1,147 @@
+<!DOCTYPE html  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_t_interp</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content"><h1>gsw_t_interp</h1>
+<!--introduction--><pre><font size="5"><b>interpolation of in-situ temperature to p_i on a cast</b></font></pre><!--/introduction-->
+<font size="4"><h2>Contents</h2>
+<div><ul>
+<li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>t_i = gsw_t_interp(t,p,p_i)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>This function interpolates vertical casts of values of in-situ temperature
+to the arbitrary pressures p_i.</pre> 
+<pre>The interpolation method uses sixteen PCHIPs (Piecewise Cubic Hermite 
+Interpolating Polynomials), one for each of sixteen different linear 
+combinations of the tracer data and a scaled version of the independent 
+variable.  Each of these sixteen PCHIPs use a scaled version of the 
+"bottle number" as the independent variable.  A final seventeenth 
+PCHIP is used to relate the interpolated data back to pressure space 
+(rather than "botttle number" space).  The interpolation method is 
+described as the MR-PCHIP method in Barker and McDougall (2020). </pre>
+<pre>The scaling factor that we use for the independent variable is 0.33
+times the maximum magnitude (over all data pairs) of the slope on the 
+[CT - bottle_number] diagram.  With the oceanographic data that we have 
+tested we have found that using multiplying factors between 0.1 and 1 
+(instead of 0.33) also gave good interpolants, so the method is not 
+sensitive to this choice of "scale_factor". </pre>
+<pre>The code uses Conservative Temperature (of TEOS-10) as the temperature 
+variable in the interpolation procedure.  The output of the code is 
+converted back to in-situ temperature.  The conversions between in-situ 
+and Conservative Temperatures are done using the constant value of 
+Absolute Salinity equal to the Standard Ocean Reference Salinity 
+(35.16504 g/kg) which is found by calling gsw_SSO.  We have found that
+the use of this salinity rather than the estimate salinity from 
+MRST-PCHIP method in Barker and McDougall (2020) results in an 
+temperature error less than 1 mK.</pre>
+<pre>Any interpolated bottles that have pressures shallower than the 
+shallowest observed bottle are set equal to the shallowest observed 
+bottle.</pre>
+<pre>Note that this interpolation scheme requires at least four observed
+bottles on the cast.</pre>
+<!-- <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/interp.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/interp.pdf">Click for a more detailed description of Barker and McDougall (2020) interpolation.</a></font></pre></td>
+  </tr>
+</table> -->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>t    =  in-situ temperature (ITS-90)                           [ deg C ]
+p    =  sea pressure                                            [ dbar ]
+        ( i.e. absolute pressure - 10.1325 dbar )
+p_i  =  specific query points at which the interpolated SA_i and CT_i
+        are required                                            [ dbar ]</pre>
+<pre>p may have dimensions Mx1 or 1xN or MxN, where t is MxN.
+p_i needs to be either a vector or a matrix and have dimensions M_ix1
+or M_ixN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>t_i =  interpolated in-situ temperature values at              [ deg C ]
+       pressures p_i</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>t   = [28.7856; 28.4329; 22.8103; 10.2600;  6.8863;  4.4036;]
+p   = [     10;      50;     125;     250;     600;    1000;]
+p_i = [     10;      50;     200;     500;     750;    1000;]</pre>
+<pre>t_i = gsw_t_interp(t,p,p_i)</pre>
+<pre>t_i =</pre>
+<pre>   28.7856
+   28.4329
+   13.4427
+    7.5396
+    5.8155
+    4.4036</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Paul Barker and Trevor McDougall              [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.06.12 (15th July, 2020)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+multiply-rotated piecewise cubic hermite interpolating polynomials. 
+J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+<a href="http://10.1175/JTECH-D-19-0211.1" title="Barker and McDougall interpolation">doi: 10.1175/JTECH-D-19-0211.1. 
+</a></pre>
+ <pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+ </div></body></html>

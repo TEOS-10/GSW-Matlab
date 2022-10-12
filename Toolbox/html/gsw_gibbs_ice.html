@@ -1,0 +1,283 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_gibbs_ice</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 900px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head>
+<body><div class="content">
+<h1>gsw_gibbs_ice</h1>
+<pre><font size="5"><b>Gibbs energy of ice and its derivatives</b></font></pre>
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">AUTHOR:</a></li>
+<li><a href="#6">VERSION NUMBER:</a></li>
+<li><a href="#7">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>gibbs_ice = gsw_gibbs_ice(nt,np,t,p)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates Ice specific Gibbs energy and derivatives up 
+to order 2.  The Gibbs function for sea ice is that of TEOS-10
+(IOC et al., 2010), being the sum of IAPWS-08 for the saline part and
+IAPWS-09 for the pure water part.</pre>
+<!--<table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/gibbs_ice.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/gibbs_ice.pdf">Click for a more detailed description of Gibbs energy
+of ice.</a></font></pre></td>
+  </tr>
+</table>-->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>nt  =  order of t derivative                      [ integers 0, 1 or 2 ]
+np  =  order of p derivative                      [ integers 0, 1 or 2 ]
+t   =  in-situ temperature (ITS-90)                            [ deg C ]
+p   =  sea pressure                                             [ dbar ]
+       (ie. absolute pressure - 10.1325 dbar)</pre>
+<pre>t and p need to have the same dimensions.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>gibbs  =  Specific Gibbs energy or its derivatives.</pre>
+<pre>          The Gibbs energy (when nt = np = 0) has units of:
+                                                                [ J/kg ]
+          The temperature derivatives are output in units of:
+                                                    [ (J/kg) (K)^(-nt) ]
+          The pressure derivatives are output in units of:
+                                                   [ (J/kg) (Pa)^(-np) ]
+          The mixed derivatives are output in units of:
+                                        [ (J/kg) (K)^(-nt) (Pa)^(-np) ]</pre>
+<pre>Note. The derivatives are taken with respect to pressure in Pa, not
+  withstanding that the pressure input into this routine is in dbar.</pre>
+<h2>AUTHOR:<a name="5"></a></h2>
+<pre>Trevor McDougall and Paul Barker      [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="6"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="7"></a></h2>
+<pre>IAPWS, 2009: Revised Release release on the Equation of State 2006 for
+ H2O Ice Ih. The International Association for the Properties of Water
+ and Steam. Doorwerth, The Netherlands, September 2009, available from
+ <a href="http://www.iapws.org" title="IAPWS">http://www.iapws.org.</a></pre>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10"> http://www.TEOS-10.org</a></pre>
+<!--  <a href="../pdf/gibbs.pdf" title="TEOS-10">See section 2.6 and appendices A.6,  G and H of this TEOS-10 Manual</a>.</pre>-->
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> gibbs_ice = gsw_gibbs_ice(nt,np,t,p)
+
+<span class="comment">% gsw_gibbs_ice                     Gibbs energy of ice and its derivatives</span>
+<span class="comment">% =========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">% USAGE:</span>
+<span class="comment">%  gibbs_ice = gsw_gibbs_ice(nt,np,t,p)</span>
+<span class="comment">%</span>
+<span class="comment">% DESCRIPTION:</span>
+<span class="comment">%  Ice specific Gibbs energy and derivatives up to order 2.</span>
+<span class="comment">%</span>
+<span class="comment">% INPUT:</span>
+<span class="comment">%  nt  =  order of t derivative                      [ integers 0, 1 or 2 ]</span>
+<span class="comment">%  np  =  order of p derivative                      [ integers 0, 1 or 2 ]</span>
+<span class="comment">%  t   =  in-situ temperature (ITS-90)                            [ deg C ]</span>
+<span class="comment">%  p   =  sea pressure                                             [ dbar ]</span>
+<span class="comment">%</span>
+<span class="comment">% OUTPUT:</span>
+<span class="comment">%  gibbs_ice = Specific Gibbs energy of ice or its derivatives.</span>
+<span class="comment">%            The Gibbs energy (when nt = np = 0) has units of:     [ J/kg ]</span>
+<span class="comment">%            The temperature derivatives are output in units of:</span>
+<span class="comment">%                                                      [ (J/kg) (K)^(-nt) ]</span>
+<span class="comment">%            The pressure derivatives are output in units of:</span>
+<span class="comment">%                                                     [ (J/kg) (Pa)^(-np) ]</span>
+<span class="comment">%            The mixed derivatives are output in units of:</span>
+<span class="comment">%                                           [ (J/kg) (K)^(-nt) (Pa)^(-np) ]</span>
+<span class="comment">%  Note. The derivatives are taken with respect to pressure in Pa, not</span>
+<span class="comment">%    withstanding that the pressure input into this routine is in dbar.</span>
+<span class="comment">%</span>
+<span class="comment">% AUTHOR:</span>
+<span class="comment">%  Trevor McDougall and Paul Barker                    [ help@teos-10.org ]</span>
+<span class="comment">%</span>
+<span class="comment">% VERSION NUMBER: 3.05 (27th January 2015)</span>
+<span class="comment">%</span>
+<span class="comment">% REFERENCES:</span>
+<span class="comment">%  IAPWS, 2009: Revised release on the Equation of State 2006 for H2O Ice</span>
+<span class="comment">%   Ih. The International Association for the Properties of Water and</span>
+<span class="comment">%   Steam. Doorwerth, The Netherlands, September 2009.</span>
+<span class="comment">%</span>
+<span class="comment">%  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of</span>
+<span class="comment">%   seawater - 2010: Calculation and use of thermodynamic properties.</span>
+<span class="comment">%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,</span>
+<span class="comment">%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org.</span>
+<span class="comment">%    See appendix I.</span>
+<span class="comment">%</span>
+<span class="comment">%  The software is available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+rec_Pt = 1.634903221903779e-3;   <span class="comment">% 1./Pt, where Pt = 611.657;  Experimental</span>
+                                 <span class="comment">% triple-point pressure in Pa.</span>
+
+Tt = 273.16;  <span class="comment">% Triple-point temperature, kelvin (K).</span>
+rec_Tt = 3.660858105139845e-3;   <span class="comment">% 1/Tt = 3.660858105139845e-3;</span>
+
+T = t + 273.15; <span class="comment">% The input temperature t is in-situ temperature in</span>
+                <span class="comment">% units of degrees Celcius.  T is the in-situ Absolute</span>
+                <span class="comment">% Temperature of the ice in degrees kelvin (K).</span>
+tau = T.*rec_Tt;
+
+db2Pa = 1e4;
+dzi = db2Pa.*p.*rec_Pt;
+
+g00 = -6.32020233335886e5;
+g01 =  6.55022213658955e-1;
+g02 = -1.89369929326131e-8;
+g03 =  3.3974612327105304e-15;
+g04 = -5.564648690589909e-22;
+
+s0 = -3.32733756492168e3;
+
+t1 = (3.68017112855051e-2 + 5.10878114959572e-2i);
+t2 = (3.37315741065416e-1 + 3.35449415919309e-1i);
+
+r1 = (4.47050716285388e1 + 6.56876847463481e1i);
+r20	= (-7.25974574329220e1 - 7.81008427112870e1i);
+r21	= (-5.57107698030123e-5 + 4.64578634580806e-5i);
+r22	= (	2.34801409215913e-11 - 2.85651142904972e-11i);
+
+<span class="keyword">if</span> nt == 0 &amp; np == 0
+
+    tau_t1 = tau./t1;
+    sqtau_t1 = tau_t1.*tau_t1;
+    tau_t2 = tau./t2;
+    sqtau_t2 = tau_t2.*tau_t2;
+
+    g0 = g00 + dzi.*(g01 + dzi.*(g02 + dzi.*(g03 + g04.*dzi)));
+
+    r2 = r20 + dzi.*(r21 + r22.*dzi);
+
+    g = r1.*(tau.*log((1 + tau_t1)./(1 - tau_t1)) + t1.*(log(1 - sqtau_t1) - sqtau_t1)) <span class="keyword">...</span>
+       + r2.*(tau.*log((1 + tau_t2)./(1 - tau_t2)) + t2.*(log(1 - sqtau_t2) - sqtau_t2));
+
+    gibbs_ice = g0 - Tt.*(s0.*tau - real(g));
+
+<span class="keyword">elseif</span> nt == 1 &amp; np == 0
+
+    tau_t1 = tau./t1;
+    tau_t2 = tau./t2;
+
+    r2 = r20 + dzi.*(r21 + r22.*dzi);
+
+    g = r1.*(log((1 + tau_t1)./(1 - tau_t1)) - 2.*tau_t1) <span class="keyword">...</span>
+        + r2.*(log((1 + tau_t2)./(1 - tau_t2)) - 2.*tau_t2);
+
+    gibbs_ice = -s0 + real(g);
+
+<span class="keyword">elseif</span> nt == 0 &amp; np == 1
+
+    tau_t2 = tau./t2;
+    sqtau_t2 = tau_t2.*tau_t2;
+
+    g0p = rec_Pt.*(g01 + dzi.*(2.*g02 + dzi.*(3.*g03 + 4.*g04.*dzi)));
+
+    r2p = rec_Pt.*(r21 + 2.*r22.*dzi);
+
+    g = r2p.*(tau.*log((1 + tau_t2)./(1 - tau_t2)) + t2.*(log(1 - sqtau_t2) <span class="keyword">...</span>
+        - sqtau_t2));
+
+    gibbs_ice = g0p + Tt.*real(g);
+
+<span class="keyword">elseif</span> nt == 1 &amp; np == 1
+
+    tau_t2 = tau./t2;
+
+    r2p = rec_Pt.*(r21 + 2.*r22.*dzi);
+
+    g = r2p.*(log((1 + tau_t2)./(1 - tau_t2)) - 2.*tau_t2);
+
+    gibbs_ice = real(g);
+
+<span class="keyword">elseif</span> nt == 2 &amp; np == 0
+
+    r2 = r20 + dzi.*(r21 + r22.*dzi);
+
+    g = r1.*(1./(t1 - tau) + 1./(t1 + tau) - 2./t1) <span class="keyword">...</span>
+        + r2.*(1./(t2 - tau) + 1./(t2 + tau) - 2./t2);
+
+    gibbs_ice = rec_Tt.*real(g);
+
+<span class="keyword">elseif</span> nt == 0 &amp; np == 2
+
+    sqrec_Pt = rec_Pt.*rec_Pt;
+
+    tau_t2 = tau./t2;
+    sqtau_t2 = tau_t2.*tau_t2;
+
+    g0pp = sqrec_Pt.*(2.*g02 + dzi.*(6.*g03 + 12.*g04.*dzi));
+
+    r2pp = 2.*r22.*sqrec_Pt;
+
+    g = r2pp.*(tau.*log((1 + tau_t2)./(1 - tau_t2)) + t2.*(log(1 - sqtau_t2) <span class="keyword">...</span>
+       - sqtau_t2));
+
+   gibbs_ice = g0pp + Tt.*real(g);
+
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+</div></body></html>

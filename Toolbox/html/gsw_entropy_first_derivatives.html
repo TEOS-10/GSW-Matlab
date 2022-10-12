@@ -1,0 +1,123 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>gsw_entropy_first_derivatives</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>gsw_entropy_first_derivatives</h1>
+  <!--introduction--><pre><font size="5"><b>first derivatives of entropy</b></font></pre><!--/introduction-->
+  <font size="4"><h2>Contents</h2>
+  <div><ul><li><a href="#1">USAGE:</a></li><li><a href="#2">DESCRIPTION:</a></li><li><a href="#3">INPUT:</a></li><li><a href="#4">OUTPUT:</a></li><li><a href="#5">EXAMPLE:</a></li><li><a href="#6">AUTHOR:</a></li><li><a href="#7">VERSION NUMBER:</a></li><li><a href="#8">REFERENCES:</a></li></ul></div>
+  <h2>USAGE:<a name="1"></a></h2>
+  <pre>[eta_SA, eta_CT] = gsw_entropy_first_derivatives(SA,CT)</pre>
+  <h2>DESCRIPTION:<a name="2"></a></h2>
+  <pre>Calculates the following two partial derivatives of specific entropy (eta)
+ (1) eta_SA, the derivative with respect to Absolute Salinity at
+     constant Conservative Temperature, and
+ (2) eta_CT, the derivative with respect to Conservative Temperature at
+     constant Absolute Salinity.</pre>
+       <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/entropy_first_derivatives.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/entropy_first_derivatives.pdf">Click for a more detailed description of the first
+derivatives of entropy.</a></font></pre></td>
+  </tr>
+</table>
+
+     <h2>INPUT:<a name="3"></a></h2>
+     <pre>SA  =   Absolute Salinity                                       [ g/kg ]
+CT  =   Conservative Temperature                               [ deg C ]</pre>
+<pre>SA &amp; CT need to have the same dimensions.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>eta_SA =  The derivative of specific entropy with respect to
+          Absolute Salinity (in units of g/kg) at constant Conservative
+          Temperature.  The eta_SA output has units of:
+                                       [ J/(kg K(g/kg))]  or [ J/(g K) ]
+eta_CT =  The derivative of specific entropy with respect to
+          Conservative Temperature at constant Absolute Salinity.
+          The eta_CT output has units of:                 [ J/(kg K^2) ]</pre>
+          <h2>EXAMPLE:<a name="5"></a></h2>
+<pre>SA = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+CT = [28.8099; 28.4392; 22.7862; 10.2262;  6.8272;  4.3236;]</pre>
+<pre>[eta_SA, eta_CT] = gsw_entropy_first_derivatives(SA,CT)</pre>
+<pre>eta_SA =</pre>
+<pre>  -0.263286800711655
+  -0.263977276574528
+  -0.255367497912925
+  -0.238066586439561
+  -0.234438260606436
+  -0.232820684341694</pre>
+<pre>eta_CT =</pre>
+<pre>  13.221031210083824
+  13.236911191313675
+  13.489004628681361
+  14.086599016583795
+  14.257729576432077
+  14.386429945649411</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Trevor McDougall.                               [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site</a>.
+  <a href="../pdf/entropy_first_derivatives.pdf">See Eqns. (A.12.8) and (P.14a, c) of this TEOS-10 Manual.</a></pre>
+  <pre>This software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+  </div></body></html>

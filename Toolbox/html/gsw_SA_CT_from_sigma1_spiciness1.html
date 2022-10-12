@@ -1,0 +1,145 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>gsw_SA_CT_from_sigma1_spiciness1</title>
+<style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head><body><div class="content">
+<h1>gsw_SA_CT_from_sigma1_spiciness1</h1>
+<!--introduction--><pre><font size="5"><b>SA and CT from sigma and spiciness at p = 1000 dbar (75-term equation)</b></font></pre><!--/introduction-->
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>[SA,CT] = gsw_SA_CT_from_sigma1_spiciness1(sigma1,spiciness1)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the Absolute Salinity and the Conservative Temperature of a 
+seawater sample at given values of potential density referenced to 
+1000 dbar and spiciness1.  This function uses the computationally-efficient 
+75-term expression for specific volume in terms of SA, CT and p 
+(Roquet et al., 2015).</pre>
+<pre>Note that this 75-term equation has been fitted in a restricted range of 
+parameter space, and is most accurate inside the "oceanographic funnel" 
+described in McDougall et al. (2003).  The GSW library function 
+"gsw_infunnel(SA,CT,p)" is avaialble to be used if one wants to test if 
+some of one's data lies outside this "funnel".  </pre>
+<!-- <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/spiciness.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/spiciness.pdf">Click for a more detailed description of spiciness.</a></font></pre></td>
+  </tr>
+</table> -->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>sigma1    =  density anomaly of a seawater sample (e.g 26 kg/m^3)
+              referenced to 1000 dbar                         [ kg/m^3 ]
+   Note. This input has had 1000 kg/m^3 subtracted from it.  That is, 
+   it is 'density anomaly', not 'density'.
+
+spiciness1 = spiciness appropriate to 1000 dbar, as given by the paper of
+              McDougall and Krzysik (2015), and the GSW algorithm 
+              gsw_spiciness1(SA,CT)                           [ kg/m^3 ]
+</pre>
+<pre>sigma1 and spiciness1 need to have the same dimensions.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>SA  =  Absolute Salinity.                                       [ g/kg ]
+CT  =  Conservative Temperature (ITS-90)                       [ deg C ]
+</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>sigma1   =   [25.9556; 26.2131; 28.1254; 31.1204; 31.6377; 32.0025;]
+spiciness1 = [ 6.3110;  6.3264;  4.6672;  1.3517;  0.6285;  0.2248;]</pre>
+<pre>[SA,CT] = gsw_SA_CT_from_sigma1_spiciness1(sigma1,spiciness1)</pre>
+<pre>SA =</pre>
+<pre>  34.711761274805134
+  34.891471674852035
+  35.025571500983958
+  34.847212933737914
+  34.736586922069982
+  34.732445807599724</pre>
+<pre>CT =</pre>
+<pre>  28.809872867656239
+  28.439231699034760
+  22.786209105041554
+  10.226045025810093
+   6.827288021081957
+   4.323517735371240</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Trevor McDougall and Paul Barker  [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.06.12 (2nd July, 2020)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.teos-10.org" title="TEOS-10">the TEOS-10 web site</a>.</pre>
+<pre>McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+ Accurate and computationally efficient algorithms for potential 
+ temperature and density of seawater.  <i>J. Atmosph. Ocean. Tech.</i>, <b>20</b>,
+ pp. 730-741.</pre>
+<pre>McDougall, T.J., and O.A. Krzysik, 2015: Spiciness. <i>Journal of 
+Marine Research</i>, <b>73</b>, 141-152.</pre>
+<pre>Roquet, F., G. Madec, T.J. McDougall and P.M. Barker, 2015: Accurate
+ polynomial expressions for the density and specific volume of seawater 
+ using the TEOS-10 standard.  <em>Ocean Modelling</em>, <b>90</b>, pp. 29-43. 
+ <a href="http://dx.doi.org/10.1016/j.ocemod.2015.04.002">http://dx.doi.org/10.1016/j.ocemod.2015.04.002</a></pre>
+<pre>The software is available from <a href="http://www.teos-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font></div></body></html>

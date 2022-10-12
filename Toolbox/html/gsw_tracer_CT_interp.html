@@ -1,0 +1,169 @@
+<!DOCTYPE html  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_tracer_CT_interp</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content"><h1>gsw_tracer_CT_interp</h1>
+<!--introduction--><pre><font size="5"><b>tracer and CT interpolation to p_i on a cast</b></font></pre><!--/introduction-->
+<font size="4"><h2>Contents</h2>
+<div><ul>
+<li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>[tracer_i, CT_i] = gsw_tracer_CT_interp(tracer,CT,p,p_i,factor)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>This function interpolates vertical casts of values of a tracer
+and Conservative Temperature to the arbitrary pressures p_i. The
+interpolation method is designed to respect the shape of the tracer-CT 
+diagram.  That is, the interpolated tracer_i and CT_i values look 
+realistic when plotted on the tracer-CT diagram.  The interpolation 
+method uses sixteen PCHIPs (Piecewise Cubic Hermite Interpolating 
+Polynomials), one for each of sixteen different linear combinations of 
+the tracer and CT input data.  Each of these sixteen PCHIPs use the 
+"bottle number" as the independent variable.  A final seventeenth PCHIP
+is used to relate the interpolated data back to pressure space (rather 
+than "botttle number" space).  The interpolation method is is the 
+MRST-PCHIP method described in Barker and McDougall (2020), with the
+tracer data being used in place of Absoluate Salinity data. </pre> 
+
+<pre>This function requires scaling the tracer and temperature data so that
+the tracer-CT diagram reflects the relative variation of the tracer and 
+temperature in the world ocean.  Specifically, "factor" should be chosen
+to be the ratio of the global range of CT to that of the tracer variable
+in the world ocean.  A list of suitable values of "factor" for various
+tracers is given here. </pre> 
+ 
+<pre>      TRACER              UNITS             FACTOR
+    Absolute Salinity     g/kg                9
+    dissolved oxygen        ?                 ?
+    AOU                     ?                 ?
+    silicic acid            ?                 ?
+    nitrate                 ?                 ?
+    phosphate               ?                 ?
+    carbon 14               ?                 ?
+    tritium                 ?                 ?
+    eastward velocity      m/s               100
+    westward velocity      m/s               100</pre>
+    
+<pre>If an input value of "factor" is not given in the function call, it is 
+set equal to 9.</pre>
+<pre>Any interpolated bottles that have pressures shallower than the 
+shallowest observed bottle are set equal to the shallowest observed 
+bottle.</pre>
+<pre>Note that this interpolation scheme requires at least four observed
+bottles on the cast.</pre>
+<!-- <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/interp.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/interp.pdf">Click for a more detailed description of Barker and McDougall (2020) interpolation.</a></font></pre></td>
+  </tr>
+</table> -->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>tracer =  tracer                                                   [ ? ]
+CT     =  Conservative Temperature                               [ deg C ]
+p      =  sea pressure                                            [ dbar ]
+          ( i.e. absolute pressure - 10.1325 dbar )
+p_i    =  specific query points at which the interpolated         [ dbar ]
+          tracer_i and CT_i are required         </pre>
+<pre>tracer &amp; CT need to have the same dimensions. 
+p may have dimensions Mx1 or 1xN or MxN, where tracer & CT are MxN.
+p_i needs to be either a vector or a matrix and have dimensions M_ix1
+or M_ixN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>tracer_i =  interpolated tracer values at pressures p_i           [ ? ]
+CT_i     =  interpolated CT values at pressures p_i             [ deg C ]</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>tracer  = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+CT  = [28.7856; 28.4329; 22.8103; 10.2600;  6.8863;  4.4036;]
+p   = [     10;      50;     125;     250;     600;    1000;]
+p_i = [     10;      50;     200;     500;     750;    1000;]
+factor = 9;</pre>
+<pre>[tracer_i, CT_i] = gsw_tracer_CT_interp(tracer,CT,p,p_i,factor)</pre>
+<pre>tracer_i =</pre>
+<pre>   34.7118
+   34.8915
+   34.9151
+   34.7520
+   34.7253
+   34.7324</pre>
+<pre>CT_i =</pre>
+<pre>   28.7856
+   28.4329
+   13.4287
+    7.5381
+    5.8243
+    4.4036</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Paul Barker and Trevor McDougall              [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.06.12 (25th June, 2020)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>Barker, P.M., and T.J. McDougall, 2020: Two interpolation methods using 
+multiply-rotated piecewise cubic hermite interpolating polynomials. 
+J. Atmosph. Ocean. Tech., 37, pp. 605-619. 
+<a href="http://10.1175/JTECH-D-19-0211.1" title="Barker and McDougall interpolation">doi: 10.1175/JTECH-D-19-0211.1. 
+</a>
+  </pre>
+ <pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+ </div></body></html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_CT_from_rho_exact</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>gsw_CT_from_rho_exact</h1>
+<!--introduction--><pre><font size="5"><b>Conservative Temperature from density</b></font></pre><!--/introduction-->
+  <font size="4"><h2>Contents</h2>
+  <div><ul><li><a href="#1">USAGE:</a></li><li><a href="#2">DESCRIPTION:</a></li><li><a href="#3">INPUT:</a></li><li><a href="#4">OUTPUT:</a></li><li><a href="#5">EXAMPLE:</a></li><li><a href="#6">AUTHOR:</a></li><li><a href="#7">VERSION NUMBER:</a></li><li><a href="#8">REFERENCES:</a></li></ul></div>
+ <h2>USAGE:<a name="1"></a></h2>
+ <pre>[CT, CT_multiple] = gsw_CT_from_rho_exact(rho,SA,p)</pre>
+ <h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the Conservative Temperature of a seawater sample, for given
+values of its density, Absolute Salinity and sea pressure (in dbar).</pre>
+<pre>Note that this function uses the full Gibbs function.  There is an 
+alternative to calling this function, namely gsw_CT_from_rho(rho,SA,p),
+which uses the computationally efficient 75-term expression for specific
+volume in terms of SA, CT and p (Roquet et al., 2015).</pre>
+ <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/CT_from_rho_exact.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/CT_from_rho_exact.pdf">Click for a more detailed description of calculating
+Conservative Temperature from density.</a></font></pre></td>
+  </tr>
+</table>
+<h2>INPUT:<a name="3"></a></h2>
+<pre>rho =  density of a seawater sample (e.g. 1026 kg/m^3)        [ kg/m^3 ]
+   Note. This input has not had 1000 kg/m^3 subtracted from it.
+     That is, it is 'density', not 'density anomaly'.
+SA  =  Absolute Salinity                                        [ g/kg ]
+p   =  sea pressure                                             [ dbar ]
+       ( i.e. absolute pressure - 10.1325 dbar )</pre>
+<pre>rho &amp; SA need to have the same dimensions.
+p may have dimensions 1x1 or Mx1 or 1xN or MxN, where rho &amp; SA are MxN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>CT           =  Conservative Temperature (ITS-90)              [ deg C ]
+CT_multiple  =  Conservative Temperature (ITS-90)              [ deg C ]
+  Note that at low salinities, in brackish water, there are two possible
+    temperatures for a single density.  This programme will output both 
+    valid solutions.  To see this second solution the user must call the 
+    programme with two outputs (i.e. [CT, CT_multiple]), if there is only 
+    one possible solution and the programme has been called with two 
+    outputs the second variable will be set to NaN.</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>rho = [1021.8484; 1022.2647; 1024.4207; 1027.7841; 1029.8287; 1031.9916;]
+SA =  [  34.7118;   34.8915;   35.0256;   34.8472;   34.7366;   34.7324;]
+p =   [       10;        50;       125;       250;       600;      1000;]</pre>
+<pre>[CT, CT_multiple] = gsw_CT_from_rho_exact(rho,SA,p)</pre>
+<pre>CT =</pre>
+<pre>  28.785118589681630<br>  28.433134593869998<br>  22.810525577671346<br>  10.260445791010170<br>   6.886933933676899<br>   4.404197563039265</pre>
+<pre>CT_multiple =</pre>
+<pre>   NaN
+   NaN
+   NaN
+   NaN
+   NaN
+   NaN</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Trevor McDougall &amp; Paul Barker                      [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+ <pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site</a>.
+  <a href="../pdf/CT_from_rho_exact.pdf" title="TEOS-10">See sections 3.1 and 3.3 of this TEOS-10 Manual.</a></pre>
+  <pre>Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+ polynomial expressions for the density and specifc volume of seawater
+ using the TEOS-10 standard. Ocean Modelling.</pre>
+ <pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+ </div></body></html>

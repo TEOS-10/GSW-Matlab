@@ -1,0 +1,163 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_melting_ice_into_seawater</title>
+
+<style type="text/css">
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+p,h1,h2,div.content div {
+  max-width: 600px;
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content">
+<h1>gsw_melting_ice_into_seawater</h1>
+<pre><font size="5"><b>the resulting SA and CT when ice is melted
+into seawater</b></font></pre>
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>[SA_final, CT_final, w_Ih_final] = ...
+                 gsw_melting_ice_into_seawater(SA,CT,p,w_Ih,t_Ih)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the Absolute Salinity and Conservative Temperature that 
+results when a given mass of ice melts and is mixed into a known mass 
+of seawater (whose properties are (SA,CT,p)). </pre> 
+<pre>When the mass fraction w_Ih_final is calculated as being a positive
+value, the seawater-ice mixture is at thermodynamic equlibrium.  </pre> 
+
+<pre>This code returns w_Ih_final = 0 when the input bulk enthalpy, h_bulk, 
+is sufficiently large (i.e. sufficiently "warm") so that there is no ice 
+present in the final state.  In this case the final state consists of 
+only seawater rather than being an equlibrium mixture of seawater and 
+ice which occurs when w_Ih_final is positive.  Note that when 
+w_Ih_final = 0, the final seawater is not at the freezing temperature.</pre> 
+<table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/melting_ice_into_seawater.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/melting_ice_into_seawater.pdf">Click for a more detailed description of the resulting
+SA and CT when ice is melted into seawater</a></font></pre></td>
+  </tr>
+</table>
+<h2>INPUT:<a name="3"></a></h2>
+<pre>SA   =  Absolute Salinity of seawater                           [ g/kg ]
+CT   =  Conservative Temperature of seawater (ITS-90)          [ deg C ]
+p    =  sea pressure                                            [ dbar ]
+          ( i.e. absolute pressure - 10.1325 dbar )          
+w_Ih  =  mass fraction of ice, that is the mass of ice divided by the 
+         sum of the masses of ice and seawater. That is, the mass of
+         ice divided by the mass of the final mixed fluid.  
+         w_ice must be between 0 and 1.                     [ unitless ]
+t_Ih  =  the in-situ temperature of the ice (ITS-90)           [ deg C ]</pre>
+<pre>SA, CT, w_Ih, and t_Ih must have the same dimensions.
+p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA, CT, w_Ih and 
+t_Ih are MxN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>SA_final    =  Absolute Salinity of the seawater in the final state, 
+               whether or not any ice is present.               [ g/kg ]
+CT_final    =  Conservative Temperature of the seawater in the the final
+               state, whether or not any ice is present.       [ deg C ]
+w_Ih_final  =  mass fraction of ice in the final seawater-ice mixture.
+               If this ice mass fraction is positive, the system is at 
+               thermodynamic equilibrium.  If this ice mass fraction is 
+               zero there is no ice in the final state which consists 
+               only of seawater which is warmer than the freezing 
+               temperature.                                   [unitless]</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>SA = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+CT = [ 4.7856;  2.4329;  1.8103;  1.2600;  0.6886;  0.4403;]
+p =  [     10;      50;     125;     250;     600;    1000;]
+w_Ih = [0.0560; 0.02513; 0.02159; 0.01210; 0.00943; 0.00751;]
+t_Ih = [-4.7856; -4.4329; -3.8103; -4.2600; -3.8863; -3.4036;] </pre>
+<pre>[SA_final, CT_final, w_Ih_final] = ...
+              gsw_melting_ice_into_seawater(SA,CT,p,w_Ih,t_Ih)</pre>
+<pre>SA_final =</pre>
+<pre>  32.767939199999994
+  34.014676604999998
+  34.269397295999994
+  34.425548880000001
+  34.409033862000001
+  34.471559675999998</pre>
+<pre>CT_final =</pre>
+<pre>  -0.298448911022612
+   0.215263001418312
+  -0.074341719211557
+   0.207796293045473
+  -0.123785388299875
+  -0.202531182809225</pre>
+<pre>  w_Ih_final =</pre>
+<pre>     0
+     0
+     0
+     0
+     0
+     0</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Trevor McDougall &amp; Paul Barker       [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site.</a></pre>
+<!--  <a href="../pdf/melting_ice_into_seawater.pdf">See section 2.8 of this TEOS-10 Manual.</a></pre>-->
+<pre>McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+ Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+ Journal of Physical Oceanography, 44, 1751-1775.</pre>
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+</div></body></html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>The Gibbs SeaWater (GSW) Oceanographic Toolbox of TEOS-10</title>
+<style type="text/css">
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+  padding:15px;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+h1 { 
+ max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+
+background: url(gsw_title_background_600x113.jpg)
+}.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+table {
+border:0px;
+cellpadding:0px;
+cellspacing:0px;
+width="100%";
+}
+
+th {
+	padding-top:15px;
+	padding-bottom:7px;
+	padding-left:15px;
+}
+ </style>
+</head>
+ <body><a name="top_of_page"></a>
+ <div class="content">
+<table>
+<tr><td colspan="2"><h1><font size="6" color="#000099"><b>The Gibbs SeaWater (GSW)<br /> Oceanographic Toolbox of TEOS-10</b></font></h1></td></tr>
+<tr><td colspan="2"><h2><font size="5" color="#000099"><b>Contents</b></font></h2></td></tr>
+ <tr><td colspan="2" bgcolor="#F0F0F0"><ul>
+ <li><a href="#1">documentaion set</a></li>
+ <li><a href="#2">Practical Salinty (SP), PSS-78</a></li>
+ <li><a href="#3">Absolute Salinity (SA), Preformed Salinity (Sstar) and Conservative Temperature (CT)</a></li>
+ <li><a href="#4">Absolute Salinity - Conservative Temperature plotting function</a></li>
+ <li><a href="#5">other conversions between temperatures, salinities, entropy, pressure and height</a></li>
+ <li><a href="#6">specific volume, density and enthalpy</a></li>
+ <li><a href="#7">vertical stability and interpolation</a></li>
+ <li><a href="#8">geostrophic streamfunctions, acoustic travel time and geostrophic velocity</a></li>
+ <li><a href="#9">neutral versus isopycnal slopes and ratios</a></li>
+ <li><a href="#10">derivatives of entropy, CT and pt</a></li>
+ <li><a href="#11">seawater and ice properties at the freezing temperature</a></li>
+ <li><a href="#12">thermodynamic interaction between ice and seawater</a></li>
+ <li><a href="#13">thermodynamic interaction between sea ice and seawater</a></li> 
+ <li><a href="#14">thermodynamic properties of ice Ih</a></li>
+ <li><a href="#15">isobaric evaporation enthalpy</a></li>
+ <li><a href="#16">spiciness</a></li>
+ <li><a href="#17">planet Earth properties</a></li>
+ <li><a href="#18">TEOS-10 constants</a></li>
+ <li><a href="#19">dissolved gasses</a></li>
+ <li><a href="#20">specific volume, density and enthalpy in terms of CT, based on the exact Gibbs function</a></li> 
+ <li><a href="#21">laboratory functions, for use with densimeter measurements</a></li> 
+ <li><a href="#22">basic thermodynamic properties in terms of in-situ temperature, based on the exact Gibbs function</a></li>
+ <li><a href="#23">Library functions of the GSW toolbox <em>(internal functions; not intended to be called by users)</em></a></li>
+ </ul></td></tr>
+<tr><td colspan="2"></td></tr>
+
+<tr><th colspan="2"><a name="1"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>documentation set</b></font></h3></th></tr>
+  <tr><td width="300"><a href="gsw_front_page.html">gsw_front_page</a></td><td><font face="Times New Roman" size="4">front page to the GSW Oceanographic Toolbox</font></td></tr>
+  <tr><td>gsw_check_functions</td> <td><font face="Times New Roman" size="4">checks that all the GSW functions work correctly</font></td></tr>
+  <tr><td>gsw_demo</td> <td><font face="Times New Roman" size="4">demonstrates many GSW functions and features</font></td></tr>
+  <tr><td>gsw_ver</td> <td><font face="Times New Roman" size="4">displays the GSW version number</font></td></tr>
+  <tr><td><a href="gsw_licence.html">gsw_licence</a></td> <td><font face="Times New Roman" size="4">creative commons licence for the GSW Oceanographic Toolbox</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2" ><a name="2"></a><h3 align="left" ><font face="Times New Roman" size="6" color="#000099"><b>Practical Salinity (SP), PSS-78</b></font></h3></th></tr>
+  <tr><td><a href="gsw_SP_from_C.html">gsw_SP_from_C</a></td> <td><font face="Times New Roman" size="4">Practical Salinity from conductivity, C (inc. for SP &lt; 2)</font></td></tr>
+  <tr><td><a href="gsw_C_from_SP.html">gsw_C_from_SP</a></td> <td><font face="Times New Roman" size="4">conductivity, C, from Practical Salinity (inc. for SP &lt; 2)</font></td></tr>
+  <tr><td><a href="gsw_SP_from_R.html">gsw_SP_from_R</a></td> <td><font face="Times New Roman" size="4">Practical Salinity from conductivity ratio, R (inc. for SP &lt; 2)</font></td></tr>
+  <tr><td><a href="gsw_R_from_SP.html">gsw_R_from_SP</a></td> <td><font face="Times New Roman" size="4">conductivity ratio, R, from Practical Salinity (inc. for SP &lt; 2)</font></td></tr>
+  <tr><td><a href="gsw_SP_salinometer.html">gsw_SP_salinometer</a></td> <td><font face="Times New Roman" size="4">Practical Salinity from a laboratory salinometer (inc. for SP &lt; 2)</font></td></tr>
+  <tr><td><a href="gsw_SP_from_SK.html">gsw_SP_from_SK</a></td> <td><font face="Times New Roman" size="4">Practical Salinity from Knudsen Salinity</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="3"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>Absolute Salinity (SA), Preformed Salinity (Sstar) and Conservative Temperature (CT)</b></font></h3></th></tr>
+ <tr><td><a href="gsw_SA_from_SP.html">gsw_SA_from_SP</a></td> <td><font face="Times New Roman" size="4">Absolute Salinity from Practical Salinity</font></td></tr>
+ <tr><td><a href="gsw_Sstar_from_SP.html">gsw_Sstar_from_SP</a></td> <td><font face="Times New Roman" size="4">Preformed Salinity from Practical Salinity</font></td></tr>
+ <tr><td><a href="gsw_CT_from_t.html">gsw_CT_from_t</a></td> <td><font face="Times New Roman" size="4">Conservative Temperature from in-situ temperature</font></td></tr>
+<tr><td><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="4"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>Absolute Salinity - Conservative Temperature  plotting function</b></font></h3>
+ <tr valign="top"><td><a href="gsw_SA_CT_plot.html">gsw_SA_CT_plot</a></td><td><font face="Times New Roman" size="4">function to plot Absolute Salinity - Conservative Temperature profiles on the SA-CT diagram, including the freezing line and selected potential density contours</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="5"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>other conversions between temperatures, salinities, pressure and height</b></font></h3></th></tr>
+ <tr><td><a href="gsw_deltaSA_from_SP.html">gsw_deltaSA_from_SP</a></td><td><font face="Times New Roman" size="4">Absolute Salinity Anomaly from Practical Salinity</font></td></tr>
+ <tr><td><a href="gsw_SA_Sstar_from_SP.html">gsw_SA_Sstar_from_SP</a></td><td><font face="Times New Roman" size="4">Absolute Salinity &amp; Preformed Salinity from Practical Salinity</font></td></tr>
+ <tr><td><a href="gsw_SR_from_SP.html">gsw_SR_from_SP</a></td><td><font face="Times New Roman" size="4">Reference Salinity from Practical Salinity</font></td></tr>
+ <tr><td><a href="gsw_SP_from_SR.html">gsw_SP_from_SR</a></td><td><font face="Times New Roman" size="4">Practical Salinity from Reference Salinity</font></td></tr>
+ <tr><td><a href="gsw_SP_from_SA.html">gsw_SP_from_SA</a></td><td><font face="Times New Roman" size="4">Practical Salinity from Absolute Salinity</font></td></tr>
+ <tr><td><a href="gsw_Sstar_from_SA.html">gsw_Sstar_from_SA</a></td><td><font face="Times New Roman" size="4">Preformed Salinity from Absolute Salinity</font></td></tr>
+ <tr><td><a href="gsw_SA_from_Sstar.html">gsw_SA_from_Sstar</a></td><td><font face="Times New Roman" size="4">Absolute Salinity from Preformed Salinity</font></td></tr>
+ <tr><td><a href="gsw_SP_from_Sstar.html">gsw_SP_from_Sstar</a></td><td><font face="Times New Roman" size="4">Practical Salinity from Preformed Salinity</font></td></tr>
+ <tr><td><a href="gsw_pt_from_CT.html">gsw_pt_from_CT</a></td><td><font face="Times New Roman" size="4">potential temperature from Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_t_from_CT.html">gsw_t_from_CT</a></td><td><font face="Times New Roman" size="4">in-situ temperature from Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_CT_from_pt.html">gsw_CT_from_pt</a></td><td><font face="Times New Roman" size="4">Conservative Temperature from potential temperature</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_from_pt.html">gsw_pot_enthalpy_from_pt</a></td><td><font face="Times New Roman" size="4">potential enthalpy from potential temperature</font></td></tr>
+ <tr><td><a href="gsw_pt_from_t.html">gsw_pt_from_t</a></td><td><font face="Times New Roman" size="4">potential temperature</font></td></tr>
+ <tr><td><a href="gsw_pt0_from_t.html">gsw_pt0_from_t</a></td><td><font face="Times New Roman" size="4">potential temperature with a reference pressure of zero dbar</font></td></tr>
+ <tr><td><a href="gsw_t_from_pt0.html">gsw_t_from_pt0</a></td><td><font face="Times New Roman" size="4">in-situ temperature from potential temperature with p_ref of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_t90_from_t48.html">gsw_t90_from_t48</a></td><td><font face="Times New Roman" size="4">ITS-90 temperature from IPTS-48 temperature</font>
+ <tr><td><a href="gsw_t90_from_t68.html">gsw_t90_from_t68</a></td><td><font face="Times New Roman" size="4">ITS-90 temperature from IPTS-68 temperature</font></td></tr>
+ <tr><td><a href="gsw_z_from_p.html">gsw_z_from_p</a></td><td><font face="Times New Roman" size="4">height from pressure</font></td></tr>
+ <tr><td><a href="gsw_p_from_z.html">gsw_p_from_z</a></td><td><font face="Times New Roman" size="4">pressure from height</font></td></tr>
+ <tr><td><a href="gsw_z_from_depth.html">gsw_z_from_depth</a></td><td><font face="Times New Roman" size="4">height from depth</font></td></tr>
+ <tr><td><a href="gsw_depth_from_z.html">gsw_depth_from_z</a></td><td><font face="Times New Roman" size="4">depth from height</font></td></tr>
+ <tr><td><a href="gsw_Abs_Pressure_from_p.html">gsw_Abs_Pressure_from_p</a></td><td><font face="Times New Roman" size="4">Absolute Pressure,P, from pressure, p</font></td></tr>
+ <tr><td><a href="gsw_p_from_Abs_Pressure.html">gsw_p_from_Abs_Pressure</a></td><td><font face="Times New Roman" size="4">pressure, p, from Absolute Pressure, P</font></td></tr>
+ <tr><td><a href="gsw_entropy_from_CT.html">gsw_entropy_from_CT</a></td><td><font face="Times New Roman" size="4">entropy from Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_CT_from_entropy.html">gsw_CT_from_entropy</a></td><td><font face="Times New Roman" size="4">Conservative Temperature from entropy</font> </td></tr>
+ <tr><td><a href="gsw_entropy_from_pt.html">gsw_entropy_from_pt</a></td><td><font face="Times New Roman" size="4">entropy from potential temperature</font></td></tr>
+ <tr><td><a href="gsw_pt_from_entropy.html">gsw_pt_from_entropy</a></td><td><font face="Times New Roman" size="4">potential temperature from entropy</font></td></tr>
+ <tr><td><a href="gsw_entropy_from_t.html">gsw_entropy_from_t</a></td><td><font face="Times New Roman" size="4">entropy from in-situ temperature</font></td></tr>
+ <tr><td><a href="gsw_t_from_entropy.html">gsw_t_from_entropy</a></td><td><font face="Times New Roman" size="4">in-situ temperature from entropy</font></td></tr>
+ <tr><td><a href="gsw_adiabatic_lapse_rate_from_CT.html">gsw_adiabatic_lapse_rate_from_CT</a></td><td><font face="Times New Roman" size="4">adiabatic lapse rate from Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_adiabatic_lapse_rate_from_t.html">gsw_adiabatic_lapse_rate_from_t</a></td><td><font face="Times New Roman" size="4">adiabatic lapse rate from in-situ temperature</font></td></tr>
+ <tr><td><a href="gsw_molality_from_SA.html">gsw_molality_from_SA</a></td><td><font face="Times New Roman" size="4">molality of seawater</font></td></tr>
+ <tr><td><a href="gsw_ionic_strength_from_SA.html">gsw_ionic_strength_from_SA</a></td><td><font face="Times New Roman" size="4">ionic strength of seawater</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="6"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>specific volume, density and enthalpy</b></font></h3></th></tr>
+ <tr><td><a href="gsw_specvol.html">gsw_specvol</a></td><td><font face="Times New Roman" size="4">specific volume</font></td></tr>
+ <tr><td><a href="gsw_alpha.html">gsw_alpha</a></td><td><font face="Times New Roman" size="4">thermal expansion coefficient with respect to CT</font></td></tr>
+ <tr><td><a href="gsw_beta.html">gsw_beta</a></td><td><font face="Times New Roman" size="4">saline contraction coefficient at constant CT</font></td></tr>
+ <tr><td><a href="gsw_alpha_on_beta.html">gsw_alpha_on_beta</a></td><td><font face="Times New Roman" size="4">alpha divided by beta</font></td></tr>
+ <tr><td><a href="gsw_specvol_alpha_beta.html">gsw_specvol_alpha_beta</a></td><td><font face="Times New Roman" size="4">specific volume, thermal expansion &amp; saline contraction coefficients</font></td></tr>
+ <tr><td><a href="gsw_specvol_first_derivatives.html">gsw_specvol_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of specific volume</font></td></tr>
+ <tr><td><a href="gsw_specvol_second_derivatives.html">gsw_specvol_second_derivatives</a></td><td><font face="Times New Roman" size="4">second derivatives of specific volume</font></td></tr>
+ <tr><td><a href="gsw_specvol_first_derivatives_wrt_enthalpy.html">gsw_specvol_first_derivatives_wrt_enthalpy</a></td><td><font face="Times New Roman" size="4">first derivatives of specific volume with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_specvol_second_derivatives_wrt_enthalpy.html">gsw_specvol_second_derivatives_wrt_enthalpy</a></td><td><font face="Times New Roman" size="4">second derivatives of specific volume with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_specvol_anom.html">gsw_specvol_anom</a></td><td><font face="Times New Roman" size="4">specific volume anomaly</font></td></tr>
+ <tr><td><a href="gsw_specvol_anom_standard.html">gsw_specvol_anom_standard</a></td><td><font face="Times New Roman" size="4">specific volume anomaly relative to SSO & 0&deg;C</font></td></tr>
+ <tr><td><a href="gsw_specvol_diff.html">gsw_specvol_diff</a></td><td><font face="Times New Roman" size="4">specific volume difference between two pressures</font></td></tr>
+ <tr><td><a href="gsw_rho.html">gsw_rho</a></td><td><font face="Times New Roman" size="4">in-situ density and potential density</font></td></tr>
+ <tr><td><a href="gsw_rho_alpha_beta.html">gsw_rho_alpha_beta</a></td><td><font face="Times New Roman" size="4">in-situ density, thermal expansion &amp; saline contraction coefficients</font></td></tr>
+ <tr><td><a href="gsw_rho_first_derivatives.html">gsw_rho_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of density</font></td></tr>
+ <tr><td><a href="gsw_rho_second_derivatives.html">gsw_rho_second_derivatives</a></td><td><font face="Times New Roman" size="4">second  derivatives of density</font></td></tr>
+ <tr><td><a href="gsw_rho_first_derivatives_wrt_enthalpy.html">gsw_rho_first_derivatives_wrt_enthalpy</a></td><td><font face="Times New Roman" size="4">first derivatives of density with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_rho_second_derivatives_wrt_enthalpy.html">gsw_rho_second_derivatives_wrt_enthalpy</a></td><td><font face="Times New Roman" size="4">second  derivatives of density with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_sigma0.html">gsw_sigma0</a></td><td><font face="Times New Roman" size="4">sigma0 with reference pressure of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma1.html">gsw_sigma1</a></td><td><font face="Times New Roman" size="4">sigma1 with reference pressure of 1000 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma2.html">gsw_sigma2</a></td><td><font face="Times New Roman" size="4">sigma2 with reference pressure of 2000 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma3.html">gsw_sigma3</a></td><td><font face="Times New Roman" size="4">sigma3 with reference pressure of 3000 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma4.html">gsw_sigma4</a></td><td><font face="Times New Roman" size="4">sigma4 with reference pressure of 4000 dbar</font></td></tr>
+ <tr><td><a href="gsw_cabbeling.html">gsw_cabbeling</a></td><td><font face="Times New Roman" size="4">cabbeling coefficient</font></td></tr>
+ <tr><td><a href="gsw_thermobaric.html">gsw_thermobaric</a></td><td><font face="Times New Roman" size="4">thermobaric coefficient</font></td></tr>
+ <tr><td><a href="gsw_enthalpy.html">gsw_enthalpy</a></td><td><font face="Times New Roman" size="4">enthalpy</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_diff.html">gsw_enthalpy_diff</a></td><td><font face="Times New Roman" size="4">difference of enthalpy between two pressures</font></td></tr>
+ <tr><td><a href="gsw_dynamic_enthalpy.html">gsw_dynamic_enthalpy</a></td><td><font face="Times New Roman" size="4">dynamic enthalpy</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_first_derivatives.html">gsw_enthalpy_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of enthalpy</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_second_derivatives.html">gsw_enthalpy_second_derivatives</a></td><td><font face="Times New Roman" size="4">second derivatives of enthalpy</font></td></tr>
+ <tr><td><a href="gsw_sound_speed.html">gsw_sound_speed</a></td><td><font face="Times New Roman" size="4">sound speed</font></td></tr>
+ <tr><td><a href="gsw_kappa.html">gsw_kappa</a></td><td><font face="Times New Roman" size="4">isentropic compressibility</font></td></tr>
+ <tr><td><a href="gsw_internal_energy.html">gsw_internal_energy</a></td><td><font face="Times New Roman" size="4">internal energy</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_first_derivatives.html">gsw_internal_energy_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of internal energy</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_second_derivatives.html">gsw_internal_energy_second_derivatives</a></td><td><font face="Times New Roman" size="4">second derivatives of internal energy</font></td></tr>
+ <tr><td><a href="gsw_CT_from_enthalpy.html">gsw_CT_from_enthalpy</a></td><td><font face="Times New Roman" size="4">Conservative Temperature from enthalpy</font></td></tr>
+ <tr><td><a href="gsw_SA_from_rho.html">gsw_SA_from_rho</a></td><td><font face="Times New Roman" size="4">Absolute Salinity from density</font></td></tr>
+ <tr><td><a href="gsw_CT_from_rho.html">gsw_CT_from_rho</a></td><td><font face="Times New Roman" size="4">Conservative Temperature from density</font></td></tr>
+ <tr><td><a href="gsw_CT_maxdensity.html">gsw_CT_maxdensity</a></td><td><font face="Times New Roman" size="4">Conservative Temperature of maximum density of seawater</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="7"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>vertical stability and interpolation</b></font></h3></th></tr>
+ <tr><td><a href="gsw_Turner_Rsubrho.html">gsw_Turner_Rsubrho</a></td><td><font face="Times New Roman" size="4">Turner angle &amp; Rsubrho</font></td></tr>
+ <tr><td><a href="gsw_Nsquared.html">gsw_Nsquared</a></td><td><font face="Times New Roman" size="4">buoyancy (Brunt-Vaisala) frequency squared (N&sup2;)</font></td></tr>
+ <tr><td><a href="gsw_Nsquared_min.html">gsw_Nsquared_min</a></td><td><font face="Times New Roman" size="4">minimum buoyancy (Brunt-Vaisala) frequency squared (N&sup2;)</font></td></tr>
+ <tr><td><a href="gsw_stabilise_SA_const_t.html">gsw_stabilise_SA_const_t</a></td><td><font face="Times New Roman" size="4">minimally adjust SA to produce a stable water column, keeping in-situ temperature constant</font></td></tr>
+ <tr><td><a href="gsw_stabilise_SA_CT.html">gsw_stabilise_SA_CT</a></td><td><font face="Times New Roman" size="4">minimally adjusts SA & CT to produce a stable water column</font></td></tr>
+ <tr><td><a href="gsw_mlp.html">gsw_mlp</a></td><td><font face="Times New Roman" size="4">mixed-layer pressure</font></td></tr>
+ <tr><td><a href="gsw_Nsquared_lowerlimit.html">gsw_Nsquared_lowerlimit</a></td><td><font face="Times New Roman" size="4">specified profile of minimum buoyancy frequency squared</font></td></tr>
+ <tr><td><a href="gsw_SA_CT_interp.html">gsw_SA_CT_interp</a></td><td><font face="Times New Roman" size="4"> interpolates SA & CT to defined pressures</font></td></tr>
+<tr><td><a href="gsw_t_interp.html">gsw_t_interp</a></td><td><font face="Times New Roman" size="4">interpolates in-situ temperature to defined pressures</font></td></tr>
+<tr><td><a href="gsw_tracer_CT_interp.html">gsw_tracer_CT_interp</a></td><td><font face="Times New Roman" size="4">interpolates a tracer & CT to defined pressures</font></td></tr>
+<tr><td><a href="gsw_tracer_interp.html">gsw_tracer_interp</a></td><td><font face="Times New Roman" size="4">interpolates a tracer to defined pressures</font></td></tr>
+ <tr valign="top"><td><a href="gsw_IPV_vs_fNsquared_ratio.html">gsw_IPV_vs_fNsquared_ratio</a></td><td><font face="Times New Roman" size="4">ratio of the vertical gradient of potential density (with reference pressure, p_ref), to the vertical gradient of locally-referenced potential density</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="8"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>geostrophic streamfunctions, acoustic travel time and geostrophic velocity</b></font></h3></th></tr>
+ <tr><td><a href="gsw_geo_strf_dyn_height.html">gsw_geo_strf_dyn_height</a></td><td><font face="Times New Roman" size="4">dynamic height anomaly</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_dyn_height_pc.html">gsw_geo_strf_dyn_height_pc</a></td><td><font face="Times New Roman" size="4">dynamic height anomaly for piecewise constant profiles</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_isopycnal.html">gsw_geo_strf_isopycnal</a></td><td><font face="Times New Roman" size="4">approximate isopycnal geostrophic streamfunction</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_isopycnal_pc.html">gsw_geof_str_isopycnal_pc</a></td><td><font face="Times New Roman" size="4">approximate isopycnal geostrophic streamfunction for piecewise constant profiles</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_Montgomery.html">gsw_geo_strf_Montgomery</a></td><td><font face="Times New Roman" size="4">Montgomery geostrophic streamfunction</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_Cunningham.html">gsw_geo_strf_Cunningham</a></td><td><font face="Times New Roman" size="4">Cunningham geostrophic streamfunction</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_steric_height.html">gsw_geo_strf_steric_height</a></td><td><font face="Times New Roman" size="4">dynamic height anomaly divided by 9.7963 m s^-2</font></td></tr>
+ <tr><td><a href="gsw_geo_strf_PISH.html">gsw_geo_strf_PISH</a></td><td><font face="Times New Roman" size="4">Pressure intergrated steric height</font></td></tr>
+ <tr><td><a href="gsw_travel_time.html">gsw_travel_time</a></td><td><font face="Times New Roman" size="4">acoustic travel time</font></td></tr>
+ <tr><td><a href="gsw_geostrophic_velocity.html">gsw_geostrophic_velocity</a></td><td><font face="Times New Roman" size="4">geostrophic velocity</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="9"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>neutral versus isopycnal slopes and ratios</b></font></h3></th></tr>
+ <tr valign="top"><td><a href="gsw_isopycnal_slope_ratio.html">gsw_isopycnal_slope_ratio</a></td><td><font face="Times New Roman" size="4">ratio of the slopes of isopycnals on the SA-CT diagram for p &amp; p_ref</font></td></tr>
+ <tr valign="top"><td><a href="gsw_isopycnal_vs_ntp_CT_ratio.html">gsw_isopycnal_vs_ntp_CT_ratio</a></td><td><font face="Times New Roman" size="4">ratio of the gradient of Conservative Temperature in a potential density surface to that in the neutral tangent plane</font></td></tr>
+ <tr valign="top"><td><a href="gsw_ntp_pt_vs_CT_ratio.html">gsw_ntp_pt_vs_CT_ratio</a></td><td><font face="Times New Roman" size="4">ratio of gradients of potential temperature &amp; Conservative Temperature in a neutral tangent plane (i.e. in a locally-referenced potential density surface)</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="10"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>derivatives of entropy, CT and pt</b></font></h3></th></tr>
+ <tr><td><a href="gsw_CT_first_derivatives.html">gsw_CT_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_CT_second_derivatives.html">gsw_CT_second_derivatives</a></td><td><font face="Times New Roman" size="4">second derivatives of Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_entropy_first_derivatives.html">gsw_entropy_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of entropy</font></td></tr>
+ <tr><td><a href="gsw_entropy_second_derivatives.html">gsw_entropy_second_derivatives</a></td><td><font face="Times New Roman" size="4">second derivatives of entropy</font></td></tr>
+ <tr><td><a href="gsw_pt_first_derivatives.html">gsw_pt_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of potential temperature</font></td></tr>
+ <tr><td><a href="gsw_pt_second_derivatives.html">gsw_pt_second_derivatives</a></td><td><font face="Times New Roman" size="4">second derivatives of potential temperature</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="11"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>seawater and ice properties at freezing temperatures</b></font></h3></th></tr>
+ <tr><td><a href="gsw_CT_freezing.html">gsw_CT_freezing</a></td><td><font face="Times New Roman" size="4">Conservative Temperature freezing temperature of seawater</font></td></tr>
+ <tr><td><a href="gsw_CT_freezing_poly.html">gsw_CT_freezing_poly</a></td><td><font face="Times New Roman" size="4">Conservative Temperature freezing temperature of seawater (polynomial)</font> </td></tr>
+ <tr><td><a href="gsw_t_freezing.html">gsw_t_freezing</a></td><td><font face="Times New Roman" size="4">in-situ freezing temperature of seawater</font></td></tr>
+ <tr><td><a href="gsw_t_freezing_poly.html">gsw_t_freezing_poly</a></td><td><font face="Times New Roman" size="4">in-situ freezing temperature of seawater (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_ice_freezing.html">gsw_pot_enthalpy_ice_freezing</a></td><td><font face="Times New Roman" size="4">potential enthalpy of ice at which seawater freezes</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_ice_freezing_poly.html">gsw_pot_enthalpy_ice_freezing_poly</a></td><td><font face="Times New Roman" size="4">potential enthalpy of ice at which seawater freezes (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_SA_freezing_from_CT.html">gsw_SA_freezing_from_CT</a></td><td><font face="Times New Roman" size="4">Absolute Salinity of seawater at the freezing point (for given CT)</font></td></tr>
+ <tr><td><a href="gsw_SA_freezing_from_CT_poly.html">gsw_SA_freezing_from_CT_poly</a></td><td><font face="Times New Roman" size="4">Absolute Salinity of seawater at the freezing point (for given CT) (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_SA_freezing_from_t.html">gsw_SA_freezing_from_t</a></td><td><font face="Times New Roman" size="4">Absolute Salinity of seawater at the freezing point (for given t)</font></td></tr>
+ <tr><td><a href="gsw_SA_freezing_from_t_poly.html">gsw_SA_freezing_from_t_poly</a></td><td><font face="Times New Roman" size="4">Absolute Salinity of seawater at the freezing point (for given t) (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_pressure_freezing_CT.html">gsw_pressure_freezing_CT</a></td><td><font face="Times New Roman" size="4">pressure of seawater at the freezing temperature (for given CT)</font></td></tr>
+ <tr><td><a href="gsw_CT_freezing_first_derivatives.html">gsw_CT_freezing_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of Conservative Temperature freezing temperature of seawater</font></td></tr>
+ <tr><td><a href="gsw_CT_freezing_first_derivatives_poly.html">gsw_CT_freezing_first_derivatives_poly</a></td><td><font face="Times New Roman" size="4">first derivatives of Conservative Temperature freezing temperature of seawater (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_t_freezing_first_derivatives.html">gsw_t_freezing_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives of in-situ freezing temperature of seawater</font></td></tr>
+ <tr><td><a href="gsw_t_freezing_first_derivatives_poly.html">gsw_t_freezing_first_derivatives_poly</a></td><td><font face="Times New Roman" size="4">first derivatives of in-situ freezing temperature of seawater (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_ice_freezing_first_derivatives.html">gsw_pot_enthalpy_ice_freezing_first_derivatives</a></td><td><font face="Times New Roman" size="4">first derivatives o fpotential enthalpy of ice at which seawater freezes</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_ice_freezing_first_derivatives_poly.html">gsw_pot_enthalpy_ice_freezing_first_derivatives_poly</a></td><td><font face="Times New Roman" size="4">first derivatives of potential enthalpy of ice at which seawater freezes (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_latentheat_melting.html">gsw_latentheat_melting</a></td><td><font face="Times New Roman" size="4">latent heat of melting of ice into seawater (isobaric melting enthalpy)</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="12"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>thermodynamic interaction between ice and seawater</b></font></h3></th></tr>
+ <tr><td><a href="gsw_melting_ice_SA_CT_ratio.html">gsw_melting_ice_SA_CT_ratio</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when ice melts in seawater</font></td></tr>
+ <tr><td><a href="gsw_melting_ice_SA_CT_ratio_poly.html">gsw_melting_ice_SA_CT_ratio_poly</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when ice melts in seawater (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_melting_ice_equilibrium_SA_CT_ratio.html">gsw_melting_ice_equilibrium_SA_CT_ratio</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when ice melts into seawater near equilibrium</font></td></tr>
+ <tr><td><a href="gsw_melting_ice_equilibrium_SA_CT_ratio_poly.html">gsw_melting_ice_equilibrium_SA_CT_ratio_poly</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when ice melts into seawater near equilibrium (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_melting_ice_into_seawater.html">gsw_melting_ice_into_seawater</a></td><td><font face="Times New Roman" size="4">SA and CT when ice melts in seawater</font></td></tr>
+ <tr><td><a href="gsw_ice_fraction_to_freeze_seawater.html">gsw_ice_fraction_to_freeze_seawater</a></td><td><font face="Times New Roman" size="4">ice mass fraction to freeze seawater</font></td></tr>
+ <tr><td><a href="gsw_frazil_ratios_adiabatic.html">gsw_frazil_ratios_adiabatic</a></td><td><font face="Times New Roman" size="4">ratios of SA, CT and P changes during frazil ice formation</font></td></tr>
+ <tr><td><a href="gsw_frazil_ratios_adiabatic_poly.html">gsw_frazil_ratios_adiabatic_poly</a></td><td><font face="Times New Roman" size="4">ratios of SA, CT and P changes during frazil ice formation (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_frazil_properties.html">gsw_frazil_properties</a></td><td><font face="Times New Roman" size="4">SA, CT and ice mass fraction from bulk SA and bulk enthalpy</font></td></tr>
+ <tr><td><a href="gsw_frazil_properties_potential.html">gsw_frazil_properties_potential</a></td><td><font face="Times New Roman" size="4">SA, CT and ice mass fraction from bulk SA and bulk potential enthalpy</font></td></tr>
+ <tr><td><a href="gsw_frazil_properties_potential_poly.html">gsw_frazil_properties_potential_poly</a></td><td><font face="Times New Roman" size="4">SA, CT and ice mass fraction from bulk SA and bulk potential enthalpy (polynomial)</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="13"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>thermodynamic interaction between sea ice and seawater</b></font></h3></th></tr>
+ <tr><td><a href="gsw_melting_seaice_SA_CT_ratio.html">gsw_melting_seaice_SA_CT_ratio</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when sea ice melts in seawater</font></td></tr>
+ <tr><td><a href="gsw_melting_seaice_SA_CT_ratio_poly.html">gsw_melting_seaice_SA_CT_ratio_poly</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when sea ice melts in seawater (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_melting_seaice_equilibrium_SA_CT_ratio.html">gsw_melting_seaice_equilibrium_SA_CT_ratio</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when sea ice melts into seawater equilibrium</font></td></tr>
+ <tr><td><a href="gsw_melting_seaice_equilibrium_SA_CT_ratio_poly.html">gsw_melting_seaice_equilibrium_SA_CT_ratio_poly</a></td><td><font face="Times New Roman" size="4">SA to CT ratio when sea ice melts into seawater equilibrium (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_melting_seaice_into_seawater.html">gsw_melting_seaice_into_seawater</a></td><td><font face="Times New Roman" size="4">SA and CT when sea ice melts in seawater</font></td></tr>
+ <tr><td><a href="gsw_seaice_fraction_to_freeze_seawater.html">gsw_seaice_fraction_to_freeze_seawater</a></td><td><font face="Times New Roman" size="4">sea ice mass fraction to freeze seawater</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="14"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>thermodynamic properties of ice Ih</b></font></h3></th></tr>
+ <tr><td><a href="gsw_rho_ice.html">gsw_rho_ice</a></td><td><font face="Times New Roman" size="4">in-situ density of ice</font></td></tr>
+ <tr><td><a href="gsw_alpha_wrt_t_ice.html">gsw_alpha_wrt_t_ice</a></td><td><font face="Times New Roman" size="4">thermal expansion coefficient of ice with respect to in-situ temperature</font></td></tr>
+ <tr><td><a href="gsw_specvol_ice.html">gsw_specvol_ice</a></td><td><font face="Times New Roman" size="4">specific volume of ice</font></td></tr>
+ <tr><td><a href="gsw_pressure_coefficient_ice.html">gsw_pressure_coefficient_ice</a></td><td><font face="Times New Roman" size="4">pressure coefficient of ice</font></td></tr>
+ <tr><td><a href="gsw_sound_speed_ice.html">gsw_sound_speed_ice</a></td><td><font face="Times New Roman" size="4">sound speed of ice (compression waves)</font></td></tr>
+ <tr><td><a href="gsw_kappa_ice.html">gsw_kappa_ice</a></td><td><font face="Times New Roman" size="4">isentropic compressibility of ice</font></td></tr>
+ <tr><td><a href="gsw_kappa_const_t_ice.html">gsw_kappa_const_t_ice</a></td><td><font face="Times New Roman" size="4">isothermal compressibility of ice</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_ice.html">gsw_internal_energy_ice</a></td><td><font face="Times New Roman" size="4">internal energy of ice</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_ice.html">gsw_enthalpy_ice</a></td><td><font face="Times New Roman" size="4">enthalpy of ice</font></td></tr>
+ <tr><td><a href="gsw_entropy_ice.html">gsw_entropy_ice</a></td><td><font face="Times New Roman" size="4">entropy of ice</font></td></tr>
+ <tr><td><a href="gsw_cp_ice.html">gsw_cp_ice</a></td><td><font face="Times New Roman" size="4">isobaric heat capacity of ice</font></td></tr>
+ <tr><td><a href="gsw_chem_potential_water_ice.html">gsw_chem_potential_water_ice</a></td><td><font face="Times New Roman" size="4">chemical potential of water in ice</font></td></tr>
+ <tr><td><a href="gsw_Helmholtz_energy_ice.html">gsw_Helmholtz_energy_ice</a></td><td><font face="Times New Roman" size="4">Helmholtz energy of ice</font></td></tr>
+ <tr><td><a href="gsw_adiabatic_lapse_rate_ice.html">gsw_adiabatic_lapse_rate_ice</a></td><td><font face="Times New Roman" size="4">adiabatic lapse rate of ice</font></td></tr>
+ <tr><td><a href="gsw_pt0_from_t_ice.html">gsw_pt0_from_t_ice</a></td><td><font face="Times New Roman" size="4">potential temperature of ice with reference pressure of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_pt_from_t_ice.html">gsw_pt_from_t_ice</a></td><td><font face="Times New Roman" size="4">potential temperature of ice</font></td></tr>
+ <tr><td><a href="gsw_t_from_pt0_ice.html">gsw_t_from_pt0_ice</a></td><td><font face="Times New Roman" size="4">in-situ temperature from potential temperature of ice with p_ref of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_t_from_rho_ice.html">gsw_t_from_rho_ice</a></td><td><font face="Times New Roman" size="4">in-situ temperature from the in-situ density of ice</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_from_pt_ice.html">gsw_pot_enthalpy_from_pt_ice</a></td><td><font face="Times New Roman" size="4">potential enthalpy from potential temperature of ice</font></td></tr>
+ <tr><td><a href="gsw_pt_from_pot_enthalpy_ice.html">gsw_pt_from_pot_enthalpy_ice</a></td><td><font face="Times New Roman" size="4">potential temperature from potential enthalpy of ice</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_from_pt_ice_poly.html">gsw_pot_enthalpy_from_pt_ice_poly</a></td><td><font face="Times New Roman" size="4">potential enthalpy from potential temperature of ice (polynomial)</font> </td></tr>
+ <tr><td><a href="gsw_pt_from_pot_enthalpy_ice_poly.html">gsw_pt_from_pot_enthalpy_ice_poly</a></td><td><font face="Times New Roman" size="4">potential temperature from potential enthalpy of ice (polynomial)</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_from_specvol_ice.html">gsw_pot_enthalpy_from_specvol_ice</a></td><td><font face="Times New Roman" size="4">potential enthalpy from specific volume of ice</font> </td></tr>
+ <tr><td><a href="gsw_specvol_from_pot_enthalpy_ice.html">gsw_specvol_from_pot_enthalpy_ice</a></td><td><font face="Times New Roman" size="4">specific volume from potential enthalpy of ice</font></td></tr>
+ <tr><td><a href="gsw_pot_enthalpy_from_specvol_ice_poly.html">gsw_pot_enthalpy_from_specvol_ice_poly</a></td><td><font face="Times New Roman" size="4">potential enthalpy from specific volume of ice (polynomial)</font> </td></tr>
+ <tr><td><a href="gsw_specvol_from_pot_enthalpy_ice_poly.html">gsw_specvol_from_pot_enthalpy_ice_poly</a></td><td><font face="Times New Roman" size="4">specific volume from potential enthalpy of ice (polynomial)</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="15"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>isobaric evaporation enthalpy</b></font></h3></th></tr>
+ <tr valign="top"><td> <a href="gsw_latentheat_evap_CT.html">gsw_latentheat_evap_CT</a></td><td><font face="Times New Roman" size="4">latent heat of evaporation of water from seawater (isobaric evaporation enthalpy) with CT as input temperature</font></td></tr>
+ <tr valign="top"><td><a href="gsw_latentheat_evap_t.html">gsw_latentheat_evap_t</a></td><td><font face="Times New Roman" size="4">latent heat of evaporation of water from seawater (isobaric evaporation enthalpy) with in-situ temperature, t, as input</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="16"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>spiciness</b></font></h3></th></tr>
+ <tr><td><a href="gsw_spiciness0.html">gsw_spiciness0</a></td><td><font face="Times New Roman" size="4">spiciness with p_ref of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_spiciness1.html">gsw_spiciness1</a></td><td><font face="Times New Roman" size="4">spiciness with p_ref of 1000 dbar</font></td></tr>
+ <tr><td><a href="gsw_spiciness2.html">gsw_spiciness2</a></td><td><font face="Times New Roman" size="4">spiciness with p_ref of 2000 dbar</font></td></tr>
+ <tr><td><a href="gsw_SA_CT_from_sigma0_spiciness0.html">gsw_SA_CT_from_sigma0_spiciness0</a></td><td><font face="Times New Roman" size="4">SA & CT from given sigma and spiciness with p_ref of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_SA_CT_from_sigma1_spiciness1.html">gsw_SA_CT_from_sigma1_spiciness1</a></td><td><font face="Times New Roman" size="4">SA & CT from given sigma and spiciness with p_ref of 1000 dbar</font></td></tr>
+ <tr><td><a href="gsw_SA_CT_from_sigma2_spiciness2.html">gsw_SA_CT_from_sigma2_spiciness2</a></td><td><font face="Times New Roman" size="4">SA & CT from given sigma and spiciness with p_ref of 2000 dbar</font></td></tr>
+
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="17"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>Planet Earth properties</b></font></h3></th></tr>
+ <tr><td><a href="gsw_f.html">gsw_f</a></td><td><font face="Times New Roman" size="4">Coriolis parameter</font></td></tr>
+ <tr><td><a href="gsw_grav.html">gsw_grav</a></td><td><font face="Times New Roman" size="4">gravitational acceleration</font></td></tr>
+ <tr><td><a href="gsw_distance.html">gsw_distance</a></td><td><font face="Times New Roman" size="4">spherical earth distance between points in the ocean</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr> <th colspan="2"><a id="18"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>TEOS-10 constants</b></font></h3></th></tr>
+ <tr><td><a href="gsw_T0.html">gsw_T0</a></td><td><font face="Times New Roman" size="4">Celcius zero point; 273.15 K</font></td></tr>
+ <tr><td><a href="gsw_P0.html">gsw_P0</a></td><td><font face="Times New Roman" size="4">one standard atmosphere; 101 325 Pa</font></td></tr>
+ <tr><td><a href="gsw_SS0.html">gsw_SS0</a></td><td><font face="Times New Roman" size="4">Standard Ocean Reference Salinity; 35.165 04 g/kg</font></td></tr>
+ <tr><td><a href="gsw_uPS.html">gsw_uPS</a></td><td><font face="Times New Roman" size="4">unit conversion factor for salinities; (35.165 04/35) g/kg</font></td></tr>
+ <tr><td><a href="gsw_cp0.html">gsw_cp0</a></td><td><font face="Times New Roman" size="4">the "specific heat" for use with CT; 3991.867 957 119 63 (J/kg)/K</font></td></tr>
+ <tr><td><a href="gsw_C3515.html">gsw_C3515</a></td><td><font face="Times New Roman" size="4">conductivity of SSW at SP=35, t_68=15, p=0; 42.9140 mS/cm</font></td></tr>
+ <tr><td><a href="gsw_SonCl.html">gsw_SonCl</a></td><td><font face="Times New Roman" size="4">ratio of SP to Chlorinity; 1.80655 (g/kg)^-1</font></td></tr>
+ <tr><td><a href="gsw_valence_factor.html">gsw_valence_factor</a></td><td><font face="Times New Roman" size="4">valence factor of sea salt; 1.2452898</font></td></tr>
+ <tr><td><a href="gsw_atomic_weight.html">gsw_atomic_weight</a></td><td><font face="Times New Roman" size="4">mole-weighted atomic weight of sea salt; 31.4038218... g/mol</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="19"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>dissolved gasses</b></font></h3></th></tr>
+ <tr><td><a href="gsw_Arsol.html">gsw_Arsol</a></td><td><font face="Times New Roman" size="4">argon solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_Arsol_SP_pt.html">gsw_Arsol_SP_pt</a></td><td><font face="Times New Roman" size="4">argon solubility from SP and pt</font></td></tr>
+ <tr><td><a href="gsw_Hesol.html">gsw_Hesol</a></td><td><font face="Times New Roman" size="4">helium solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_Hesol_SP_pt.html">gsw_Hesol_SP_pt</a></td><td><font face="Times New Roman" size="4">helium solubility from SP and pt</font></td></tr>
+ <tr><td> <a href="gsw_Krsol.html">gsw_Krsol</a></td><td><font face="Times New Roman" size="4">krypton solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_Krsol_SP_pt.html">gsw_Krsol_SP_pt</a></td><td><font face="Times New Roman" size="4">krypton solubility from SP and pt</font></td></tr>
+ <!-- <tr><td><a href="gsw_N2Osol.html">gsw_N2Osol</a></td><td><font face="Times New Roman" size="4">nitrous oxide solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_N2Osol_SP_pt.html">gsw_N2Osol_SP_pt</a></td><td><font face="Times New Roman" size="4">nitrous oxide solubility from SP and pt</font></td></tr> -->
+ <tr><td><a href="gsw_N2sol.html">gsw_N2sol</a></td><td><font face="Times New Roman" size="4">nitrogen solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_N2sol_SP_pt.html">gsw_N2sol_SP_pt</a></td><td><font face="Times New Roman" size="4">nitrogen solubility from SP and pt</font></td></tr>
+ <tr><td><a href="gsw_Nesol.html">gsw_Nesol</a></td><td><font face="Times New Roman" size="4">neon solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_Nesol_SP_pt.html">gsw_Nesol_SP_pt</a></td><td><font face="Times New Roman" size="4">neon solubility from SP and pt</font></td></tr>
+ <tr><td><a href="gsw_O2sol.html">gsw_O2sol</a></td><td><font face="Times New Roman" size="4">oxygen solubility from SA and CT</font></td></tr>
+ <tr><td><a href="gsw_O2sol_SP_pt.html">gsw_O2sol_SP_pt</a></td><td><font face="Times New Roman" size="4">oxygen solubility from SP and pt</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="20"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>density and enthalpy in terms of CT, based on the exact Gibbs function</b></font></h3></th></tr>
+ <tr><td><a href="gsw_specvol_CT_exact.html">gsw_specvol_CT_exact</a></td><td><font face="Times New Roman" size="4">specific volume</font></td></tr>
+ <tr><td><a href="gsw_alpha_CT_exact.html">gsw_alpha_CT_exact</a></td><td><font face="Times New Roman" size="4">thermal expansion coefficient with respect to CT</font></td></tr>
+ <tr><td><a href="gsw_beta_CT_exact.html">gsw_beta_CT_exact</a></td><td><font face="Times New Roman" size="4">saline contraction coefficient at constant CT</font></td></tr>
+ <tr><td><a href="gsw_alpha_on_beta_CT_exact.html">gsw_alpha_on_beta_CT_exact</a></td><td><font face="Times New Roman" size="4">alpha divided by beta</font></td></tr>
+ <tr><td><a href="gsw_specvol_alpha_beta_CT_exact.html">gsw_specvol_alpha_beta_CT_exact</a></td><td><font face="Times New Roman" size="4">specific volume, thermal expansion &amp; saline contraction coefficients</font></td></tr>
+ <tr><td><a href="gsw_specvol_first_derivatives_CT_exact.html">gsw_specvol_first_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of specific volume</font></td></tr>
+ <tr><td><a href="gsw_specvol_second_derivatives_CT_exact.html">gsw_specvol_second_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">second derivatives of specific volume</font></td></tr>
+ <tr><td><a href="gsw_specvol_first_derivatives_wrt_enthalpy_CT_exact.html">gsw_specvol_first_derivatives_wrt_enthalpy_CT_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of specific volume with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_specvol_second_derivatives_wrt_enthalpy_CT_exact.html">gsw_specvol_second_derivatives_wrt_enthalpy_CT_exact</a></td><td><font face="Times New Roman" size="4">second derivatives of specific volume with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_specvol_anom_CT_exact.html">gsw_specvol_anom_CT_exact</a></td><td><font face="Times New Roman" size="4">specific volume anomaly</font></td></tr>
+ <tr><td><a href="gsw_specvol_anom_standard_CT_exact.html">gsw_specvol_anom_standard_CT_exact</a></td><td><font face="Times New Roman" size="4">specific volume anomaly relative to SSO & 0&deg;C</font></td></tr>
+ <tr><td><a href="gsw_specvol_diff_CT_exact.html">gsw_specvol_diff_CT_exact</a></td><td><font face="Times New Roman" size="4">specific volume difference between two pressures</font></td></tr>
+ <tr><td><a href="gsw_rho_CT_exact.html">gsw_rho_CT_exact</a></td><td><font face="Times New Roman" size="4">in-situ density and potential density</font></td></tr>
+ <tr><td><a href="gsw_rho_alpha_beta_CT_exact.html">gsw_rho_alpha_beta_CT_exact</a></td><td><font face="Times New Roman" size="4">in-situ density, thermal expansion &amp; saline contraction coefficients</font></td></tr>
+ <tr><td><a href="gsw_rho_first_derivatives_CT_exact.html">gsw_rho_first_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of density</font></td></tr>
+ <tr><td><a href="gsw_rho_second_derivatives_CT_exact.html">gsw_rho_second_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">second  derivatives of density</font></td></tr>
+ <tr><td><a href="gsw_rho_first_derivatives_wrt_enthalpy_CT_exact.html">gsw_rho_first_derivatives_wrt_enthalpy_CT_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of density with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_rho_second_derivatives_wrt_enthalpy_CT_exact.html">gsw_rho_second_derivatives_wrt_enthalpy_CT_exact</a></td><td><font face="Times New Roman" size="4">second  derivatives of density with respect to enthalpy</font></td></tr>
+ <tr><td><a href="gsw_sigma0_CT_exact.html">gsw_sigma0_CT_exact</a></td><td><font face="Times New Roman" size="4">sigma0 with reference pressure of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma1_CT_exact.html">gsw_sigma1_CT_exact</a></td><td><font face="Times New Roman" size="4">sigma1 with reference pressure of 1000 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma2_CT_exact.html">gsw_sigma2_CT_exact</a></td><td><font face="Times New Roman" size="4">sigma2 with reference pressure of 2000 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma3_CT_exact.html">gsw_sigma3_CT_exact</a></td><td><font face="Times New Roman" size="4">sigma3 with reference pressure of 3000 dbar</font></td></tr>
+ <tr><td><a href="gsw_sigma4_CT_exact.html">gsw_sigma4_CT_exact</a></td><td><font face="Times New Roman" size="4">sigma4 with reference pressure of 4000 dbar</font></td></tr>
+ <tr><td><a href="gsw_cabbeling_CT_exact.html">gsw_cabbeling_CT_exact</a></td><td><font face="Times New Roman" size="4">cabbeling coefficient</font></td></tr>
+ <tr><td><a href="gsw_thermobaric_CT_exact.html">gsw_thermobaric_CT_exact</a></td><td><font face="Times New Roman" size="4">thermobaric coefficient</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_CT_exact.html">gsw_enthalpy_CT_exact</a></td><td><font face="Times New Roman" size="4">enthalpy</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_diff_CT_exact.html">gsw_enthalpy_diff_CT_exact</a></td><td><font face="Times New Roman" size="4">difference of enthalpy between two pressures</font></td></tr>
+ <tr><td><a href="gsw_dynamic_enthalpy_CT_exact.html">gsw_dynamic_enthalpy_CT_exact</a></td><td><font face="Times New Roman" size="4">dynamic enthalpy</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_first_derivatives_CT_exact.html">gsw_enthalpy_first_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of enthalpy</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_second_derivatives_CT_exact.html">gsw_enthalpy_second_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">second derivatives of enthalpy</font></td></tr>
+ <tr><td><a href="gsw_sound_speed_CT_exact.html">gsw_sound_speed_CT_exact</a></td><td><font face="Times New Roman" size="4">sound speed</font></td></tr>
+ <tr><td><a href="gsw_kappa_CT_exact.html">gsw_kappa_CT_exact</a></td><td><font face="Times New Roman" size="4">isentropic compressibility</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_CT_exact.html">gsw_internal_energy_CT_exact</a></td><td><font face="Times New Roman" size="4">internal energy</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_first_derivatives_CT_exact.html">gsw_internal_energy_first_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of internal energy</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_second_derivatives_CT_exact.html">gsw_internal_energy_second_derivatives_CT_exact</a></td><td><font face="Times New Roman" size="4">second derivatives of internal energy</font></td></tr>
+ <tr><td><a href="gsw_CT_from_enthalpy_exact.html">gsw_CT_from_enthalpy_exact</a></td><td><font face="Times New Roman" size="4">Conservative Temperature from enthalpy</font></td></tr>
+ <tr><td><a href="gsw_SA_from_rho_CT_exact.html">gsw_SA_from_rho_CT_exact</a></td><td><font face="Times New Roman" size="4">Absolute Salinity from density</font></td></tr>
+ <tr><td><a href="gsw_CT_from_rho_exact.html">gsw_CT_from_rho_exact</a></td><td><font face="Times New Roman" size="4">Conservative Temperature from density</font></td></tr>
+ <tr><td><a href="gsw_CT_maxdensity_exact.html">gsw_CT_maxdensity_exact</a></td><td><font face="Times New Roman" size="4">Conservative Temperature of maximum density of seawater</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="21"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>Laboratory functions, for use with densimeter measurements</b></font></h3></th></tr>
+ <tr><td><a href="gsw_deltaSA_from_rho_t_exact.html">gsw_deltaSA_from_rho_t_exact</a></td><td><font face="Times New Roman" size="4">Absolute Salinity Anomaly from density measurements</font></td></tr>
+ <tr><td><a href="gsw_SA_from_rho_t_exact.html">gsw_SA_from_rho_t_exact</a></td><td><font face="Times New Roman" size="4">Absolute Salinity from density</font></td></tr>
+ <tr><td><a href="gsw_rho_t_exact.html">gsw_rho_t_exact</a></td><td><font face="Times New Roman" size="4">in-situ density</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="22"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><b>basic thermodynamic properties in terms of in-situ t, based on the exact Gibbs function</b></font></h3></th></tr>
+ <tr><td><a href="gsw_specvol_t_exact.html">gsw_specvol_t_exact</a></td><td><font face="Times New Roman" size="4">specific volume</font></td></tr>
+ <tr><td><a href="gsw_alpha_wrt_CT_t_exact.html">gsw_alpha_wrt_CT_t_exact</a></td><td><font face="Times New Roman" size="4">thermal expansion coefficient with respect to Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_alpha_wrt_pt_t_exact.html">gsw_alpha_wrt_pt_t_exact</a></td><td><font face="Times New Roman" size="4">thermal expansion coefficient with respect to potential temperature</font></td></tr>
+ <tr><td><a href="gsw_alpha_wrt_t_exact.html">gsw_alpha_wrt_t_exact</a></td><td><font face="Times New Roman" size="4">thermal expansion coefficient with respect to in-situ temperature</font></td></tr>
+ <tr><td><a href="gsw_beta_const_CT_t_exact.html">gsw_beta_const_CT_t_exact</a></td><td><font face="Times New Roman" size="4">saline contraction coefficient at constant Conservative Temperature</font></td></tr>
+ <tr><td><a href="gsw_beta_const_pt_t_exact.html">gsw_beta_const_pt_t_exact</a></td><td><font face="Times New Roman" size="4">saline contraction coefficient at constant potential temperature</font></td></tr>
+ <tr><td><a href="gsw_beta_const_t_exact.html">gsw_beta_const_t_exact</a></td><td><font face="Times New Roman" size="4">saline contraction coefficient at constant in-situ temperature</font></td></tr>
+ <tr><td><a href="gsw_specvol_anom_standard_t_exact.html">gsw_specvol_anom_standard_t_exact</a></td><td><font face="Times New Roman" size="4">specific volume anomaly relative to SSO and 0&deg;C</font></td></tr>
+ <tr><td><a href="gsw_rho_t_exact.html">gsw_rho_t_exact</a></td><td><font face="Times New Roman" size="4">in-situ density</font></td></tr>
+ <tr><td><a href="gsw_pot_rho_t_exact.html">gsw_pot_rho_t_exact</a></td><td><font face="Times New Roman" size="4">potential density</font></td></tr>
+ <tr><td><a href="gsw_sigma0_pt0_exact.html">gsw_sigma0_pt0_exact</a></td><td><font face="Times New Roman" size="4">sigma0 from pt0 with reference pressure of 0 dbar</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_t_exact.html">gsw_enthalpy_t_exact</a></td><td><font face="Times New Roman" size="4">enthalpy</font></td></tr>
+ <tr><td><a href="gsw_dynamic_enthalpy_t_exact.html">gsw_dynamic_enthalpy_t_exact</a></td><td><font face="Times New Roman" size="4">dynamic enthalpy</font></td></tr>
+ <tr><td><a href="gsw_CT_first_derivatives_wrt_t_exact.html">gsw_CT_first_derivatives_wrt_t_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of Conservative Temperature with respect to t</font></td></tr>
+ <tr><td><a href="gsw_enthalpy_first_derivatives_wrt_t_exact.html">gsw_enthalpy_first_derivatives_wrt_t_exact</a></td><td><font face="Times New Roman" size="4">first derivatives of enthalpy with respect to t</font></td></tr>
+ <tr><td><a href="gsw_sound_speed_t_exact.html">gsw_sound_speed_t_exact</a></td><td><font face="Times New Roman" size="4">sound speed</font></td></tr>
+ <tr><td><a href="gsw_kappa_t_exact.html">gsw_kappa_t_exact</a></td><td><font face="Times New Roman" size="4">isentropic compressibility</font></td></tr>
+ <tr><td><a href="gsw_kappa_const_t_exact.html">gsw_kappa_const_t_exact</a></td><td><font face="Times New Roman" size="4">isothermal compressibility</font></td></tr>
+ <tr><td><a href="gsw_internal_energy_t_exact.html">gsw_internal_energy_t_exact</a></td><td><font face="Times New Roman" size="4">internal energy</font></td></tr>
+ <tr><td><a href="gsw_SA_from_rho_t_exact.html">gsw_SA_from_rho_t_exact</a></td><td><font face="Times New Roman" size="4">Absolute Salinity from density</font></td></tr>
+ <tr><td><a href="gsw_t_from_rho_exact.html">gsw_t_from_rho_exact</a></td><td><font face="Times New Roman" size="4">in-situ temperature from density</font></td></tr>
+ <tr><td><a href="gsw_t_maxdensity_exact.html">gsw_t_maxdensity_exact</a></td><td><font face="Times New Roman" size="4">in-situ temperature of maximum density of seawater</font></td></tr>
+ <tr><td><a href="gsw_cp_t_exact.html">gsw_cp_t_exact</a></td><td><font face="Times New Roman" size="4">isobaric heat capacity</font></td></tr>
+ <tr><td><a href="gsw_isochoric_heat_cap_t_exact.html">gsw_isochoric_heat_cap_t_exact</a></td><td><font face="Times New Roman" size="4">isochoric heat capacity</font></td></tr>
+ <tr><td><a href="gsw_chem_potential_relative_t_exact.html">gsw_chem_potential_relative_t_exact</a></td><td><font face="Times New Roman" size="4">relative chemical potential</font></td></tr>
+ <tr><td><a href="gsw_chem_potential_water_t_exact.html">gsw_chem_potential_water_t_exact</a></td><td><font face="Times New Roman" size="4">chemical potential of water in seawater</font></td></tr>
+ <tr><td><a href="gsw_chem_potential_salt_t_exact.html">gsw_chem_potential_salt_t_exact</a></td><td><font face="Times New Roman" size="4">chemical potential of salt in seawater</font></td></tr>
+ <tr><td><a href="gsw_t_deriv_chem_potential_water_t_exact.html">gsw_t_deriv_chem_potential_water_t_exact</a></td><td><font face="Times New Roman" size="4">temperature derivative of chemical potential of water</font></td></tr>
+ <tr><td><a href="gsw_dilution_coefficient_t_exact.html">gsw_dilution_coefficient_t_exact</a></td><td><font face="Times New Roman" size="4">dilution coefficient of seawater</font></td></tr>
+ <tr><td><a href="gsw_Gibbs_energy_t_exact.html">gsw_Gibbs_energy_t_exact</a></td><td><font face="Times New Roman" size="4">Gibbs energy</font></td></tr>
+ <tr><td><a href="gsw_Helmholtz_energy_t_exact.html">gsw_Helmholtz_energy_t_exact</a></td><td><font face="Times New Roman" size="4">Helmholtz energy</font></td></tr>
+ <tr><td><a href="gsw_osmotic_coefficient_t_exact.html">gsw_osmotic_coefficient_t_exact</a></td><td><font face="Times New Roman" size="4">osmotic coefficient of seawater</font></td></tr>
+ <tr><td><a href="gsw_osmotic_pressure_t_exact.html">gsw_osmotic_pressure_t_exact</a></td><td><font face="Times New Roman" size="4">osmotic pressure of seawater</font></td></tr>
+<tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+
+<tr><th colspan="2"><a name="23"></a><h3 align="left"><font face="Times New Roman" size="6" color="#000099"><em> The GSW functions above call the following library functions:</em></font></h3></th></tr>
+ <tr><td><a href="gsw_gibbs.html">gsw_gibbs</a></td><td><font face="Times New Roman" size="4">the TEOS-10 Gibbs function of seawater and its derivatives</font></td></tr>
+ <tr><td><a href="gsw_gibbs_ice.html">gsw_gibbs_ice</a></td><td><font face="Times New Roman" size="4">the TEOS-10 Gibbs function of ice and its derivatives</font></td></tr>
+ <tr><td><a href="gsw_SAAR.html">gsw_SAAR</a></td><td><font face="Times New Roman" size="4">Absolute Salinity Anomaly Ratio (excluding the Baltic Sea)</font></td></tr>
+ <tr><td><a href="gsw_Fdelta.html">gsw_Fdelta</a></td><td><font face="Times New Roman" size="4">ratio of Absolute to Preformed Salinity, minus 1</font></td></tr>
+ <tr><td><a href="gsw_deltaSA_atlas.html">gsw_deltaSA_atlas</a></td><td><font face="Times New Roman" size="4">Absolute Salinity Anomaly atlas value (excluding the Baltic Sea)</font></td></tr>
+ <tr><td><a href="gsw_SA_from_SP_Baltic.html">gsw_SA_from_SP_Baltic</a></td><td><font face="Times New Roman" size="4">Calculates Absolute Salinity in the Baltic Sea</font></td></tr>
+ <tr><td><a href="gsw_SP_from_SA_Baltic.html">gsw_SP_from_SA_Baltic</a></td><td><font face="Times New Roman" size="4">Calculates Practical Salinity in the Baltic Sea</font></td></tr>
+ <tr><td><a href="gsw_infunnel.html">gsw_infunnel</a></td><td><font face="Times New Roman" size="4">"oceanographic funnel" check for the 75-term equation</font></td></tr>
+ <tr><td>gsw_entropy_part</td><td><font face="Times New Roman" size="4">entropy minus the terms that are a function of only SA</font></td></tr>
+ <tr><td>gsw_entropy_part_zerop</td><td><font face="Times New Roman" size="4">entropy_part evaluated at 0 dbar</font></td></tr>
+ <tr><td>gsw_interp_ref_cast</td><td><font face="Times New Roman" size="4">linearly interpolates the reference cast</font></td></tr>
+ <tr><td>gsw_linear_interp_SA_CT</td><td><font face="Times New Roman" size="4">linearly interpolates (SA,CT,p) to the desired p</font></td></tr>
+ <tr><td>gsw_pchip_interp_SA_CT</td><td><font face="Times New Roman" size="4">pchip interpolation of (SA,CT,p) to the desired p</font></td></tr>
+ <tr><td>gsw_rr68_interp_SA_CT</td><td><font face="Times New Roman" size="4">Reininger & Ross (1968) interpolation of (SA,CT,p) to the desired p</font></td></tr>
+ <tr><td>gsw_spline_interp_SA_CT</td><td><font face="Times New Roman" size="4">spline interpolation of (SA,CT,p) to the desired p</font></td></tr>
+ <tr><td>gsw_wiggliness</td><td><font face="Times New Roman" size="4">amount of variation in a cast</font></td></tr>
+ <tr><td>gsw_gibbs_pt0_pt0</td><td><font face="Times New Roman" size="4">gibbs(0,2,0,SA,t,0)</font></td></tr>
+ <tr><td>gsw_gibbs_ice_part_t</td><td><font face="Times New Roman" size="4">part of gibbs_ice(1,0,t,p)</font></td></tr>
+ <tr><td>gsw_gibbs_ice_pt0</td><td><font face="Times New Roman" size="4">part of gibbs_ice(1,0,pt0,0)</font></td></tr>
+ <tr><td>gsw_specvol_SSO_0</td><td><font face="Times New Roman" size="4">specvol(35.16504,0,p)</font></td></tr>
+ <tr><td>gsw_enthalpy_SSO_0</td><td><font face="Times New Roman" size="4">enthalpy(35.16504,0,p)</font></td></tr>
+ <tr><td>gsw_Hill_ratio_at_SP2</td><td><font face="Times New Roman" size="4">Hill ratio at a Practical Salinity of 2</font></td></tr>
+ <tr><td><font face="Times New Roman" size="4"><b> The GSW data set:</b></font></td></tr>
+ <tr valign="top"><td><font size="3">gsw_data_v3_0</font></td><td> <font face="Times New Roman" size="4"><em>This fine contains:</em>,</font></td></tr>
+ <tr><td></td><td><font face="Times New Roman" size="4">(1) the global data set of Absolute Salinity Anomaly Ratio,</font></td></tr>
+ <tr><td></td><td><font face="Times New Roman" size="4">(2) the global data set of Absolute Salinity Anomaly Ref.,</font></td></tr>                                   
+ <tr><td></td><td><font face="Times New Roman" size="4">(3) a reference cast (for the isopycnal streamfunction),</font></td></tr>
+ <tr><td></td><td><font face="Times New Roman" size="4">(4) two reference casts that are used by gsw_demo</font></td></tr>
+ <tr><td></td><td><font face="Times New Roman" size="4">(5) three vertical profiles of (SP, t, p) at known long & lat, plus</font></td></tr>
+ <tr><td></td><td><font face="Times New Roman" size="4">the outputs of all the GSW functions for these 3 profiles, and</font></td></tr>
+ <tr><td></td><td><font face="Times New Roman" size="4">the required accuracy of all these outputs.</font></td></tr>
+ <tr><td colspan="2"><br><a href="#top_of_page"><img src="Back_to_top.jpeg" width="19" height="16"> Back to Top</a></td></tr>
+</table> 
+</div></body></html>
+      

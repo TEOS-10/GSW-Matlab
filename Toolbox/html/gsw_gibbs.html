@@ -1,0 +1,661 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_gibbs</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 900px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content">
+<h1>gsw_gibbs</h1>
+<pre><font size="5"><b>Gibbs energy and its derivatives</b></font></pre>
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">AUTHOR:</a></li>
+<li><a href="#6">VERSION NUMBER:</a></li>
+<li><a href="#7">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>gibbs = gsw_gibbs(ns,nt,np,SA,t,p)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates specific Gibbs energy and its derivatives up to order 3 for
+seawater.  The Gibbs function for seawater is that of TEOS-10
+(IOC et al., 2010), being the sum of IAPWS-08 for the saline part and
+IAPWS-09 for the pure water part.  These International Association 
+for the Properties of Water and Steam (IAPWS) releases are the
+officially blessed IAPWS descriptions of Feistel (2008) and the pure
+water part of Feistel (2003).  Absolute Salinity, SA, in all of the GSW
+routines is expressed on the Reference-Composition Salinity Scale of
+2008 (RCSS-08) of Millero et al. (2008).</pre>
+<table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/gibbs.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/gibbs.pdf">Click for a more detailed description of Gibbs energy.</a></font></pre></td>
+  </tr>
+</table>
+<h2>INPUT:<a name="3"></a></h2>
+<pre>ns  =  order of SA derivative                     [ integers 0, 1 or 2 ]
+nt  =  order of t derivative                      [ integers 0, 1 or 2 ]
+np  =  order of p derivative                      [ integers 0, 1 or 2 ]
+SA  =  Absolute Salinity                                        [ g/kg ]
+t   =  in-situ temperature (ITS-90)                            [ deg C ]
+p   =  sea pressure                                             [ dbar ]
+       (ie. absolute pressure - 10.1325 dbar)</pre>
+<pre>SA, t and p need to have the same dimensions.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>gibbs  =  Specific Gibbs energy or its derivatives.</pre>
+<pre>          The Gibbs energy (when ns = nt = np = 0) has units of:
+                                                                [ J/kg ]
+          The Absolute Salinity derivatives are output in units of:
+                                                 [ (J/kg) (g/kg)^(-ns) ]
+          The temperature derivatives are output in units of:
+                                                    [ (J/kg) (K)^(-nt) ]
+          The pressure derivatives are output in units of:
+                                                   [ (J/kg) (Pa)^(-np) ]
+          The mixed derivatives are output in units of:
+                            [ (J/kg) (g/kg)^(-ns) (K)^(-nt) (Pa)^(-np) ]</pre>
+
+<pre>Note. The derivatives are taken with respect to pressure in Pa, not
+  withstanding that the pressure input into this routine is in dbar.</pre>
+<h2>AUTHOR:<a name="5"></a></h2>
+<pre>David Jackett, Paul Barker and Trevor McDougall     [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="6"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="7"></a></h2>
+<pre>Feistel, R., 2003: A new extended Gibbs thermodynamic potential of
+ seawater,  Progr. Oceanogr., 58, 43-114.</pre>
+<pre>Feistel, R., 2008: A Gibbs function for seawater thermodynamics
+ for -6 to 80&deg;C and salinity up to 120 g kg&#8211;1, Deep-Sea Res. I,
+ 55, 1639-1671.</pre>
+<pre>IAPWS, 2008: Release on the IAPWS Formulation 2008 for the
+ Thermodynamic Properties of Seawater. The International Association
+ for the Properties of Water and Steam. Berlin, Germany, September
+ 2008, available from <a href="http://www.iapws.org" title="IAPWS">http://www.iapws.org</a>.  
+  This Release is referred to as IAPWS-08.</pre>
+<pre>IAPWS, 2009: Supplementary Release on a Computationally Efficient
+ Thermodynamic Formulation for Liquid Water for Oceanographic Use.
+ The International Association for the Properties of Water and Steam.
+ Doorwerth, The Netherlands, September 2009, available from
+ <a href="http://www.iapws.org" title="IAPWS">http://www.iapws.org.</a>  
+  This Release is referred to as IAPWS-09.</pre>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10"> http://www.TEOS-10.org</a>
+  <a href="../pdf/gibbs.pdf" title="TEOS-10">See section 2.6 and appendices A.6,  G and H of this TEOS-10 Manual</a>.</pre>
+<pre>Millero, F. J., R. Feistel, D. G. Wright, and T. J. McDougall, 2008:
+ The composition of Standard Seawater and the definition of the
+ Reference-Composition Salinity Scale, Deep-Sea Res. I, 55, 50-72.</pre>
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+<div class="content">
+<pre class="codeinput">
+<span class="keyword">function</span> gibbs = gsw_gibbs(ns,nt,np,SA,t,p)
+
+<span class="comment">% gsw_gibbs                                Gibbs energy and its derivatives</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">% USAGE:</span>
+<span class="comment">%   gibbs = gsw_gibbs(ns,nt,np,SA,t,p)</span>
+<span class="comment">%</span>
+<span class="comment">% DESCRIPTION:</span>
+<span class="comment">%  Calculates specific Gibbs energy and its derivatives up to order 3 for</span>
+<span class="comment">%  seawater.  The Gibbs function for seawater is that of TEOS-10</span>
+<span class="comment">%  (IOC et al., 2010), being the sum of IAPWS-08 for the saline part and</span>
+<span class="comment">%  IAPWS-09 for the pure water part.  These IAPWS releases are the</span>
+<span class="comment">%  officially blessed IAPWS descriptions of Feistel (2008) and the pure</span>
+<span class="comment">%  water part of Feistel (2003).  Absolute Salinity, SA, in all of the GSW</span>
+<span class="comment">%  routines is expressed on the Reference-Composition Salinity Scale of</span>
+<span class="comment">%  2008 (RCSS-08) of Millero et al. (2008).</span>
+<span class="comment">%</span>
+<span class="comment">% INPUT:</span>
+<span class="comment">%  ns  =  order of SA derivative                     [ integers 0, 1 or 2 ]</span>
+<span class="comment">%  nt  =  order of t derivative                      [ integers 0, 1 or 2 ]</span>
+<span class="comment">%  np  =  order of p derivative                      [ integers 0, 1 or 2 ]</span>
+<span class="comment">%  SA  =  Absolute Salinity                                        [ g/kg ]</span>
+<span class="comment">%  t   =  in-situ temperature (ITS-90)                            [ deg C ]</span>
+<span class="comment">%  p   =  sea pressure                                             [ dbar ]</span>
+<span class="comment">%         (ie. absolute pressure - 10.1325 dbar)</span>
+<span class="comment">%</span>
+<span class="comment">%  SA, t and p need to have the same dimensions.</span>
+<span class="comment">%</span>
+<span class="comment">% OUTPUT:</span>
+<span class="comment">%  gibbs  =  Specific Gibbs energy or its derivatives.</span>
+<span class="comment">%</span>
+<span class="comment">%            The Gibbs energy (when ns = nt = np = 0) has units of:</span>
+<span class="comment">%                                                                  [ J/kg ]</span>
+<span class="comment">%            The Absolute Salinity derivatives are output in units of:</span>
+<span class="comment">%                                                   [ (J/kg) (g/kg)^(-ns) ]</span>
+<span class="comment">%            The temperature derivatives are output in units of:</span>
+<span class="comment">%                                                      [ (J/kg) (K)^(-nt) ]</span>
+<span class="comment">%            The pressure derivatives are output in units of:</span>
+<span class="comment">%                                                     [ (J/kg) (Pa)^(-np) ]</span>
+<span class="comment">%            The mixed derivatives are output in units of:</span>
+<span class="comment">%                              [ (J/kg) (g/kg)^(-ns) (K)^(-nt) (Pa)^(-np) ]</span>
+<span class="comment">%  Note. The derivatives are taken with respect to pressure in Pa, not</span>
+<span class="comment">%    withstanding that the pressure input into this routine is in dbar.</span>
+<span class="comment">%</span>
+<span class="comment">% AUTHOR:</span>
+<span class="comment">%  David Jackett, Paul Barker and Trevor McDougall     [ help@teos-10.org ]</span>
+<span class="comment">%</span>
+<span class="comment">% VERSION NUMBER: 3.05 (27th January 2015)</span>
+<span class="comment">%</span>
+<span class="comment">% REFERENCES:</span>
+<span class="comment">%  Feistel, R., 2003: A new extended Gibbs thermodynamic potential of</span>
+<span class="comment">%   seawater,  Progr. Oceanogr., 58, 43-114.</span>
+<span class="comment">%</span>
+<span class="comment">%  Feistel, R., 2008: A Gibbs function for seawater thermodynamics</span>
+<span class="comment">%   for -6 to 80&deg;C and salinity up to 120 g kg&#8211;1, Deep-Sea Res. I,</span>
+<span class="comment">%   55, 1639-1671.</span>
+<span class="comment">%</span>
+<span class="comment">%  IAPWS, 2008: Release on the IAPWS Formulation 2008 for the</span>
+<span class="comment">%   Thermodynamic Properties of Seawater. The International Association</span>
+<span class="comment">%   for the Properties of Water and Steam. Berlin, Germany, September</span>
+<span class="comment">%   2008, available from http://www.iapws.org.  This Release is referred</span>
+<span class="comment">%   to as IAPWS-08.</span>
+<span class="comment">%</span>
+<span class="comment">%  IAPWS, 2009: Supplementary Release on a Computationally Efficient</span>
+<span class="comment">%   Thermodynamic Formulation for Liquid Water for Oceanographic Use.</span>
+<span class="comment">%   The International Association for the Properties of Water and Steam.</span>
+<span class="comment">%   Doorwerth, The Netherlands, September 2009, available from</span>
+<span class="comment">%   http://www.iapws.org.  This Release is referred to as IAPWS-09.</span>
+<span class="comment">%</span>
+<span class="comment">%  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of</span>
+<span class="comment">%   seawater - 2010: Calculation and use of thermodynamic properties.</span>
+<span class="comment">%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,</span>
+<span class="comment">%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org</span>
+<span class="comment">%    See section 2.6 and appendices A.6,  G and H of this TEOS-10 Manual.</span>
+<span class="comment">%</span>
+<span class="comment">%  Millero, F.J., R. Feistel, D.G. Wright, and T.J. McDougall, 2008:</span>
+<span class="comment">%   The composition of Standard Seawater and the definition of the</span>
+<span class="comment">%   Reference-Composition Salinity Scale, Deep-Sea Res. I, 55, 50-72.</span>
+<span class="comment">%</span>
+<span class="comment">%  The software is available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">% This line ensures that SA is non-negative.</span>
+SA(SA &lt; 0) = 0;
+
+<span class="comment">% Set the upper and lower limits where the Gibbs function is defined.</span>
+SA(SA &gt; 120 | t &lt; -12 | t &gt; 80 | p &gt; 12000) = NaN;
+t(SA &gt; 120 | t &lt; -12 | t &gt; 80 | p &gt; 12000) = NaN;
+p(SA &gt; 120 | t &lt; -12 | t &gt; 80 | p &gt; 12000) = NaN;
+
+sfac = 0.0248826675584615;                   <span class="comment">% sfac = 1/(40*(35.16504/35)).</span>
+
+x2 = sfac.*SA;
+x = sqrt(x2);
+y = t.*0.025;
+z = p.*1e-4; <span class="comment">%Note.The input pressure (p) is sea pressure in units of dbar.</span>
+
+<span class="keyword">if</span> ns==0 &amp; nt==0 &amp; np==0
+
+    g03 = 101.342743139674 + z.*(100015.695367145 + <span class="keyword">...</span>
+        z.*(-2544.5765420363 + z.*(284.517778446287 + <span class="keyword">...</span>
+        z.*(-33.3146754253611 + (4.20263108803084 - 0.546428511471039.*z).*z)))) + <span class="keyword">...</span>
+        y.*(5.90578347909402 + z.*(-270.983805184062 + <span class="keyword">...</span>
+        z.*(776.153611613101 + z.*(-196.51255088122 + (28.9796526294175 - 2.13290083518327.*z).*z))) + <span class="keyword">...</span>
+        y.*(-12357.785933039 + z.*(1455.0364540468 + <span class="keyword">...</span>
+        z.*(-756.558385769359 + z.*(273.479662323528 + z.*(-55.5604063817218 + 4.34420671917197.*z)))) + <span class="keyword">...</span>
+        y.*(736.741204151612 + z.*(-672.50778314507 + <span class="keyword">...</span>
+        z.*(499.360390819152 + z.*(-239.545330654412 + (48.8012518593872 - 1.66307106208905.*z).*z))) + <span class="keyword">...</span>
+        y.*(-148.185936433658 + z.*(397.968445406972 + <span class="keyword">...</span>
+        z.*(-301.815380621876 + (152.196371733841 - 26.3748377232802.*z).*z)) + <span class="keyword">...</span>
+        y.*(58.0259125842571 + z.*(-194.618310617595 + <span class="keyword">...</span>
+        z.*(120.520654902025 + z.*(-55.2723052340152 + 6.48190668077221.*z))) + <span class="keyword">...</span>
+        y.*(-18.9843846514172 + y.*(3.05081646487967 - 9.63108119393062.*z) + <span class="keyword">...</span>
+        z.*(63.5113936641785 + z.*(-22.2897317140459 + 8.17060541818112.*z))))))));
+
+    g08 = x2.*(1416.27648484197 + z.*(-3310.49154044839 + <span class="keyword">...</span>
+        z.*(384.794152978599 + z.*(-96.5324320107458 + (15.8408172766824 - 2.62480156590992.*z).*z))) + <span class="keyword">...</span>
+        x.*(-2432.14662381794 + x.*(2025.80115603697 + <span class="keyword">...</span>
+        y.*(543.835333000098 + y.*(-68.5572509204491 + <span class="keyword">...</span>
+        y.*(49.3667694856254 + y.*(-17.1397577419788 + 2.49697009569508.*y))) - 22.6683558512829.*z) + <span class="keyword">...</span>
+        x.*(-1091.66841042967 - 196.028306689776.*y + <span class="keyword">...</span>
+        x.*(374.60123787784 - 48.5891069025409.*x + 36.7571622995805.*y) + 36.0284195611086.*z) + <span class="keyword">...</span>
+        z.*(-54.7919133532887 + (-4.08193978912261 - 30.1755111971161.*z).*z)) + <span class="keyword">...</span>
+        z.*(199.459603073901 + z.*(-52.2940909281335 + (68.0444942726459 - 3.41251932441282.*z).*z)) + <span class="keyword">...</span>
+        y.*(-493.407510141682 + z.*(-175.292041186547 + (83.1923927801819 - 29.483064349429.*z).*z) + <span class="keyword">...</span>
+        y.*(-43.0664675978042 + z.*(383.058066002476 + z.*(-54.1917262517112 + 25.6398487389914.*z)) + <span class="keyword">...</span>
+        y.*(-10.0227370861875 - 460.319931801257.*z + y.*(0.875600661808945 + 234.565187611355.*z))))) + <span class="keyword">...</span>
+        y.*(168.072408311545 + z.*(729.116529735046 + <span class="keyword">...</span>
+        z.*(-343.956902961561 + z.*(124.687671116248 + z.*(-31.656964386073 + 7.04658803315449.*z)))) + <span class="keyword">...</span>
+        y.*(880.031352997204 + y.*(-225.267649263401 + <span class="keyword">...</span>
+        y.*(91.4260447751259 + y.*(-21.6603240875311 + 2.13016970847183.*y) + <span class="keyword">...</span>
+        z.*(-297.728741987187 + (74.726141138756 - 36.4872919001588.*z).*z)) + <span class="keyword">...</span>
+        z.*(694.244814133268 + z.*(-204.889641964903 + (113.561697840594 - 11.1282734326413.*z).*z))) + <span class="keyword">...</span>
+        z.*(-860.764303783977 + z.*(337.409530269367 + <span class="keyword">...</span>
+        z.*(-178.314556207638 + (44.2040358308 - 7.92001547211682.*z).*z))))));
+
+    g08(x&gt;0) = g08(x&gt;0) + x2(x&gt;0).*(5812.81456626732 + 851.226734946706.*y(x&gt;0)).*log(x(x&gt;0));
+
+    gibbs = g03 + g08;
+
+<span class="keyword">elseif</span> ns==1 &amp; nt==0 &amp; np==0
+
+    g08 = 8645.36753595126 + z.*(-6620.98308089678 + <span class="keyword">...</span>
+        z.*(769.588305957198 + z.*(-193.0648640214916 + (31.6816345533648 - 5.24960313181984.*z).*z))) + <span class="keyword">...</span>
+        x.*(-7296.43987145382 + x.*(8103.20462414788 + <span class="keyword">...</span>
+        y.*(2175.341332000392 + y.*(-274.2290036817964 + <span class="keyword">...</span>
+        y.*(197.4670779425016 + y.*(-68.5590309679152 + 9.98788038278032.*y))) - 90.6734234051316.*z) + <span class="keyword">...</span>
+        x.*(-5458.34205214835 - 980.14153344888.*y + <span class="keyword">...</span>
+        x.*(2247.60742726704 - 340.1237483177863.*x + 220.542973797483.*y) + 180.142097805543.*z) + <span class="keyword">...</span>
+        z.*(-219.1676534131548 + (-16.32775915649044 - 120.7020447884644.*z).*z)) + <span class="keyword">...</span>
+        z.*(598.378809221703 + z.*(-156.8822727844005 + (204.1334828179377 - 10.23755797323846.*z).*z)) + <span class="keyword">...</span>
+        y.*(-1480.222530425046 + z.*(-525.876123559641 + (249.57717834054571 - 88.449193048287.*z).*z) + <span class="keyword">...</span>
+        y.*(-129.1994027934126 + z.*(1149.174198007428 + z.*(-162.5751787551336 + 76.9195462169742.*z)) + <span class="keyword">...</span>
+        y.*(-30.0682112585625 - 1380.9597954037708.*z + y.*(2.626801985426835 + 703.695562834065.*z))))) + <span class="keyword">...</span>
+        y.*(1187.3715515697959 + z.*(1458.233059470092 + <span class="keyword">...</span>
+        z.*(-687.913805923122 + z.*(249.375342232496 + z.*(-63.313928772146 + 14.09317606630898.*z)))) + <span class="keyword">...</span>
+        y.*(1760.062705994408 + y.*(-450.535298526802 + <span class="keyword">...</span>
+        y.*(182.8520895502518 + y.*(-43.3206481750622 + 4.26033941694366.*y) + <span class="keyword">...</span>
+        z.*(-595.457483974374 + (149.452282277512 - 72.9745838003176.*z).*z)) + <span class="keyword">...</span>
+        z.*(1388.489628266536 + z.*(-409.779283929806 + (227.123395681188 - 22.2565468652826.*z).*z))) + <span class="keyword">...</span>
+        z.*(-1721.528607567954 + z.*(674.819060538734 + <span class="keyword">...</span>
+        z.*(-356.629112415276 + (88.4080716616 - 15.84003094423364.*z).*z)))));
+
+    g08(x&gt;0) = g08(x&gt;0) + (11625.62913253464 + 1702.453469893412.*y(x&gt;0)).*log(x(x&gt;0));
+    g08(x==0) = nan;
+
+    gibbs = 0.5.*sfac.*g08;
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==1 &amp; np==0
+
+    g03 = 5.90578347909402 + z.*(-270.983805184062 + <span class="keyword">...</span>
+        z.*(776.153611613101 + z.*(-196.51255088122 + (28.9796526294175 - 2.13290083518327.*z).*z))) + <span class="keyword">...</span>
+        y.*(-24715.571866078 + z.*(2910.0729080936 + <span class="keyword">...</span>
+        z.*(-1513.116771538718 + z.*(546.959324647056 + z.*(-111.1208127634436 + 8.68841343834394.*z)))) + <span class="keyword">...</span>
+        y.*(2210.2236124548363 + z.*(-2017.52334943521 + <span class="keyword">...</span>
+        z.*(1498.081172457456 + z.*(-718.6359919632359 + (146.4037555781616 - 4.9892131862671505.*z).*z))) + <span class="keyword">...</span>
+        y.*(-592.743745734632 + z.*(1591.873781627888 + <span class="keyword">...</span>
+        z.*(-1207.261522487504 + (608.785486935364 - 105.4993508931208.*z).*z)) + <span class="keyword">...</span>
+        y.*(290.12956292128547 + z.*(-973.091553087975 + <span class="keyword">...</span>
+        z.*(602.603274510125 + z.*(-276.361526170076 + 32.40953340386105.*z))) + <span class="keyword">...</span>
+        y.*(-113.90630790850321 + y.*(21.35571525415769 - 67.41756835751434.*z) + <span class="keyword">...</span>
+        z.*(381.06836198507096 + z.*(-133.7383902842754 + 49.023632509086724.*z)))))));
+
+    g08 = x2.*(168.072408311545 + z.*(729.116529735046 + <span class="keyword">...</span>
+        z.*(-343.956902961561 + z.*(124.687671116248 + z.*(-31.656964386073 + 7.04658803315449.*z)))) + <span class="keyword">...</span>
+        x.*(-493.407510141682 + x.*(543.835333000098 + x.*(-196.028306689776 + 36.7571622995805.*x) + <span class="keyword">...</span>
+        y.*(-137.1145018408982 + y.*(148.10030845687618 + y.*(-68.5590309679152 + 12.4848504784754.*y))) - <span class="keyword">...</span>
+        22.6683558512829.*z) + z.*(-175.292041186547 + (83.1923927801819 - 29.483064349429.*z).*z) + <span class="keyword">...</span>
+        y.*(-86.1329351956084 + z.*(766.116132004952 + z.*(-108.3834525034224 + 51.2796974779828.*z)) + <span class="keyword">...</span>
+        y.*(-30.0682112585625 - 1380.9597954037708.*z + y.*(3.50240264723578 + 938.26075044542.*z)))) + <span class="keyword">...</span>
+        y.*(1760.062705994408 + y.*(-675.802947790203 + <span class="keyword">...</span>
+        y.*(365.7041791005036 + y.*(-108.30162043765552 + 12.78101825083098.*y) + <span class="keyword">...</span>
+        z.*(-1190.914967948748 + (298.904564555024 - 145.9491676006352.*z).*z)) + <span class="keyword">...</span>
+        z.*(2082.7344423998043 + z.*(-614.668925894709 + (340.685093521782 - 33.3848202979239.*z).*z))) + <span class="keyword">...</span>
+        z.*(-1721.528607567954 + z.*(674.819060538734 + <span class="keyword">...</span>
+        z.*(-356.629112415276 + (88.4080716616 - 15.84003094423364.*z).*z)))));
+
+    g08(x&gt;0) = g08(x&gt;0) + 851.226734946706.*x2(x&gt;0).*log(x(x&gt;0));
+
+    gibbs = (g03 + g08).*0.025;
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==0 &amp; np==1
+
+    g03 = 100015.695367145 + z.*(-5089.1530840726 + <span class="keyword">...</span>
+        z.*(853.5533353388611 + z.*(-133.2587017014444 + (21.0131554401542 - 3.278571068826234.*z).*z))) + <span class="keyword">...</span>
+        y.*(-270.983805184062 + z.*(1552.307223226202 + <span class="keyword">...</span>
+        z.*(-589.53765264366 + (115.91861051767 - 10.664504175916349.*z).*z)) + <span class="keyword">...</span>
+        y.*(1455.0364540468 + z.*(-1513.116771538718 + <span class="keyword">...</span>
+        z.*(820.438986970584 + z.*(-222.2416255268872 + 21.72103359585985.*z))) + <span class="keyword">...</span>
+        y.*(-672.50778314507 + z.*(998.720781638304 + <span class="keyword">...</span>
+        z.*(-718.6359919632359 + (195.2050074375488 - 8.31535531044525.*z).*z)) + <span class="keyword">...</span>
+        y.*(397.968445406972 + z.*(-603.630761243752 + (456.589115201523 - 105.4993508931208.*z).*z) + <span class="keyword">...</span>
+        y.*(-194.618310617595 + y.*(63.5113936641785 - 9.63108119393062.*y + <span class="keyword">...</span>
+        z.*(-44.5794634280918 + 24.511816254543362.*z)) + <span class="keyword">...</span>
+        z.*(241.04130980405 + z.*(-165.8169157020456 + 25.92762672308884.*z)))))));
+
+
+    g08 = x2.*(-3310.49154044839 + z.*(769.588305957198 + <span class="keyword">...</span>
+        z.*(-289.5972960322374 + (63.3632691067296 - 13.1240078295496.*z).*z)) + <span class="keyword">...</span>
+        x.*(199.459603073901 + x.*(-54.7919133532887 + 36.0284195611086.*x - 22.6683558512829.*y + <span class="keyword">...</span>
+        (-8.16387957824522 - 90.52653359134831.*z).*z) + <span class="keyword">...</span>
+        z.*(-104.588181856267 + (204.1334828179377 - 13.65007729765128.*z).*z) + <span class="keyword">...</span>
+        y.*(-175.292041186547 + (166.3847855603638 - 88.449193048287.*z).*z + <span class="keyword">...</span>
+        y.*(383.058066002476 + y.*(-460.319931801257 + 234.565187611355.*y) + <span class="keyword">...</span>
+        z.*(-108.3834525034224 + 76.9195462169742.*z)))) + <span class="keyword">...</span>
+        y.*(729.116529735046 + z.*(-687.913805923122 + <span class="keyword">...</span>
+        z.*(374.063013348744 + z.*(-126.627857544292 + 35.23294016577245.*z))) + <span class="keyword">...</span>
+        y.*(-860.764303783977 + y.*(694.244814133268 + <span class="keyword">...</span>
+        y.*(-297.728741987187 + (149.452282277512 - 109.46187570047641.*z).*z) + <span class="keyword">...</span>
+        z.*(-409.779283929806 + (340.685093521782 - 44.5130937305652.*z).*z)) + <span class="keyword">...</span>
+        z.*(674.819060538734 + z.*(-534.943668622914 + (176.8161433232 - 39.600077360584095.*z).*z)))));
+
+    gibbs = (g03 + g08).*1e-8;
+    <span class="comment">% Note. This pressure derivative of the gibbs function is in units of (J/kg) (Pa^-1) = m^3/kg</span>
+
+<span class="keyword">elseif</span> ns==1 &amp; nt==1 &amp; np==0
+
+    g08 = 1187.3715515697959 + z.*(1458.233059470092 + <span class="keyword">...</span>
+        z.*(-687.913805923122 + z.*(249.375342232496 + z.*(-63.313928772146 + 14.09317606630898.*z)))) + <span class="keyword">...</span>
+        x.*(-1480.222530425046 + x.*(2175.341332000392 + x.*(-980.14153344888 + 220.542973797483.*x) + <span class="keyword">...</span>
+        y.*(-548.4580073635929 + y.*(592.4012338275047 + y.*(-274.2361238716608 + 49.9394019139016.*y))) - <span class="keyword">...</span>
+        90.6734234051316.*z) + z.*(-525.876123559641 + (249.57717834054571 - 88.449193048287.*z).*z) + <span class="keyword">...</span>
+        y.*(-258.3988055868252 + z.*(2298.348396014856 + z.*(-325.1503575102672 + 153.8390924339484.*z)) + <span class="keyword">...</span>
+        y.*(-90.2046337756875 - 4142.8793862113125.*z + y.*(10.50720794170734 + 2814.78225133626.*z)))) + <span class="keyword">...</span>
+        y.*(3520.125411988816 + y.*(-1351.605895580406 + <span class="keyword">...</span>
+        y.*(731.4083582010072 + y.*(-216.60324087531103 + 25.56203650166196.*y) + <span class="keyword">...</span>
+        z.*(-2381.829935897496 + (597.809129110048 - 291.8983352012704.*z).*z)) + <span class="keyword">...</span>
+        z.*(4165.4688847996085 + z.*(-1229.337851789418 + (681.370187043564 - 66.7696405958478.*z).*z))) + <span class="keyword">...</span>
+        z.*(-3443.057215135908 + z.*(1349.638121077468 + <span class="keyword">...</span>
+        z.*(-713.258224830552 + (176.8161433232 - 31.68006188846728.*z).*z))));
+
+    g08(x&gt;0) = g08(x&gt;0) + 1702.453469893412.*log(x(x&gt;0));
+    g08(SA==0) = nan;
+
+    gibbs = 0.5.*sfac.*0.025.*g08;
+
+<span class="keyword">elseif</span> ns==1 &amp; nt==0 &amp; np==1
+
+    g08 =  -6620.98308089678 + z.*(1539.176611914396 + <span class="keyword">...</span>
+        z.*(-579.1945920644748 + (126.7265382134592 - 26.2480156590992.*z).*z)) + <span class="keyword">...</span>
+        x.*(598.378809221703 + x.*(-219.1676534131548 + 180.142097805543.*x - 90.6734234051316.*y + <span class="keyword">...</span>
+        (-32.65551831298088 - 362.10613436539325.*z).*z) + <span class="keyword">...</span>
+        z.*(-313.764545568801 + (612.4004484538132 - 40.95023189295384.*z).*z) + <span class="keyword">...</span>
+        y.*(-525.876123559641 + (499.15435668109143 - 265.347579144861.*z).*z + <span class="keyword">...</span>
+        y.*(1149.174198007428 + y.*(-1380.9597954037708 + 703.695562834065.*y) + <span class="keyword">...</span>
+        z.*(-325.1503575102672 + 230.7586386509226.*z)))) + <span class="keyword">...</span>
+        y.*(1458.233059470092 + z.*(-1375.827611846244 + <span class="keyword">...</span>
+        z.*(748.126026697488 + z.*(-253.255715088584 + 70.4658803315449.*z))) + <span class="keyword">...</span>
+        y.*(-1721.528607567954 + y.*(1388.489628266536 + <span class="keyword">...</span>
+        y.*(-595.457483974374 + (298.904564555024 - 218.92375140095282.*z).*z) + <span class="keyword">...</span>
+        z.*(-819.558567859612 + (681.370187043564 - 89.0261874611304.*z).*z)) + <span class="keyword">...</span>
+        z.*(1349.638121077468 + z.*(-1069.887337245828 + (353.6322866464 - 79.20015472116819.*z).*z))));
+
+    gibbs = g08.*sfac.*0.5e-8;
+    <span class="comment">% Note. This derivative of the Gibbs function is in units of (m^3/kg)/(g/kg) = m^3/g,</span>
+    <span class="comment">% that is, it is the derivative of specific volume with respect to Absolute</span>
+    <span class="comment">% Salinity measured in g/kg.</span>
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==1 &amp; np==1
+
+    g03 = -270.983805184062 + z.*(1552.307223226202 + z.*(-589.53765264366 + <span class="keyword">...</span>
+        (115.91861051767 - 10.664504175916349.*z).*z)) + <span class="keyword">...</span>
+        y.*(2910.0729080936 + z.*(-3026.233543077436 + <span class="keyword">...</span>
+        z.*(1640.877973941168 + z.*(-444.4832510537744 + 43.4420671917197.*z))) + <span class="keyword">...</span>
+        y.*(-2017.52334943521 + z.*(2996.162344914912 + <span class="keyword">...</span>
+        z.*(-2155.907975889708 + (585.6150223126464 - 24.946065931335752.*z).*z)) + <span class="keyword">...</span>
+        y.*(1591.873781627888 + z.*(-2414.523044975008 + (1826.356460806092 - 421.9974035724832.*z).*z) + <span class="keyword">...</span>
+        y.*(-973.091553087975 + z.*(1205.20654902025 + z.*(-829.084578510228 + 129.6381336154442.*z)) + <span class="keyword">...</span>
+        y.*(381.06836198507096 - 67.41756835751434.*y + z.*(-267.4767805685508 + 147.07089752726017.*z))))));
+
+    g08 = x2.*(729.116529735046 + z.*(-687.913805923122 + <span class="keyword">...</span>
+        z.*(374.063013348744 + z.*(-126.627857544292 + 35.23294016577245.*z))) + <span class="keyword">...</span>
+        x.*(-175.292041186547 - 22.6683558512829.*x + (166.3847855603638 - 88.449193048287.*z).*z + <span class="keyword">...</span>
+        y.*(766.116132004952 + y.*(-1380.9597954037708 + 938.26075044542.*y) + <span class="keyword">...</span>
+        z.*(-216.7669050068448 + 153.8390924339484.*z))) + <span class="keyword">...</span>
+        y.*(-1721.528607567954 + y.*(2082.7344423998043 + <span class="keyword">...</span>
+        y.*(-1190.914967948748 + (597.809129110048 - 437.84750280190565.*z).*z) + <span class="keyword">...</span>
+        z.*(-1229.337851789418 + (1022.055280565346 - 133.5392811916956.*z).*z)) + <span class="keyword">...</span>
+        z.*(1349.638121077468 + z.*(-1069.887337245828 + (353.6322866464 - 79.20015472116819.*z).*z))));
+
+    gibbs = (g03 + g08).*2.5e-10;
+    <span class="comment">% Note. This derivative of the Gibbs function is in units of (m^3/(K kg)),</span>
+    <span class="comment">% that is, the pressure of the derivative in Pa.</span>
+
+<span class="keyword">elseif</span> ns==2 &amp; nt==0 &amp; np==0
+
+    g08 = 5812.814566267320 + 851.2267349467060.*y + x.*(-3648.219935726910 <span class="keyword">...</span>
+       + x.*(8103.204624147880 + x.*(-8187.513078222526 + x.*(4495.214854534080 <span class="keyword">...</span>
+       - 850.3093707944657.*x))) + y.*(-740.1112652125230 + x.*(2175.341332000392 <span class="keyword">...</span>
+       + x.*(-1470.212300173320 + 441.0859475949660.*x)) + y.*(-64.59970139670629 <span class="keyword">...</span>
+       - 274.2290036817964.*x + y.*(-15.03410562928125 + 197.4670779425016.*x <span class="keyword">...</span>
+       + y.*(1.313400992713418 - 68.55903096791521.*x + 9.987880382780312.*x.*y)))) <span class="keyword">...</span>
+       + z.*(299.1894046108515 + x.*(-219.1676534131548 + 270.2131467083145.*x) <span class="keyword">...</span>
+       + y.*(-262.9380617798205 - 90.67342340513160.*x + y.*(+ 574.5870990037140 <span class="keyword">...</span>
+       + y.*(-690.4798977018854 + 351.8477814170325.*y))) + z.*(-78.44113639220025 <span class="keyword">...</span>
+       - 16.32775915649044.*x + y.*(124.7885891702729 - 81.28758937756680.*y) <span class="keyword">...</span>
+       + z.*(102.0667414089689 - 120.7020447884644.*x + y.*(-44.22459652414350 <span class="keyword">...</span>
+       + 38.45977310848710.*y) - 5.118778986619230.*z))));
+
+    g08(x&gt;0) = g08(x&gt;0)./(x2(x&gt;0));
+    g08(x==0) = NaN;
+
+    gibbs = 0.5.*sfac.*sfac.*g08;
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==2 &amp; np==0
+
+    g03 = -24715.571866078 + z.*(2910.0729080936 + z.* <span class="keyword">...</span>
+        (-1513.116771538718 + z.*(546.959324647056 + z.*(-111.1208127634436 + 8.68841343834394.*z)))) + <span class="keyword">...</span>
+        y.*(4420.4472249096725 + z.*(-4035.04669887042 + <span class="keyword">...</span>
+        z.*(2996.162344914912 + z.*(-1437.2719839264719 + (292.8075111563232 - 9.978426372534301.*z).*z))) + <span class="keyword">...</span>
+        y.*(-1778.231237203896 + z.*(4775.621344883664 + <span class="keyword">...</span>
+        z.*(-3621.784567462512 + (1826.356460806092 - 316.49805267936244.*z).*z)) + <span class="keyword">...</span>
+        y.*(1160.5182516851419 + z.*(-3892.3662123519 + <span class="keyword">...</span>
+        z.*(2410.4130980405 + z.*(-1105.446104680304 + 129.6381336154442.*z))) + <span class="keyword">...</span>
+        y.*(-569.531539542516 + y.*(128.13429152494615 - 404.50541014508605.*z) + <span class="keyword">...</span>
+        z.*(1905.341809925355 + z.*(-668.691951421377 + 245.11816254543362.*z))))));
+
+    g08 = x2.*(1760.062705994408 + x.*(-86.1329351956084 + <span class="keyword">...</span>
+        x.*(-137.1145018408982 + y.*(296.20061691375236 + y.*(-205.67709290374563 + 49.9394019139016.*y))) + <span class="keyword">...</span>
+        z.*(766.116132004952 + z.*(-108.3834525034224 + 51.2796974779828.*z)) + <span class="keyword">...</span>
+        y.*(-60.136422517125 - 2761.9195908075417.*z + y.*(10.50720794170734 + 2814.78225133626.*z))) + <span class="keyword">...</span>
+        y.*(-1351.605895580406 + y.*(1097.1125373015109 + y.*(-433.20648175062206 + 63.905091254154904.*y) + <span class="keyword">...</span>
+        z.*(-3572.7449038462437 + (896.713693665072 - 437.84750280190565.*z).*z)) + <span class="keyword">...</span>
+        z.*(4165.4688847996085 + z.*(-1229.337851789418 + (681.370187043564 - 66.7696405958478.*z).*z))) + <span class="keyword">...</span>
+        z.*(-1721.528607567954 + z.*(674.819060538734 + <span class="keyword">...</span>
+        z.*(-356.629112415276 + (88.4080716616 - 15.84003094423364.*z).*z))));
+
+    gibbs = (g03 + g08).*0.000625;
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==0 &amp; np==2
+
+    g03 = -5089.1530840726 + z.*(1707.1066706777221 + <span class="keyword">...</span>
+        z.*(-399.7761051043332 + (84.0526217606168 - 16.39285534413117.*z).*z)) + <span class="keyword">...</span>
+        y.*(1552.307223226202 + z.*(-1179.07530528732 + (347.75583155301 - 42.658016703665396.*z).*z) + <span class="keyword">...</span>
+        y.*(-1513.116771538718 + z.*(1640.877973941168 + z.*(-666.7248765806615 + 86.8841343834394.*z)) + <span class="keyword">...</span>
+        y.*(998.720781638304 + z.*(-1437.2719839264719 + (585.6150223126464 - 33.261421241781.*z).*z) + <span class="keyword">...</span>
+        y.*(-603.630761243752 + (913.178230403046 - 316.49805267936244.*z).*z + <span class="keyword">...</span>
+        y.*(241.04130980405 + y.*(-44.5794634280918 + 49.023632509086724.*z) + <span class="keyword">...</span>
+        z.*(-331.6338314040912 + 77.78288016926652.*z))))));
+
+    g08 = x2.*(769.588305957198 + z.*(-579.1945920644748 + (190.08980732018878 - 52.4960313181984.*z).*z) + <span class="keyword">...</span>
+        x.*(-104.588181856267 + x.*(-8.16387957824522 - 181.05306718269662.*z) + <span class="keyword">...</span>
+        (408.2669656358754 - 40.95023189295384.*z).*z + <span class="keyword">...</span>
+        y.*(166.3847855603638 - 176.898386096574.*z + y.*(-108.3834525034224 + 153.8390924339484.*z))) + <span class="keyword">...</span>
+        y.*(-687.913805923122 + z.*(748.126026697488 + z.*(-379.883572632876 + 140.9317606630898.*z)) + <span class="keyword">...</span>
+        y.*(674.819060538734 + z.*(-1069.887337245828 + (530.4484299696 - 158.40030944233638.*z).*z) + <span class="keyword">...</span>
+        y.*(-409.779283929806 + y.*(149.452282277512 - 218.92375140095282.*z) + <span class="keyword">...</span>
+        (681.370187043564 - 133.5392811916956.*z).*z))));
+
+    gibbs = (g03 + g08).*1e-16;
+    <span class="comment">% Note. This is the second derivative of the Gibbs function with respect to</span>
+    <span class="comment">% pressure, measured in Pa.  This derivative has units of (J/kg) (Pa^-2).</span>
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==3 &amp; np==0
+
+    g03 = 4420.44722490967251 + y.*(-3556.46247440779189 + y.*(3481.55475505542563 <span class="keyword">...</span>
+        + y.*(-2278.12615817006417 + 640.671457624730749.*y))) + z.*(-4035.04669887042019 <span class="keyword">...</span>
+        + y.*(9551.24268976732856 + y.*(-11677.0986370556993 + y.*(7621.36723970141975 <span class="keyword">...</span>
+        - 2022.52705072543023.*y))) + z.*(2996.16234491491196 + y.*(-7243.56913492502372 <span class="keyword">...</span>
+        + y.*(7231.23929412149937 - 2674.76780568550794.*y)) <span class="keyword">...</span>
+        + z.*(-1437.27198392647188 + y.*(3652.71292161218389 + y.*(-3316.33831404091188 <span class="keyword">...</span>
+        + 980.472650181734480.*y)) + z.*(292.807511156323187 + y.*(-632.996105358724890 <span class="keyword">...</span>
+        + 388.914400846332569.*y) - 9.97842637253430098.*z))));
+
+    g08 = x2.*(-1351.605895580406 + x.*(-60.1364225171250 + 296.200616913752.*x) <span class="keyword">...</span>
+        + y.*(2194.22507460302 + y.*(-1299.61944525187 + 255.620365016620.*y) <span class="keyword">...</span>
+        + x.*(21.0144158834147 + x.*(-411.354185807491 + 149.818205741705.*y))) <span class="keyword">...</span>
+        + z.*(4165.46888479961 - 2761.91959080754.*x + y.*(-7145.48980769249 <span class="keyword">...</span>
+        + 5629.56450267252.*x) + z.*(-1229.33785178942 + 1793.42738733014.*y <span class="keyword">...</span>
+        + z.*(681.370187043564 - 875.695005603811.*y - 66.7696405958478.*z))));
+
+    gibbs = (g03 + g08).*0.000625.*0.025;
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==2 &amp; np==1
+
+    g03 = 2910.07290809360 + y.*(-4035.04669887042 + y.*(4775.62134488366  <span class="keyword">...</span>
+        + y.*(-3892.36621235190 + y.*(1905.34180992535 - 404.505410145086.*y))))  <span class="keyword">...</span>
+        + z.*(-3026.23354307744 + y.*(5992.32468982982 + y.*(-7243.56913492502  <span class="keyword">...</span>
+        + y.*(4820.82619608100 - 1337.38390284275.*y))) + z.*(1640.87797394117  <span class="keyword">...</span>
+        + y.*(-4311.81595177942 + y.*(5479.06938241828 + y.*(-3316.33831404091  <span class="keyword">...</span>
+        + 735.354487636301.*y)))+ z.*(-444.483251053774 + y.*(1171.23004462529  <span class="keyword">...</span>
+        + y.*(-1265.99221071745 + 518.552534461777.*y))  <span class="keyword">...</span>
+        + z.*(43.4420671917197 - 49.8921318626715.*y))));
+
+    g08 = x2.*(-1721.52860756795 + 766.116132004952.*x - 2761.91959080754.*x.*y  <span class="keyword">...</span>
+        + y.*(4165.46888479961 + y.*(-3572.74490384624 + 2814.78225133626.*x))  <span class="keyword">...</span>
+        + z.*(1349.63812107747 - 216.766905006845.*x + y.*(-2458.67570357884 <span class="keyword">...</span>
+        + 1793.42738733014.*y) + z.*(-1069.88733724583 + 153.839092433949.*x  <span class="keyword">...</span>
+        + y.*(+ 2044.11056113069 - 1313.54250840572.*y) + z.*(353.632286646400  <span class="keyword">...</span>
+        - 267.078562383391.*y - 79.2001547211682.*z))));
+
+    gibbs = (g03 + g08).*2.5e-10.*0.025;
+
+<span class="keyword">elseif</span> ns==1 &amp; nt==1 &amp; np==1
+
+    g08 =  1458.23305947009 + x.*(-525.876123559641 - 90.6734234051316.*x <span class="keyword">...</span>
+        + y.*(2298.34839601486 + y.*(-4142.87938621131 + 2814.78225133626.*y))) <span class="keyword">...</span>
+        + y.*(-3443.05721513591 + y.*(4165.46888479961 - 2381.82993589750.*y)) <span class="keyword">...</span>
+        + z.*(-1375.82761184624 + x.*(499.154356681091 - 650.300715020534.*y) <span class="keyword">...</span>
+        + y.*(2699.27624215494 + y.*(-2458.67570357884 + 1195.61825822010.*y)) <span class="keyword">...</span>
+        + z.*(748.126026697488 + x.*(-265.347579144861 + 461.517277301845.*y) <span class="keyword">...</span>
+        + y.*(-2139.77467449166 + y.*(2044.11056113069 - 875.695005603811.*y)) <span class="keyword">...</span>
+        + z.*(-253.255715088584 + y.*(707.264573292800 - 267.078562383391.*y) <span class="keyword">...</span>
+        + z.*(70.4658803315449 - 158.400309442336.*y))));
+
+    gibbs = g08.*sfac.*0.5e-8.*0.025;
+
+<span class="keyword">elseif</span> ns==2 &amp; nt==0 &amp; np==1
+
+    g08 = 299.1894046108515 + x.*(-219.1676534131548 + 270.2131467083145.*x) <span class="keyword">...</span>
+        + y.*(-262.9380617798205 - 90.67342340513160.*x + y.*(+ 574.5870990037140 <span class="keyword">...</span>
+        + y.*(-690.4798977018854 + 351.8477814170325.*y))) + z.*(- 156.8822727844005 <span class="keyword">...</span>
+        - 32.65551831298088.*x + y.*( 249.5771783405457 - 162.5751787551336.*y) <span class="keyword">...</span>
+        + z.*(306.2002242269066 - 362.1061343653932.*x + y.*(-132.6737895724305 <span class="keyword">...</span>
+        + 115.3793193254613.*y) - 20.47511594647692.*z));
+
+    g08(x&gt;0) = g08(x&gt;0)./x(x&gt;0);
+    g08(x==0) = nan;
+
+    gibbs = 0.5.*sfac.*sfac.*g08.*1e-8;
+
+<span class="keyword">elseif</span> ns==1 &amp; nt==2 &amp; np==0
+
+    g08 = 3520.125411988816 + x.*(-258.3988055868252 - 548.4580073635929.*x) <span class="keyword">...</span>
+        + y.*(-2703.211791160812 + x.*(-180.409267551375 + 1184.8024676550094.*x) <span class="keyword">...</span>
+        + y.*(2194.2250746030217 + x.*(31.52162382512202 + x.*(-822.70837161498247 <span class="keyword">...</span>
+        + 199.7576076556064.*y)) + y.*(-866.4129635012441 + 127.8101825083098.*y))) <span class="keyword">...</span>
+        + z.*(-3443.057215135908 + 2298.348396014856.*x + y.*(8330.937769599217 <span class="keyword">...</span>
+        - 8285.758772422625.*x + y.*(-7145.4898076924878 + 8444.34675400878.*x)) <span class="keyword">...</span>
+        + z.*(1349.638121077468 - 325.1503575102672.*x + y.*(-2458.675703578836 <span class="keyword">...</span>
+        + 1793.427387330144.*y) + z.*(-713.258224830552 + 153.8390924339484.*x <span class="keyword">...</span>
+        + y.*(1362.740374087128 - 875.6950056038112.*y) + z.*(176.8161433232 <span class="keyword">...</span>
+        - 133.5392811916956.*y - 31.6800618884673.*z))));
+
+    g08(x==0) = nan;
+
+    gibbs = 0.5.*sfac.*0.025.*g08.*0.025;
+
+<span class="keyword">elseif</span> ns==2 &amp; nt==1 &amp; np==0
+
+    g08 = 851.22673494670596 + x.*(-740.11126521252299 + x.*(2175.3413320003920 <span class="keyword">...</span>
+        + x.*(-1470.2123001733199 + 441.08594759496600.*x)) + y.*(-129.19940279341259 <span class="keyword">...</span>
+        - 548.45800736359286.*x + y.*(-45.102316887843749 + 592.40123382750477.*x <span class="keyword">...</span>
+        + y.*(5.2536039708536704 + x.*(-274.23612387166082 + 49.939401913901600.*y)))) <span class="keyword">...</span>
+        + z.*(-262.93806177982049 - 90.673423405131601.*x + y.*(1149.1741980074280 <span class="keyword">...</span>
+        + y.*(- 2071.4396931056563 + 1407.3911256681299.*y)) + z.*( 124.78858917027286 <span class="keyword">...</span>
+        - 162.57517875513361.*y + z.*(-44.224596524143500 + 76.919546216974197.*y))));
+
+    g08(x&gt;0) = g08(x&gt;0)./x2(x&gt;0);
+    g08(x==0) = nan;
+
+    gibbs = 0.5.*sfac.*sfac.*g08.*0.025;
+
+<span class="keyword">elseif</span> ns==1 &amp; nt==0 &amp; np==2
+
+    g08 = 1539.17661191439606 + x.*(-313.764545568801 - 32.6555183129809.*x) <span class="keyword">...</span>
+        + y.*(-1375.827611846244 + 499.15435668109143.*x + y.*(1349.638121077468 <span class="keyword">...</span>
+        - 325.150357510267.*x + y.*(-819.558567859612 + 298.904564555024.*y))) <span class="keyword">...</span>
+        + z.*(-1158.3891841289496 + x.*(1224.8008969076263 - 724.2122687307865.*x) <span class="keyword">...</span>
+        + y.*(1496.252053394976 - 530.695158289722.*x + y.*(-2139.774674491656 <span class="keyword">...</span>
+        + 461.5172773018452.*x + y.*(1362.740374087128 - 437.847502801906.*y))) <span class="keyword">...</span>
+        + z.*(380.179614640378 - 122.850695678862.*x + y.*(-759.767145265752 <span class="keyword">...</span>
+        + y.*(1060.8968599392 - 267.078562383391.*y)) + z.*(-104.992062636397 <span class="keyword">...</span>
+        + y.*(281.86352132618 - 316.800618884673.*y))));
+
+    gibbs = g08.*sfac.*0.5e-8.*1e-8;
+
+<span class="keyword">elseif</span> ns==0 &amp; nt==1 &amp; np==2
+
+    g03 = 1552.307223226202 + y.*(-3026.233543077436 + y.*(2996.162344914912 <span class="keyword">...</span>
+        + y.*(-2414.523044975008 + y.*(1205.20654902025 - 267.4767805685508.*y)))) <span class="keyword">...</span>
+        + z.*(-1179.07530528732 + y.*(3281.755947882336 + y.*(-4311.815951779416 <span class="keyword">...</span>
+        + y.*(3652.712921612184 + y.*(-1658.169157020456 + 294.141795054520.*y)))) <span class="keyword">...</span>
+        + z.*(347.755831553010 + y.*(-1333.449753161323 + y.*(1756.84506693794 <span class="keyword">...</span>
+        + y.*(-1265.99221071745 + 388.9144008463326.*y))) + z.*(-42.6580167036654 <span class="keyword">...</span>
+        + y.*(173.7682687668788 - 99.7842637253430.*y))));
+
+    g08 = x2.*(-687.9138059231220 + 166.3847855603638.*x + y.*(1349.638121077468 <span class="keyword">...</span>
+        - 216.7669050068448.*x + y.*(-1229.337851789418 + 597.8091291100480.*y)) <span class="keyword">...</span>
+        + z.*(748.1260266974880 - 176.8983860965740.*x + y.*(-2139.774674491656 <span class="keyword">...</span>
+        + 307.6781848678968.*x + y.*(2044.110561130692 - 875.6950056038113.*y)) <span class="keyword">...</span>
+        + z.*(-379.883572632876 + y.*(1060.89685993920 - 400.6178435750868.*y) <span class="keyword">...</span>
+        + z.*(140.9317606630898 - 316.8006188846728.*y))));
+
+    gibbs = (g03 + g08).*2.5e-10.*1e-8;
+    <span class="comment">% Note. This derivative of the Gibbs function is in units of (m^3/(K kg)),</span>
+    <span class="comment">% that is, the pressure of the derivative in Pa.</span>
+
+<span class="keyword">end</span>
+
+<span class="keyword">end</span>
+
+</div></body></html>

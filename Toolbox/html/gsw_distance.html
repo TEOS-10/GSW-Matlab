@@ -1,0 +1,138 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>gsw_distance</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head><body><div class="content"><h1>gsw_distance</h1>
+<!--introduction-->
+<pre><font size="5"><b>spherical earth distance between points in long, 
+lat coordinates at a given pressure</b></font></pre><!--/introduction-->
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCE:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>distance = gsw_distance(long,lat,{p})</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the distance in metres between successive points in the
+vectors long and lat, computed using the Haversine formula on a
+spherical earth of radius 6,371 km, being the radius of a sphere having
+the same volume as Earth. For a sperical Earth of radius 6,371,000 m,
+one nautical mile is 1,853.2488 m, thus one degree of latitude is
+111,194.93 m.
+Note. Distances are probably good to better than 1% of the "true"
+  distance on the ellipsoidal earth.</pre>
+
+<h2>INPUT:<a name="3"></a></h2>
+<pre>long  =  longitude in decimal degress                     [ 0 ... +360 ]
+                                                    or [ -180 ... +180 ]
+lat   =  latitude in decimal degress north               [ -90 ... +90 ]</pre>
+<pre>OPTIONAL:</pre>
+<pre>p     =  sea pressure ( default is 0 )                          [ dbar ]
+         ( i.e. absolute pressure - 10.1325 dbar )</pre>
+<pre>lat and long need to have the same dimensions, Mx1 or 1xN or MxN.
+p, if provided, may have dimensions 1x1 or Mx1 or 1xN or MxN,
+where lat &amp; long are Mx1 or 1xN or MxN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>distance  =  Distance between points on a spherical                [ m ]
+             Earth at pressure (p)
+Note. The output is in m not km.</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>Example 1  Station 1 is at (-35, 159) &amp; Station 2 is at (35, 220)
+   long = [159 220]
+   lat = [-35 35]</pre>
+<pre> distance = gsw_distance(long,lat)</pre>
+<pre> distance =</pre>
+<pre>   1.003097465291600e+007</pre>
+<pre>Example 2  Station 1 is at (-35, 159) &amp; Station 2 is at (35, 220),
+ the pressure at  Station 1 is 200 and at Station 2 it is 1000 dbar.
+   long = [159 220]
+   lat = [-35 35]
+   p = [200 1000]</pre>
+<pre>Note that the pressures are not equal, we therefore calculate the
+distance between stations at the mid pressure.</pre>
+<pre> distance = gsw_distance(long,lat,p)</pre>
+<pre> distance =</pre>
+<pre>  1.003003651722478e+007</pre>
+<pre>Example 3 If the locations are entered as pairs in a column it will 
+calculate the distances between each pairs of stations (points).
+   long = [159 220; 140 200]
+   lat = [-35 35; 20 45]
+   p = [200 1000]</pre>
+<pre> distance = gsw_distance(long,lat,p)</pre>
+<pre> distance =</pre>
+<pre>     1.003003651722478e+007
+    0.611126188161320e+006</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>6th November, 2000 by Rich Pawlowicz               [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]
+Note. This function was extracted from Rich Pawlowicz's m_map package,
+  which is available from <a href="http://www.eos.ubc.ca/~rich/map.html" title="m_map">http://www.eos.ubc.ca/~rich/map.html</a></pre>
+<pre>MODIFIED:
+  15th June, 2020 by Paul Barker and Trevor McDougall.</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.06.12 (15th June, 2020)</pre>
+<h2>REFERENCE:<a name="8"></a></h2>
+<pre>Rich Pawlowicz's m_map package.  <a href="http://www.eos.ubc.ca/~rich/map.html" title="m_map">http://www.eos.ubc.ca/~rich/map.html</a></pre>
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+</div></body></html>

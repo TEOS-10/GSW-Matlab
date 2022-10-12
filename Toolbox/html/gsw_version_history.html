@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Gibbs Sea Water (GSW) version history</title>
+</head>
+
+<body>
+
+<h1>Gibbs Sea Water (GSW) version history</h1>
+<h2>Version 3.05 <font size="3">(22th May, 2015)</font></h2>
+<p>Added</p> 
+<ul>
+<li>75-term specific volume equation replaces the 48 term rational function. <br />
+It is intended for use by observational, theoretical oceanographers<br />
+and ocean modellers, both Boussinesq and non-Boussinesq. <br />
+The use of a single specific volume equation will ensure a unified field. </li>
+<li>Reininger & Ross (1968) interpolation to dynamic height</li>
+<li>more gibbs derivatives (second and third derviatives)</li>
+<li>more polynomial versions of the functions in <br />seawater and ice properties at freezing temperatures,<br />  thermodynamic interaction between ice and seawater <br />thermodynamic interaction between sea ice and seawater <br />and thermodynamic properties of ice Ih</li>
+spiciness<br /><br />
+The following using 75 term polynomial and using the gibss function:</li>
+<li>first derivatives of specific volume</li>
+<li>second derivatives of specific volume</li>
+<li>first derivatives of specific volume with respect to enthalpy</li>
+<li>second derivatives of specific volume with respect to enthalpy</li>
+<li>specific volume anomaly</li>
+<li>second derivatives of density</li>
+<li>first derivatives of density with respect to enthalpy</li>
+<li>second derivatives of density with respect to enthalpy</li>
+<li>first derivatives of enthalpy</li>
+<li>second derivatives of enthalpy</li>
+<li>first derivatives of internal energy</li>
+<li>second derivatives of internal energy</li><br />
+<li>gsw_travel_time</li>
+<li>gsw_frazil_properties</li>
+<li>gsw_frazil_properties_potential</li>
+<li>gsw_frazil_properties_potential_poly</li>
+</ul>
+<p>Renamed gsw_brineSA_CT to gsw_SA_freezing_from_CT</p>
+<p>Renamed gsw_brineSA_CT_poly to gsw_SA_freezing_from_CT_poly</p>
+<p>Renamed gsw_brineSA_t to gsw_SA_freezing_from_t</p>
+<p>Renamed gsw_brineSA_t_poly to gsw_SA_freezing_from_t_poly</p>
+<p>Renamed gsw_frazil_ratios to gsw_frazil_ratios_adiabatic</p>
+<p>Renamed gsw_specvol_amon to gsw_specvol_amon_standard</p>
+<p>Renamed gsw_specvol_amon_CT_exact to gsw_specvol_amon_standard_CT_exact</p>
+<p>Renamed gsw_specvol_amon_t_exact to gsw_specvol_amon_standard_t_exact</p>
+
+<h2>Version 3.04 <font size="3">(20th December, 2013)</font></h2>
+<p>Added</p> 
+<ul>
+<li>seawater properties at the freezing temperature</li>
+<li>thermodynamic properties of ice Ih</li>
+<li>thermodynamic interaction between ice Ih and seawater</li>
+<li>thermodynamic interaction between sea ice and seawater</li>
+<li>dissolved gasses</li>
+<li>gsw_CT_from_enthalpy and gsw_CT_from_enthalpy_exact</li>
+<li>gsw_CT_first_derivatives_wrt_t_exact</li>
+<li>gsw_enthalpy_first_derivatives_wrt_t_exact</li>
+<li>gsw_t_deriv_chem_potential_water_t_exact</li>
+</ul>
+<p>Renamed gsw_streric_height to gsw_geo_strf_steric_height</p>
+<p>Renamed gsw_CT_freezing to gsw_CT_freezing_poly</p>
+<p>Renamed gsw_t_freezing to gsw_t_freezing_poly</p>
+<p>Renamed gsw_brineSA_CT to gsw_brineSA_CT_poly</p>
+<p>Renamed gsw_brineSA_t to gsw_brineSA_t_poly</p>
+<p>This is the final version where functions based on the 48-term expression for density that end in "_CT" are supported</p>
+
+<h2>Version 3.03 <font size="3">(8th June, 2013)</font></h2>
+<p>Added</p> 
+<ul>
+<li>isentropic compressibility (kappa) for the 48-term equation of state.</li>
+<li>gsw_rho_first derivatves and gsw_rho_first derivatves_CT_exact.</li>
+<li>gsw_alpha_on_beta and gsw_alpha_on_beta_CT_exact.</li>
+<li>gsw_t_from_pt0</li>
+<li>gsw_t_from_entropy</li>
+<li>gsw_adiabatic_lapse_rate_from_CT.</li>
+<li>gsw_deltaSA_from_rho_t_exact.</li>
+</ul>
+<p>Remaned gsw_entropy_t_exact to gsw_entropy_from_t, and added ths inverse function (gsw_t_from_entropy)</p>
+<p>Renamed gsw_adiabatic_lapse_rate_t_exact to gsw_adiabatic_lapse_rate_from_t</p>
+
+
+<h2>Version 3.02 <font size="3">(20th November, 2012)</font></h2>
+<p>Improved computation efficiency.</p>
+<p>Minor bug fixes.</p>
+
+<h2>Version 3.01 <font size="3">(14th November 2011)</font></h2>
+<p>Bug fix in gsw_SA_Sstar_from_SP (line 182).</p>
+
+
+<h2>Version 3.0 <font size="3">(15th May 2011)</font></h2>
+<p>Consists of approximately 166 functions.</p>
+<p>Major improvements</p>
+<ul>
+<li> 48-term density equation introduced (intended for use by observational, theoretical oceanographers
+ and ocean modellers). The use of a single density equation will ensure a unified field. </li>
+<li> the Absolute Salinity Anomaly takes into account evaporation and dilution. </li>
+<li> freezing temperatures</li>
+<li> isobaric melting enthalpy and isobaric evaporation enthalpy</li>
+</ul>
+
+<p>Main changes</p>
+<ul>
+<li> all functions which have in-situ temperature t as the input temperature now end in "_t_exact"</li>
+<li> all functions which have Conservative Temperature CT as the input temperature and which are directly evaluated using the Gibbs function now end in "_CT_exact" (in version 2 they ended in "_CT")</li>
+<li> all functions which have Conservative Temperature CT as the input temperature and were based on the 
+25 term density equation have been replaced with the 48 term density function. 
+<br/>The "_CT25" ending has been dropped.</li>
+<li> the 25 term density equation has been removed.</li>
+<li> <b>all functions which have Conservative Temperature CT as the input temperature but use the 48 term 
+density function can be called either with "_CT" at the end of their function names or without this ending.</b>
+ This point is the biggest change as many of these function names in version 2 used in-situ 
+ temperature (t) as the input temperature and the relied on the Gibbs function.</li>
+<li> Geostrophic streamfunctions now allow the user to define a reference pressure, and the options 
+for the interpolation style and interpolated bottle resolution has been removed.</li>
+
+</ul>
+<p>Bug fixes</p>
+
+<h2>Version 2 <font size="3">(18th October 2010)</font></h2>
+<p>Consists of approximately 100 functions</p>
+<p>Introduced</p>
+<ul>
+<li> the new naming structure for conversion functions, gsw_X_from_Y</li>
+<li> Streamfunctions</li>
+<li> water column properties</li>
+<li> neutral and non-linear properties</li>
+<li> planet Earth properties </li>
+<li> derivatives of enthalpy, entropy, Conservative temperature and potential temperature </li>
+<li> 25 term density equation (intended for modellers)</li>
+</ul>
+<p>Major changes</p>
+<ul>
+<li>Absolute Salinity Anomaly extended to cover all areas of the ocean </li>
+</ul>
+<p>Bug fixes</p>
+
+
+<h2>Version 1 <font size="3">(1st January 2009)</font></h2>
+<p>Consists of approximately 16 functions</p>
+<p>Introduction of the Absolute Salinity Anomaly</p>
+
+</body>
+</html>

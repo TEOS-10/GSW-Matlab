@@ -1,0 +1,110 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>gsw_latentheat_melting</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>gsw_latentheat_melting</h1>
+  <!--introduction--><pre><font size="5"><b>latent heat of melting</b></font></pre><!--/introduction-->
+  <font size="4"><h2>Contents</h2><div><ul><li><a href="#1">USAGE:</a></li><li><a href="#2">DESCRIPTION:</a></li><li><a href="#3">INPUT:</a></li><li><a href="#4">OUTPUT:</a></li><li><a href="#5">EXAMPLE:</a></li><li><a href="#6">AUTHOR:</a></li><li><a href="#7">VERSION NUMBER:</a></li><li><a href="#8">REFERENCES:</a></li></ul></div>
+  <h2>USAGE:<a name="1"></a></h2>
+  <pre>latentheat_melting = gsw_latentheat_melting(SA,p)</pre>
+  <h2>DESCRIPTION:<a name="2"></a></h2>
+  <pre>Calculates latent heat, or enthalpy, of melting.  It is defined in terms
+of Absolute Salinity, SA, and sea pressure, p, and is valid in the  
+ranges 0 < SA < 42 g/kg and 0 < p < 10,000 dbar.  The errors range 
+between -0.4 and 0.3 J/kg.
+</pre>
+  <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/latentheat_melting.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/latentheat_melting.pdf">Click for a more detailed description of calculating
+latent heat of melting.</a></font></pre></td>
+  </tr>
+</table>
+<h2>INPUT:<a name="3"></a></h2>
+<pre>SA  =  Absolute Salinity                                        [ g/kg ]
+p   =  sea pressure                                             [ dbar ]
+       ( i.e. absolute pressure - 10.1325 dbar )</pre>
+<pre>SA &amp; p need to have the same dimensions.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>latentheat_melting  =  latent heat of melting                   [ J/kg ]</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>SA = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+p =  [     10;      50;     125;     250;     600;    1000;]</pre>
+<pre>latentheat_melting = gsw_latentheat_melting(SA,p)</pre>
+<pre>latentheat_melting =</pre>
+<pre>   1.0e+005 *</pre>
+<pre>   3.299496680271213
+   3.298613352397986
+   3.297125622834541
+   3.294973895330757
+   3.288480445559747
+   3.280715862416388</pre>
+  <h2>AUTHOR:<a name="6"></a></h2>
+  <pre>Paul Barker, Trevor McDougall and Rainer Feistal    [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+  <h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+  <h2>REFERENCES:<a name="8"></a></h2>
+  <pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org">the TEOS-10 web site</a>.
+  <a href="../pdf/latentheat_melting.pdf">See section 3.3 of this TEOS-10 Manual.</a></pre>
+  <pre>The software is available from <a href="http://www.TEOS-10.org">http://www.TEOS-10.org</a></pre></font>
+  </div></body></html>

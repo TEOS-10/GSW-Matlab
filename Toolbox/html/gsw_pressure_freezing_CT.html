@@ -1,0 +1,134 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_pressure_freezing_CT</title>
+
+<style type="text/css">
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+p,h1,h2,div.content div {
+  max-width: 600px;
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content">
+<h1>gsw_pressure_freezing_CT</h1>
+<pre><font size="5"><b>pressure of seawater at the freezing temperature</b></font></pre>
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>pressure_freezing = gsw_pressure_freezing_CT(SA,CT,saturation_fraction)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the pressure (in dbar) of seawater at the freezing
+temperature.  That is, the output is the pressure at which seawater,
+with Absolute Salinity SA, Conservative Temperature CT, and with 
+saturation_fraction of dissolved air, freezes.  If the input values are 
+such that there is no value of pressure in the range between 0 dbar and 
+10,000 dbar for which seawater is at the freezing temperature, the 
+output, pressure_freezing, is put equal to NaN.</pre>
+<!--<table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/pressure_freezing_CT.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/pressure_freezing_CT.pdf">Click for a more detailed description of the pressure coefficient of ice.</a></font></pre></td>
+  </tr>
+</table> -->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>SA  =  Absolute Salinity                                          [ g/kg ]
+CT  =  Conservative Temperature (ITS-90)                         [ deg C ]
+
+OPTIONAL:
+saturation_fraction = the saturation fraction of dissolved air in 
+                        seawater
+  (i.e., saturation_fraction must be between 0 and 1, and the default 
+    is 1, completely saturated) </pre>
+<pre>p & saturation_fraction (if provided) may have dimensions 1x1 or Mx1 or 
+1xN or MxN, where SA and CT are MxN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>pressure_freezing  =  sea pressure at which the seawater          [ dbar ]
+                      freezes
+      ( i.e. absolute pressure - 10.1325 dbar ) </pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>SA = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+CT = [-1.8996; -1.9407; -2.0062; -2.0923; -2.3593; -2.6771;]
+saturation_fraction = [1; 0.8; 0.6; 0.5; 0.4; 0;]</pre>
+<pre>pressure_freezing = gsw_pressure_freezing_CT(SA,CT,saturation_fraction)</pre>
+<pre>pressure_freezing =</pre>
+<pre>1.0e+003 *</pre>
+<pre>   0.009890530270710
+   0.050376026585933
+   0.125933117050624
+   0.251150973076077
+   0.601441775836021
+   1.002273338145043</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Trevor McDougall &amp; Paul Barker       [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site.</a></pre>
+<!--  <a href="../pdf/pressure_coefficient_ice.pdf">See section 2.8 of this TEOS-10 Manual.</a></pre>-->
+<pre>McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+ Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+ Journal of Physical Oceanography, 44, 1751-1775.</pre>
+<pre>McDougall, T.J. and S.J. Wotherspoon, 2013: A simple modification of 
+ Newton’s method to achieve convergence of order "1 + sqrt(2)". <em>Applied 
+ Mathematics Letters</em>, <b>29</b>, 20-25.  
+ <a href="http://dx.doi.org/10.1016/j.aml.2013.10.008" title="">http://dx.doi.org/10.1016/j.aml.2013.10.008</a> </pre>
+ <pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+</div></body></html>

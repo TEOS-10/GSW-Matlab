@@ -1,0 +1,113 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <title>gsw_specvol_from_pot_enthalpy_ice_poly</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>gsw_specvol_from_pot_enthalpy_ice_poly</h1>
+  <!--introduction--><pre><font size="5"><b>specific volume from potential enthalpy of ice (polynomial)</b></font></pre><!--/introduction-->
+  <font size="4"><h2>Contents</h2>
+  <div><ul><li><a href="#1">USAGE:</a></li><li><a href="#2">DESCRIPTION:</a></li><li><a href="#3">INPUT:</a></li>
+  <li><a href="#4">OUTPUT:</a></li><li><a href="#5">EXAMPLE:</a></li><li><a href="#6">AUTHOR:</a></li><li><a href="#7">VERSION NUMBER:</a></li><li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>specvol_ice = gsw_specvol_from_pot_enthalpy_ice_poly(pot_enthalpy_ice,p)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the specific volume of ice from potential enthalpy  
+of ice.  The reference sea pressure of the potential enthalpy is zero
+dbar. </pre>
+<pre>Note that this is a computationally efficient polynomial version of 
+potential enthalpy from specfic volume of ice.</pre>
+<!--<table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/specvol_ice.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/specvol_ice.pdf">Click for a more detailed description of specific
+volume of ice.</a></font></pre></td>
+  </tr>
+</table>-->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>pot_enthalpy_ice  =  potential enthalpy of ice                 [ J/kg ]
+p  =  sea pressure                                             [ dbar ]
+       ( i.e. absolute pressure - 10.1325 dbar )</pre>
+<pre>p may have dimensions 1x1 or Mx1 or 1xN or MxN, where pot_enthalpy_ice 
+is MxN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>specvol_ice  =  specific volume of ice                        [ kg/m^3 ]</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>pot_enthalpy_ice = ...
+[-3.5654e5;-3.6195e5;-3.6085e5;-3.5902e5;-3.5629e5;-3.5159e5]
+p = [     10;      50;     125;     250;     600;    1000;]</pre>
+<pre>specvol_ice = gsw_specvol_from_pot_enthalpy_ice_poly(pot_enthalpy_ice,p)</pre>
+<pre>specvol_ice =</pre>
+<pre>     1.088900469577280e-03
+     1.088400418620099e-03
+     1.088400680909352e-03
+     1.088400587171036e-03
+     1.088200275167673e-03
+     1.088100585359528e-03</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>David Jackett &amp; Paul Barker             [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site</a>.</pre>
+<!--  <a href="../pdf/specvol_ice.pdf" title="TEOS-10">See section 2.7 of this TEOS-10 Manual.</a></pre>-->
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+  </div></body></html>

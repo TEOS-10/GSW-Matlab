@@ -1,0 +1,171 @@
+<!DOCTYPE html  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_geo_strf_isopycnal_pc</title>
+<style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content">
+<h1>gsw_geo_strf_isopycnal_pc</h1>
+ <!--introduction-->
+<pre><font size="5"><b>approximate isopycnal geostrophic streamfunction 
+for piecewise constant profiles (75-term equation)</b></font></pre><!--/introduction-->
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>[geo_strf_McD_Klocker_pc, p_mid] = gsw_geo_strf_isopycnal_pc(SA,CT,delta_p,gamma_n,layer_indx,A)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the McDougall-Klocker geostrophic streamfunction (see Eqn.
+(3.30.1) of IOC et al. (2010).  This function is to used when the 
+Absolute Salinity and Conservative Temperature are piecewise constant in
+the vertical over sucessive pressure intervals of delta_p (such as in a 
+forward "z-coordinate" ocean model, and in isopycnal layered ocean 
+models).  The McDougall-Klocker geostrophic streamfunction is designed 
+to be used as the geostrophic streamfunction in an approximately neutral
+surface (such as a Neutral Density surface, a potential density surface 
+or an omega surface (Klocker et al. (2009)).  Reference values of 
+Absolute Salinity, Conservative Temperature and pressure are found by 
+interpolation of a one-dimensional look-up table, with the interpolating
+variable being Neutral Density (gamma_n) or sigma_2.  This function 
+calculates specific volume anomaly using the computationally efficient 
+76-term expression for specific volume (Roquet et al., 2015).</pre>
+  <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/geo_strf_isopycnal_pc.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/geo_strf_isopycnal_pc.pdf">Click for a more detailed description of the
+isopycnal geostrophic streamfunction
+for piecewise constant profiles</a></font></pre>
+  </tr>
+</table>
+
+<h2>INPUT:<a name="3"></a></h2>
+<pre>SA         =  Absolute Salinity                                 [ g/kg ]
+CT         =  Conservative Temperature                         [ deg C ]
+delta_p    =  difference in sea pressure between the deep and shallow
+              extents of each layer in which SA and CT are vertically
+              constant.  delta_p must be positive.              [ dbar ]
+Note. Sea pressure is absolute pressure minus 10.1325 dbar.</pre>
+<pre>gamma_n    =  Neutral Density anomaly                         [ kg/m^3 ]
+              ( i.e. Neutral Density minus 1000 kg/m^3 )
+layer_indx =  Index of the layers of the gamma_n surfaces</pre>
+<pre>OPTIONAL:</pre>
+<pre>A          =  if nothing is entered the programme defaults to "Neutral
+              Density" as the vertical interpolating variable. 
+           =  's2' or 'sigma2', for sigma_2 as the vertical interpolating
+              variable. </pre>
+<pre>SA, CT &amp; delta_p need to have the same dimensions.
+gamma_n &amp; layer_indx need to have the same dimensions, there should be 
+only one &quot;gamma_n&quot; or &quot;sigma_2&quot; value per level of interest.
+A needs to be 1x1.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>geo_strf_isopycnal_pc =  isopycnal geostrophic               [ m^2/s^2 ]
+                         streamfunction as defined by 
+                         McDougall & Klocker (2010)
+p_mid                 =  mid-point pressure in each layer       [ dbar ]</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>SA      = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+CT      = [28.8099; 28.4392; 22.7862; 10.2262;  6.8272;  4.3236;]
+delta_p = [     10;      40;      75;     125;     350;     400;]</pre>
+<pre>gamma_n     = [26.7; 27.8;]
+layer_indx  = [   3;    5;]</pre>
+<pre>[geo_strf_isopycnal_pc, p_mid] = ...
+            gsw_geo_strf_isopycnal_pc(SA,CT,delta_p,gamma_n,layer_indx)</pre>
+<pre>geo_strf_isopycnal_pc =</pre>
+<pre>  -5.270417210618314
+ -10.380530051934258</pre>
+ <pre>p_mid =</pre>
+ <pre>  1.0e+002 *</pre>
+ <pre>   0.875000000000000
+   4.250000000000000</pre>
+ <h2>AUTHOR:<a name="6"></a></h2>
+ <pre>Trevor McDougall and Paul Barker                    [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+ <h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.06 (15th May, 2017)</pre>
+ <h2>REFERENCES:<a name="8"></a></h2>
+ <pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site</a>.
+  <a href="../pdf/geo_strf_isopycnal_pc.pdf" title="TEOS-10">See section 3.30 of this TEOS-10 Manual</a>.</pre>
+  <pre>Jackett, D. R. and T. J. McDougall, 1997: A neutral density variable
+ for the world&#8217;s oceans. Journal of Physical Oceanography, 27, 237-263.</pre>
+ <pre>Klocker, A., T. J. McDougall and D. R. Jackett, 2009: A new method
+ for forming approximately neutral surfaces.  Ocean Sci., 5, 155-172.</pre>
+ <pre>McDougall, T.J., D.R. Jackett, D.G. Wright and R. Feistel, 2003: 
+ Accurate and computationally efficient algorithms for potential 
+ temperature and density of seawater.  J. Atmosph. Ocean. Tech., 20,
+ pp. 730-741.</pre>
+ <pre>McDougall, T. J. and A. Klocker, 2010: An approximate geostrophic
+ streamfunction for use in density surfaces.  Ocean Modelling, 32,
+ 105-117.
+  The McDougall-Klocker geostrophic streamfunction is defined in
+ Eqn. (62) of this paper.
+  See section 8 of this paper for a discussion of this piecewise-
+ constant version of the McDougall-Klocker geostrophic streamfunction.</pre>
+  <pre>Roquet, F., G. Madec, T.J. McDougall, P.M. Barker, 2015: Accurate
+ polynomial expressions for the density and specifc volume of seawater
+ using the TEOS-10 standard. Ocean Modelling.</pre>
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre>
+ </font>
+ </div></body></html>

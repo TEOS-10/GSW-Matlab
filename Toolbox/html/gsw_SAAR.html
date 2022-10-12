@@ -1,0 +1,527 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>gsw_SAAR</title><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 900px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+
+  </style></head><body><div class="content"><h1>gsw_SAAR</h1>
+  <!--introduction--><pre><font size="5"><b>Absolute Salinity Anomaly Ratio</b></font></pre><!--/introduction-->
+  <font size="4"><h2>Contents</h2>
+  <div><ul><li><a href="#1">USAGE:</a></li>
+  <li><a href="#2">DESCRIPTION:</a></li>
+  <li><a href="#3">INPUT:</a></li>
+  <li><a href="#4">OUTPUT:</a></li>
+  <li><a href="#5">EXAMPLE:</a></li>
+  <li><a href="#6">AUTHOR:</a></li>
+  <li><a href="#7">VERSION NUMBER:</a></li>
+  <li><a href="#8">REFERENCES:</a></li></ul></div>
+  <h2>USAGE:<a name="1"></a></h2>
+  <pre>SAAR = gsw_SAAR(p,long,lat)</pre>
+  <h2>DESCRIPTION:<a name="2"></a></h2>
+  <pre>Calculates the Absolute Salinity Anomaly Ratio.</pre>  
+    <table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/SAAR.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/SAAR.pdf">Click for a more detailed description of the 
+Absolute Salinity Anomaly Ratio.</a></font></pre></td>
+  </tr>
+</table>
+<h2>INPUT:<a name="3"></a></h2>
+<pre>p     =  sea pressure                                           [ dbar ]
+         ( i.e. absolute pressure - 10.1325 dbar )
+long  =  longitude in decimal degrees                     [ 0 ... +360 ]
+                                                    or [ -180 ... +180 ]
+lat   =  latitude in decimal degrees north               [ -90 ... +90 ]</pre>
+<pre>p, long &amp; lat need to have the same dimensions.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>SAAR      =  Absolute Salinity Anomaly Ratio                [ unitless ]
+in_ocean  =  0, if long and lat are a long way from the ocean 
+          =  1, if long and lat are in the ocean
+  Note. This flag is only set when the observation is well and truly on
+    dry land; often the warning flag is not set until one is several 
+    hundred kilometres inland from the coast. </pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>p =    [   10;   50;  125;  250;  600; 1000;]
+lat =  [    4;    4;    4;    4;    4;    4;]
+long = [  188;  188;  188;  188;  188;  188;]</pre>
+<pre>[SAAR, in_ocean] = gsw_SAAR(p,long,lat)</pre>
+<pre>SAAR = </pre>
+<pre> 1.0e-003 *</pre>
+<pre>   0.004794295602143
+   0.007668755837570
+   0.018919828449091
+   0.077293264028981
+   0.161974583039298
+   0.270652408428964</pre>
+<pre>in_ocean =</pre>
+<pre>     1
+     1
+     1
+     1
+     1
+     1</pre>
+ <h2>AUTHOR:<a name="6"></a></h2>
+ <pre>Paul Barker and Trevor McDougall                  [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+ <h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+ <h2>REFERENCES:<a name="8"></a></h2>
+ <pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org">http://www.TEOS-10.org</a>
+  <a href="../pdf/SAAR.pdf">See section 2.5 of this TEOS-10 Manual.</a></pre>
+<pre>McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and
+ P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.
+ <i>Ocean Science</i>, <b>8</b>, 1123-1134.  
+  <a href="http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf">http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf</a></pre>
+<pre>The software is available from <a href="http://www.TEOS-10.org">http://www.TEOS-10.org</a></pre></font>
+<div class="content"><pre class="codeinput"><span class="keyword">function</span> [SAAR, in_ocean] = gsw_SAAR(p,long,lat)
+
+<span class="comment">% gsw_SAAR       Absolute Salinity Anomaly Ratio (excluding the Baltic Sea)</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">% USAGE:</span>
+<span class="comment">%  [SAAR, in_ocean] = gsw_SAAR(p,long,lat)</span>
+<span class="comment">%</span>
+<span class="comment">% DESCRIPTION:</span>
+<span class="comment">%  Calculates the Absolute Salinity Anomaly Ratio, SAAR, in the open ocean</span>
+<span class="comment">%  by spatially interpolating the global reference data set of SAAR to the</span>
+<span class="comment">%  location of the seawater sample.</span>
+<span class="comment">%</span>
+<span class="comment">%  This function uses version 3.0 of the SAAR look up table (15th May 2011).</span>
+<span class="comment">%</span>
+<span class="comment">%  The Absolute Salinity Anomaly Ratio in the Baltic Sea is evaluated</span>
+<span class="comment">%  separately, since it is a function of Practical Salinity, not of space.</span>
+<span class="comment">%  The present function returns a SAAR of zero for data in the Baltic Sea.</span>
+<span class="comment">%  The correct way of calculating Absolute Salinity in the Baltic Sea is by</span>
+<span class="comment">%  calling gsw_SA_from_SP.</span>
+<span class="comment">%</span>
+<span class="comment">% INPUT:</span>
+<span class="comment">%  p     =  sea pressure                                           [ dbar ]</span>
+<span class="comment">%          ( i.e. absolute pressure - 10.1325 dbar )</span>
+<span class="comment">%  long  =  Longitude in decimal degrees                     [ 0 ... +360 ]</span>
+<span class="comment">%                                                      or [ -180 ... +180 ]</span>
+<span class="comment">%  lat   =  Latitude in decimal degrees north               [ -90 ... +90 ]</span>
+<span class="comment">%</span>
+<span class="comment">%  p, long &amp; lat need to be vectors and have the same dimensions.</span>
+<span class="comment">%</span>
+<span class="comment">% OUTPUT:</span>
+<span class="comment">%  SAAR      =  Absolute Salinity Anomaly Ratio                [ unitless ]</span>
+<span class="comment">%  in_ocean  =  0, if long and lat are a long way from the ocean</span>
+<span class="comment">%            =  1, if long and lat are in or near the ocean</span>
+<span class="comment">%  Note. This flag is only set when the observation is well and truly on</span>
+<span class="comment">%    dry land; often the warning flag is not set until one is several</span>
+<span class="comment">%    hundred kilometres inland from the coast.</span>
+<span class="comment">%</span>
+<span class="comment">% AUTHOR:</span>
+<span class="comment">%  David Jackett                                       [ help@teos-10.org ]</span>
+<span class="comment">%</span>
+<span class="comment">% MODIFIED:</span>
+<span class="comment">%  Paul Barker and Trevor McDougall</span>
+<span class="comment">%  Acknowledgment. Matlab programming assisance from Sunke Schmidtko.</span>
+<span class="comment">%</span>
+<span class="comment">% VERSION NUMBER: 3.05 (27th January 2015)</span>
+<span class="comment">%</span>
+<span class="comment">% REFERENCES:</span>
+<span class="comment">%  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of</span>
+<span class="comment">%   seawater - 2010: Calculation and use of thermodynamic properties.</span>
+<span class="comment">%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,</span>
+<span class="comment">%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%  McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and</span>
+<span class="comment">%   P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.</span>
+<span class="comment">%   Ocean Science, 8, 1123-1134.</span>
+<span class="comment">%   http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf</span>
+<span class="comment">%</span>
+<span class="comment">%  The software is available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% Check variables and resize if necessary</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+
+<span class="keyword">if</span> ~(nargin == 3)
+   error(<span class="string">'gsw_SAAR:  Requires three inputs'</span>)
+<span class="keyword">end</span> <span class="comment">%if</span>
+
+[mp,np] = size(p);
+[mla,nla] = size(lat);
+[mlo,nlo] = size(long);
+
+<span class="keyword">if</span> (mp ~= mla) | (mp ~=mlo) | (np ~= nla) | (np ~= nlo)
+    error(<span class="string">'gsw_SAAR: Inputs need be of the same size'</span>)
+<span class="keyword">end</span> <span class="comment">%if</span>
+
+<span class="keyword">if</span> any(p &lt; -1.5)
+    error(<span class="string">'gsw_SAAR: pressure needs to be positive'</span>)
+<span class="keyword">end</span>
+
+<span class="comment">%set any pressures between 0 and -1.5 to be equal to 0 (i.e. the surface)</span>
+p(p &lt; 0) = 0;
+
+<span class="comment">%--------------------------------------------------------------------------</span>
+<span class="comment">% Start of the calculation (extracting from a look up table)</span>
+<span class="comment">%--------------------------------------------------------------------------</span>
+
+<span class="keyword">persistent</span> SAAR_ref lats_ref longs_ref p_ref ndepth_ref
+
+<span class="keyword">if</span> isempty(SAAR_ref)
+    gsw_data = <span class="string">'gsw_data_v3_0.mat'</span>;
+
+    gsw_data_file = which(gsw_data);
+
+    load (gsw_data_file,<span class="string">'SAAR_ref'</span>,<span class="string">'lats_ref'</span>,<span class="string">'longs_ref'</span>,<span class="string">'p_ref'</span>, <span class="keyword">...</span>
+        <span class="string">'ndepth_ref'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% precalculate constants</span>
+nx = length(longs_ref);
+ny = length(lats_ref);
+nz = length(p_ref);
+nyz = ny.*nz;
+
+n0 = length(p);
+
+dlongs_ref = longs_ref(2) - longs_ref(1);
+dlats_ref = lats_ref(2) - lats_ref(1);
+
+indsx0 = floor(1 + (nx-1)*(long - longs_ref(1))./(longs_ref(nx) - longs_ref(1)));
+indsx0 = indsx0(:);
+indsx0(indsx0 == nx) = nx - 1;
+
+indsy0 = floor(1 + (ny-1)*(lat - lats_ref(1))./(lats_ref(ny) - lats_ref(1)));
+indsy0 = indsy0(:);
+indsy0(indsy0 == ny) = ny - 1;
+
+<span class="comment">% Assign a pressure bin for each bottle.</span>
+indsz0 = ones(n0,1);
+<span class="keyword">for</span> I = 2:nz
+    indsz0(p &gt;= p_ref(I-1) &amp; p &lt; p_ref(I)) = I - 1;
+<span class="keyword">end</span>
+indsz0(p &gt;= p_ref(nz)) = nz-1;
+
+indsy0_indsx0_ny = indsy0 + indsx0.*ny;
+indsn1 = indsy0_indsx0_ny - ny;              <span class="comment">%4 xy grid points surrounding the data</span>
+indsn2 = indsy0_indsx0_ny;
+indsn3 = indsy0_indsx0_ny + 1;
+indsn4 = indsy0_indsx0_ny + (1 - ny);
+
+nmax = max([ndepth_ref(indsn1)';ndepth_ref(indsn2)';ndepth_ref(indsn3)';ndepth_ref(indsn4)']);
+
+<span class="keyword">if</span> any(indsz0(:)' &gt; nmax)
+    inds1 = find(indsz0(:)' &gt; nmax);                <span class="comment">% casts deeper than GK maximum</span>
+
+    p(inds1) = p_ref(nmax(inds1));                  <span class="comment">% have reset p here so have to reset indsz0</span>
+
+    indsz0(inds1) = nmax(inds1) - 1;
+<span class="keyword">end</span>
+
+indsyx_tmp = indsy0_indsx0_ny.*nz;        <span class="comment">% precalculate constants for loop</span>
+inds0 =  indsz0 + indsyx_tmp  - (nyz + nz);
+
+data_indices = [indsx0,indsy0,indsz0,inds0];
+data_inds = data_indices(:,3);
+
+r1 = (long(:) - longs_ref(indsx0))./(longs_ref(indsx0+1) - longs_ref(indsx0));
+s1 = (lat(:) - lats_ref(indsy0))./(lats_ref(indsy0+1) - lats_ref(indsy0));
+t1 = (p(:) - p_ref(indsz0))./(p_ref(indsz0+1) - p_ref(indsz0));
+
+sa_upper = NaN(size(data_inds));
+sa_lower = sa_upper;
+SAAR = sa_upper;
+in_ocean = ones(size(SAAR));
+
+indsyx_tmp = indsy0_indsx0_ny.*nz;        <span class="comment">% precalculate constants for loop</span>
+saar_nan = nan(4,n0);
+
+<span class="keyword">for</span> k = 1:nz-1
+
+    inds_k = find(indsz0 == k);
+
+    <span class="keyword">if</span> ~isempty(inds_k)
+
+        indsXYZ = k + indsyx_tmp(inds_k);
+
+        inds_di = find(data_inds == k);
+
+        <span class="comment">% level k interpolation</span>
+        saar = saar_nan;
+
+        saar(:,inds_k) = SAAR_ref([(indsXYZ-(nz+nyz))'; (indsXYZ - nz)'; (indsXYZ)'; (indsXYZ -nyz)']);
+
+        inds_pan = find(abs(long(inds_k)-277.6085)&lt;=17.6085 &amp; <span class="keyword">...</span>
+            abs(lat(inds_k)-9.775) &lt;= 9.775);
+
+        <span class="keyword">if</span> ~isempty(inds_pan)
+            inds = inds_k(inds_pan);
+            saar(:,inds) = gsw_saar_add_barrier(saar(:,inds),long(inds), <span class="keyword">...</span>
+                lat(inds),longs_ref(indsx0(inds)),lats_ref(indsy0(inds)),dlongs_ref,dlats_ref);
+        <span class="keyword">end</span>
+
+        <span class="keyword">if</span> any(isnan(sum(saar(:,inds_k))))
+            inds = inds_k(isnan(sum(saar(:,inds_k))));
+            saar(:,inds) = gsw_saar_add_mean(saar(:,inds));
+        <span class="keyword">end</span>
+
+        sa_upper(inds_di) = (1-s1(inds_di)).*(saar(1,inds_k)' + <span class="keyword">...</span>
+            r1(inds_di).*(saar(2,inds_k)'-saar(1,inds_k)')) + <span class="keyword">...</span>
+            s1(inds_di).*(saar(4,inds_k)' + <span class="keyword">...</span>
+            r1(inds_di).*(saar(3,inds_k)'-saar(4,inds_k)'));  <span class="comment">% level k+1 interpolation</span>
+
+        saar = saar_nan;
+        saar(:,inds_k) = SAAR_ref([(indsXYZ+(1-nz-nyz))'; (indsXYZ+(1-nz))'; (indsXYZ+1)'; (indsXYZ+(1-nyz))';]);
+
+        <span class="keyword">if</span> ~isempty(inds_pan)
+            inds = inds_k(inds_pan);
+            saar(:,inds) = gsw_saar_add_barrier(saar(:,inds),long(inds), <span class="keyword">...</span>
+                lat(inds),longs_ref(indsx0(inds)),lats_ref(indsy0(inds)),dlongs_ref,dlats_ref);
+        <span class="keyword">end</span>
+
+        <span class="keyword">if</span> any(isnan(sum(saar(:,inds_k))))
+            inds = inds_k(isnan(sum(saar(:,inds_k))));
+            saar(:,inds) = gsw_saar_add_mean(saar(:,inds));
+        <span class="keyword">end</span>
+
+        sa_lower(inds_di) = (1-s1(inds_di)).*(saar(1,inds_k)' + <span class="keyword">...</span>
+            r1(inds_di).*(saar(2,inds_k)'-saar(1,inds_k)')) + <span class="keyword">...</span>
+            s1(inds_di).*(saar(4,inds_k)' + <span class="keyword">...</span>
+            r1(inds_di).*(saar(3,inds_k)'-saar(4,inds_k)'));
+
+        <span class="keyword">if</span> any(isfinite(sa_upper(inds_di)) &amp; isnan(sa_lower(inds_di)))
+            inds_different = find(isfinite(sa_upper(inds_di)) &amp; isnan(sa_lower(inds_di)));
+            sa_lower(inds_di(inds_different)) = sa_upper(inds_di(inds_different));
+        <span class="keyword">end</span>
+
+        SAAR(inds_di) = sa_upper(inds_di) + t1(inds_di).*(sa_lower(inds_di) - sa_upper(inds_di));
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+inds = find(~isfinite(SAAR));
+SAAR(inds) = 0;
+
+in_ocean(inds) = 0;
+
+<span class="keyword">end</span>
+
+<span class="comment">%##########################################################################</span>
+
+<span class="keyword">function</span> SAAR = gsw_saar_add_mean(saar)
+
+<span class="comment">% gsw_saar_add_mean</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">% USAGE:</span>
+<span class="comment">%  SAAR = gsw_saar_add_mean(saar)</span>
+<span class="comment">%</span>
+<span class="comment">% DESCRIPTION:</span>
+<span class="comment">%  Replaces NaN's with nanmean of the 4 adjacent neighbours</span>
+<span class="comment">%</span>
+<span class="comment">% INPUT:</span>
+<span class="comment">%  saar  =  Absolute Salinity Anomaly Ratio of the 4 adjacent neighbours</span>
+<span class="comment">%                                                              [ unitless ]</span>
+<span class="comment">%</span>
+<span class="comment">% OUTPUT:</span>
+<span class="comment">%  SAAR  =  nanmean of the 4 adjacent neighbours               [ unitless ]</span>
+<span class="comment">%</span>
+<span class="comment">% AUTHOR:</span>
+<span class="comment">%  David Jackett</span>
+<span class="comment">%</span>
+<span class="comment">% MODIFIED:</span>
+<span class="comment">%  Paul Barker and Trevor McDougall</span>
+<span class="comment">%  Acknowledgment. Matlab programming assisance from Sjoerd Groeskamp.</span>
+<span class="comment">%</span>
+<span class="comment">% VERSION NUMBER: 3.05 (27th January 2015)</span>
+<span class="comment">%</span>
+<span class="comment">% REFERENCES:</span>
+<span class="comment">%  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of</span>
+<span class="comment">%   seawater - 2010: Calculation and use of thermodynamic properties.</span>
+<span class="comment">%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,</span>
+<span class="comment">%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%  McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and</span>
+<span class="comment">%   P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.</span>
+<span class="comment">%   Ocean Science, 8, 1123-1134.</span>
+<span class="comment">%   http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf</span>
+<span class="comment">%</span>
+<span class="comment">%  The software is available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+<span class="keyword">if</span> exist(<span class="string">'nanmean'</span>,<span class="string">'file'</span>)
+    saar_nanmean = nanmean(saar);
+    saar_nanmean(2,:) = saar_nanmean;
+    saar_nanmean(3:4,:) = saar_nanmean;
+    nans = isnan(saar);
+    [Inans] = find(isnan(saar));
+    saar_mean_nans = nans(Inans).*saar_nanmean(Inans);
+    saar(Inans) = saar_mean_nans;
+<span class="keyword">else</span>
+    saar_mean = mean(saar);
+    inds_nan = find(isnan(saar_mean));
+    no_nan = length(inds_nan);
+    <span class="keyword">for</span> kk = 1:no_nan
+        col = inds_nan(kk);
+        [Inn] = find(~isnan(saar(:,col)));
+        <span class="keyword">if</span> ~isempty(Inn)
+            saar(isnan(saar(:,col)),col) = sum(saar(Inn,col))./numel(Inn);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+SAAR = saar;
+
+<span class="keyword">end</span>
+
+<span class="comment">%##########################################################################</span>
+
+<span class="keyword">function</span> SAAR = gsw_saar_add_barrier(saar,long,lat,longs_ref,lats_ref,dlongs_ref,dlats_ref)
+
+<span class="comment">% gsw_saar_add_barrier</span>
+<span class="comment">%==========================================================================</span>
+<span class="comment">%</span>
+<span class="comment">% USAGE:</span>
+<span class="comment">%  SAAR = gsw_saar_add_barrier(saar,long,lat,longs_ref,lats_ref,dlongs_ref,dlats_ref)</span>
+<span class="comment">%</span>
+<span class="comment">% DESCRIPTION:</span>
+<span class="comment">%  Adds a barrier through Central America (Panama) and then averages</span>
+<span class="comment">%  over the appropriate side of the barrier</span>
+<span class="comment">%</span>
+<span class="comment">% INPUT:</span>
+<span class="comment">%  saar        =  Absolute Salinity Anomaly Ratio                          [ unitless ]</span>
+<span class="comment">%  long        =  Longitudes of data in decimal degrees east               [ 0 ... +360 ]</span>
+<span class="comment">%  lat         =  Latitudes of data in decimal degrees north               [ -90 ... +90 ]</span>
+<span class="comment">%  longs_ref   =  Longitudes of regular grid in decimal degrees east       [ 0 ... +360 ]</span>
+<span class="comment">%  lats_ref    =  Latitudes of regular grid in decimal degrees north       [ -90 ... +90 ]</span>
+<span class="comment">%  dlongs_ref  =  Longitude difference of regular grid in decimal degrees  [ deg longitude ]</span>
+<span class="comment">%  dlats_ref   =  Latitude difference of regular grid in decimal degrees   [ deg latitude ]</span>
+<span class="comment">%</span>
+<span class="comment">% OUTPUT:</span>
+<span class="comment">%  SAAR        =  Absolute Salinity Anomaly Ratio                          [ unitless ]</span>
+<span class="comment">%</span>
+<span class="comment">% AUTHOR:</span>
+<span class="comment">%  David Jackett</span>
+<span class="comment">%</span>
+<span class="comment">% MODIFIED:</span>
+<span class="comment">%  Paul Barker and Trevor McDougall</span>
+<span class="comment">%</span>
+<span class="comment">% VERSION NUMBER: 3.05 (27th January 2015)</span>
+<span class="comment">%</span>
+<span class="comment">% REFERENCES:</span>
+<span class="comment">%  IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of</span>
+<span class="comment">%   seawater - 2010: Calculation and use of thermodynamic properties.</span>
+<span class="comment">%   Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,</span>
+<span class="comment">%   UNESCO (English), 196 pp.  Available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%  McDougall, T.J., D.R. Jackett, F.J. Millero, R. Pawlowicz and</span>
+<span class="comment">%   P.M. Barker, 2012: A global algorithm for estimating Absolute Salinity.</span>
+<span class="comment">%   Ocean Science, 8, 1123-1134.</span>
+<span class="comment">%   http://www.ocean-sci.net/8/1123/2012/os-8-1123-2012.pdf</span>
+<span class="comment">%</span>
+<span class="comment">%  The software is available from http://www.TEOS-10.org</span>
+<span class="comment">%</span>
+<span class="comment">%==========================================================================</span>
+
+longs_pan = [260.0000 272.5900 276.5000 278.6500 280.7300 295.2170];
+
+lats_pan  = [ 19.5500  13.9700   9.6000   8.1000   9.3300   0];
+
+lats_lines0 = interp1(longs_pan,lats_pan,long);
+
+lats_lines1 = interp1(longs_pan,lats_pan,longs_ref);
+lats_lines2 = interp1(longs_pan,lats_pan,(longs_ref+dlongs_ref));
+
+<span class="keyword">for</span> k0 = 1:length(long)
+    <span class="keyword">if</span> lats_lines0(k0) &lt;= lat(k0)
+        above_line0 = 1;
+    <span class="keyword">else</span>
+        above_line0 = 0;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> lats_lines1(k0) &lt;= lats_ref(k0)
+        above_line(1) = 1;
+    <span class="keyword">else</span>
+        above_line(1) = 0;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> lats_lines1(k0) &lt;= (lats_ref(k0) + dlats_ref)
+        above_line(4) = 1;
+    <span class="keyword">else</span>
+        above_line(4) = 0;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> lats_lines2(k0) &lt;= lats_ref(k0)
+        above_line(2) = 1;
+    <span class="keyword">else</span>
+        above_line(2) = 0;
+    <span class="keyword">end</span>
+    <span class="keyword">if</span> lats_lines2(k0) &lt;= (lats_ref(k0) + dlats_ref)
+        above_line(3) = 1;
+    <span class="keyword">else</span>
+        above_line(3) = 0;
+    <span class="keyword">end</span>
+    saar(above_line ~= above_line0,k0) = nan;     <span class="comment">% indices of different sides of CA line</span>
+<span class="keyword">end</span>
+
+<span class="keyword">if</span> any(isnan(saar))
+    saar = gsw_saar_add_mean(saar);
+<span class="keyword">end</span>
+
+SAAR = saar;
+
+<span class="keyword">end</span>
+</div></body></html>

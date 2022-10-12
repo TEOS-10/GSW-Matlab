@@ -1,0 +1,149 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>gsw_melting_seaice_SA_CT_ratio_poly</title>
+
+<style type="text/css">
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+p,h1,h2,div.content div {
+  max-width: 600px;
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+</style></head>
+<body><div class="content">
+<h1>gsw_melting_seaice_SA_CT_ratio_poly</h1>
+<pre><font size="5"><b>ratio of SA to CT changes when sea ice melts 
+into seawater (polynomial)</b></font></pre>
+<font size="4"><h2>Contents</h2>
+<div><ul><li><a href="#1">USAGE:</a></li>
+<li><a href="#2">DESCRIPTION:</a></li>
+<li><a href="#3">INPUT:</a></li>
+<li><a href="#4">OUTPUT:</a></li>
+<li><a href="#5">EXAMPLE:</a></li>
+<li><a href="#6">AUTHOR:</a></li>
+<li><a href="#7">VERSION NUMBER:</a></li>
+<li><a href="#8">REFERENCES:</a></li></ul></div>
+<h2>USAGE:<a name="1"></a></h2>
+<pre>melting_seaice_SA_CT_ratio = ...
+          gsw_melting_seaice_SA_CT_ratio_poly(SA,CT,p,SA_seaice,t_seaice)</pre>
+<h2>DESCRIPTION:<a name="2"></a></h2>
+<pre>Calculates the ratio of SA to CT changes when sea ice melts into seawater.
+It is assumed that a small mass of sea ice melts into an infinite mass of
+seawater.  Because of the infinite mass of seawater, the sea ice will 
+always melt.  </pre> 
+<pre>Ice formed at the sea surface (sea ice) typically contains between 2 g/kg
+and 12 g/kg of salt (defined as the mass of salt divided by the mass of 
+ice Ih plus brine) and this programme returns NaN's if the input 
+SA_seaice is greater than 15 g/kg.  If the SA_seaice input is not zero, 
+usually this would imply that the pressure p should be zero, as sea ice 
+only occurs near the sea surface.  The code does not impose that p = 0 if 
+SA_seaice is non-zero.  Rather, this is left to the user.</pre>  
+<pre>The Absolute Salinity, SA_brine, of the brine trapped in little pockets 
+in the sea ice, is in thermodynamic equilibrium with the ice Ih that
+surrounds these pockets.  As the seaice temperature, t_seaice, may be 
+less than the freezing temperature, SA_brine is usually greater than the
+Absolute Salinity of the seawater at the time and place when and where 
+the sea ice was formed.  So usually SA_brine will be larger than SA. </pre> 
+<pre>The output, melting_seaice_SA_CT_ratio, is dSA/dCT rather than dCT/dSA. 
+This is done so that when (SA - seaice_SA) = 0, the output, dSA/dCT is 
+zero whereas dCT/dSA would be infinite. </pre>
+<!--<table width="500" border="0">
+  <tr>
+    <td><a href="../pdf/melting_seaice_SA_CT_ratio.pdf"> <img src="TEOS-10_front_cover.jpg" width="60" height="82" alt="TEOS-10" style ="display: block;  padding-right: 5px; padding-left: 5px; "></a></td>
+    <td><pre><font size="4"><a href="../pdf/melting_seaice_SA_CT_ratio.pdf">Click for a more detailed description of the ratio of
+SA to CT changes when sea ice melts into seawater.</a></font></pre></td>
+  </tr>
+</table>-->
+<h2>INPUT:<a name="3"></a></h2>
+<pre>SA   =  Absolute Salinity of seawater                           [ g/kg ]
+CT   =  Conservative Temperature of seawater (ITS-90)          [ deg C ]
+p    =  sea pressure                                            [ dbar ]
+          ( i.e. absolute pressure - 10.1325 dbar )  
+SA_seaice  =  Absolute Salinity of sea ice, that is, the mass fraction 
+              of salt in seaice expressed in g of salt per kg of sea ice
+                                                                [ g/kg ]
+t_seaice = the in-situ temperature of the seaice (ITS-90)      [ deg C ]</pre>
+<pre>SA, CT, SA_seaice & t_seaice must all have the same dimensions.
+p may have dimensions 1x1 or Mx1 or 1xN or MxN, where SA, CT, SA_seaice 
+and t_seaice are MxN.</pre>
+<h2>OUTPUT:<a name="4"></a></h2>
+<pre>melting_seaice_SA_CT_ratio = the ratio dSA/dCT of SA to CT changes when
+              sea ice melts into a large mass of seawater   [ g/(kg K) ]               
+</pre>
+<h2>EXAMPLE:<a name="5"></a></h2>
+<pre>SA = [34.7118; 34.8915; 35.0256; 34.8472; 34.7366; 34.7324;]
+CT = [-1.7856; -1.4329; -1.8103; -1.2600; -0.6886;  0.4403;]
+p =  [     10;      50;     125;     250;     600;    1000;]
+SA_seaice = [     5;      4.8;     4.5;     2.5;     1;    0.4;]
+t_seaice = [-6.7856; -7.4329; -6.8103; -6.2600; -6.8863; -8.4036;]</pre>
+<pre>melting_seaice_SA_CT_ratio = ...
+  gsw_melting_seaice_SA_CT_ratio_poly(SA,CT,p,SA_seaice,t_seaice)</pre>
+<pre>melting_seaice_SA_CT_ratio =</pre>
+<pre>   0.364261502697949
+   0.364096599409704
+   0.372793540281215
+   0.387623124079145
+   0.394351558502922
+   0.390587407771145</pre>
+<h2>AUTHOR:<a name="6"></a></h2>
+<pre>Trevor McDougall &amp; Paul Barker       [ <a href="mailto:help@teos-10.org">help@teos-10.org</a> ]</pre>
+<h2>VERSION NUMBER:<a name="7"></a></h2>
+<pre>3.05 (16th February, 2015)</pre>
+<h2>REFERENCES:<a name="8"></a></h2>
+<pre>IOC, SCOR and IAPSO, 2010: The international thermodynamic equation of
+ seawater - 2010: Calculation and use of thermodynamic properties.
+ Intergovernmental Oceanographic Commission, Manuals and Guides No. 56,
+ UNESCO (English), 196 pp.  Available from <a href="http://www.TEOS-10.org" title="TEOS-10">the TEOS-10 web site.</a></pre>
+<!--  <a href="../pdf/rho_ice.pdf">See section 2.8 of this TEOS-10 Manual.</a></pre>-->
+<pre>McDougall, T.J., P.M. Barker, R. Feistel and B.K. Galton-Fenzi, 2014: 
+ Melting of Ice and Sea Ice into Seawater and Frazil Ice Formation. 
+ Journal of Physical Oceanography, 44, 1751-1775.</pre>
+<pre>The software is available from <a href="http://www.TEOS-10.org" title="TEOS-10">http://www.TEOS-10.org</a></pre></font>
+</div></body></html>

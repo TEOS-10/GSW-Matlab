@@ -1,0 +1,15 @@
+name: Tests
+
+on: [push, pull_request]
+
+jobs:
+  my-job:
+    name: Run MATLAB Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: matlab-actions/setup-matlab@v2
+      - name: Run Tests
+        uses: matlab-actions/run-command@v2
+        with:
+          command: run_checks

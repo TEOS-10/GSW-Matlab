@@ -1,23 +1,23 @@
-if isempty(which('gsw_gibbs.html'))
-    fprintf(2,'You need to add the GSW "html" subdirectory to your path. \n');
-end
+% if isempty(which('gsw_gibbs.html'))
+%     fprintf(2,'You need to add the GSW "html" subdirectory to your path. \n');
+% end
 
 if isempty(which('gsw_gibbs.m'))
     fprintf(2,'You need to add the GSW "library" subdirectory to your path. \n');
 end
 
-if isempty(which('gibbs.pdf'))
-    fprintf(2,'You need to add the GSW "pdf" subdirectory to your path. \n');
-end
+% if isempty(which('gibbs.pdf'))
+%     fprintf(2,'You need to add the GSW "pdf" subdirectory to your path. \n');
+% end
 
 if isempty(which('gsw_rho_t_exact.m'))
     fprintf(2,'You need to add the GSW "thermodynamics_from_t" subdirectory to your path. \n');
 end
 
-if isempty(which('gsw_gibbs.html')) | isempty(which('gsw_gibbs.m')) | ...
-        isempty(which('gibbs.pdf')) | isempty(which('gsw_rho_t_exact.m'))
-    error('You have not added the GSW subdirectories to you MATLAB Path')
-end
+% if isempty(which('gsw_gibbs.html')) | isempty(which('gsw_gibbs.m')) | ...
+%         isempty(which('gibbs.pdf')) | isempty(which('gsw_rho_t_exact.m'))
+%     error('You have not added the GSW subdirectories to you MATLAB Path')
+% end
 
 try
     gsw_installation_dir = which ('gsw_gibbs.html');
@@ -2219,7 +2219,7 @@ if gsw_cf.gsw_chks == 1 ;
 end
 
 if gsw_cf.gsw_chks == 0
-    fprintf(2,'Your installation of the Gibbs SeaWater (GSW) Oceanographic Toolbox has errors !\n');
+    error(2,'Your installation of the Gibbs SeaWater (GSW) Oceanographic Toolbox has errors !\n');
     demo = 0;
 else
     fprintf(1,'Well done! The gsw_check_functions confirms that the \n');

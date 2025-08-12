@@ -7,7 +7,7 @@ jobs:
     name: Run MATLAB Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: matlab-actions/setup-matlab@v2
       - name: Run Tests
         uses: matlab-actions/run-command@v2
